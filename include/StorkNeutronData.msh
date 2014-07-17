@@ -1,0 +1,158 @@
+%{
+#include "StorkNeutronData.hh"
+
+%}
+
+// This file is generated automatically from StorkNeutronData.hh .  It is an
+//   intermediate file useful for debugging, but otherwise may be deleted.
+
+ marshaling class MarshaledStorkNeutronData (StorkNeutronData* param) {
+
+        G4double first;
+    //FIELDMARSHAL:
+    {
+	memcpy($$, &Shadowed_param->first, sizeof(G4double));
+    }
+    //FIELDUNMARSHAL:
+    {
+	memcpy(&Shadowed_param->first, $$, sizeof(G4double));
+
+    }
+    //FIELDSIZE:
+    {
+	$SIZE = sizeof(G4double);
+
+    }
+
+        G4double second;
+    //FIELDMARSHAL:
+    {
+	memcpy($$, &Shadowed_param->second, sizeof(G4double));
+    }
+    //FIELDUNMARSHAL:
+    {
+	memcpy(&Shadowed_param->second, $$, sizeof(G4double));
+
+    }
+    //FIELDSIZE:
+    {
+	$SIZE = sizeof(G4double);
+
+    }
+
+        G4ThreeVector third;
+    //FIELDMARSHAL:
+    {
+	memcpy($$, &Shadowed_param->third, sizeof(G4ThreeVector));
+    }
+    //FIELDUNMARSHAL:
+    {
+	memcpy(&Shadowed_param->third, $$, sizeof(G4ThreeVector));
+
+    }
+    //FIELDSIZE:
+    {
+	$SIZE = sizeof(G4ThreeVector);
+
+    }
+
+        G4ThreeVector fourth;
+    //FIELDMARSHAL:
+    {
+	memcpy($$, &Shadowed_param->fourth, sizeof(G4ThreeVector));
+    }
+    //FIELDUNMARSHAL:
+    {
+	memcpy(&Shadowed_param->fourth, $$, sizeof(G4ThreeVector));
+
+    }
+    //FIELDSIZE:
+    {
+	$SIZE = sizeof(G4ThreeVector);
+
+    }
+
+        G4double fifth;
+    //FIELDMARSHAL:
+    {
+	memcpy($$, &Shadowed_param->fifth, sizeof(G4double));
+    }
+    //FIELDUNMARSHAL:
+    {
+	memcpy(&Shadowed_param->fifth, $$, sizeof(G4double));
+
+    }
+    //FIELDSIZE:
+    {
+	$SIZE = sizeof(G4double);
+
+    }
+
+        G4double sixth;
+    //FIELDMARSHAL:
+    {
+	memcpy($$, &Shadowed_param->sixth, sizeof(G4double));
+    }
+    //FIELDUNMARSHAL:
+    {
+	memcpy(&Shadowed_param->sixth, $$, sizeof(G4double));
+
+    }
+    //FIELDSIZE:
+    {
+	$SIZE = sizeof(G4double);
+
+    }
+
+        G4double seventh;
+    //FIELDMARSHAL:
+    {
+	memcpy($$, &Shadowed_param->seventh, sizeof(G4double));
+    }
+    //FIELDUNMARSHAL:
+    {
+	memcpy(&Shadowed_param->seventh, $$, sizeof(G4double));
+
+    }
+    //FIELDSIZE:
+    {
+	$SIZE = sizeof(G4double);
+
+    }
+
+        G4double eigth;
+    //FIELDMARSHAL:
+    {
+	memcpy($$, &Shadowed_param->eigth, sizeof(G4double));
+    }
+    //FIELDUNMARSHAL:
+    {
+	memcpy(&Shadowed_param->eigth, $$, sizeof(G4double));
+
+    }
+    //FIELDSIZE:
+    {
+	$SIZE = sizeof(G4double);
+
+    }
+
+        G4double ninth;
+    //FIELDMARSHAL:
+    {
+	memcpy($$, &Shadowed_param->ninth, sizeof(G4double));
+    }
+    //FIELDUNMARSHAL:
+    {
+	memcpy(&Shadowed_param->ninth, $$, sizeof(G4double));
+
+    }
+    //FIELDSIZE:
+    {
+	$SIZE = sizeof(G4double);
+
+    }
+	unmarshaling constructor {
+	$THIS = new StorkNeutronData();
+	}
+}
+
