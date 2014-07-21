@@ -169,6 +169,9 @@ StorkUnionSolid& StorkUnionSolid::operator = (const StorkUnionSolid& rhs)
 //
 //
 
+
+// taken from G4Unionsolid, this calculates the extent of the volume based off an axis or in other words the distance the particle will travel in the solid based off its current trajectory
+//this function has been checked and confirmed
 G4bool
 StorkUnionSolid::CalculateExtent( const EAxis pAxis,
                                const G4VoxelLimits& pVoxelLimit,
