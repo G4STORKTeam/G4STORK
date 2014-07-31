@@ -1,0 +1,62 @@
+%{
+#include "StorkMatPropChange.hh"
+
+%}
+
+// This file is generated automatically from StorkMatPropChange.hh .  It is an
+//   intermediate file useful for debugging, but otherwise may be deleted.
+
+ marshaling class MarshaledStorkMatPropChange (StorkMatPropChange* param) {
+
+        G4int matN;
+    //FIELDMARSHAL:
+    {
+	memcpy($$, &Shadowed_param->matN, sizeof(G4int));
+    }
+    //FIELDUNMARSHAL:
+    {
+	memcpy(&Shadowed_param->matN, $$, sizeof(G4int));
+
+    }
+    //FIELDSIZE:
+    {
+	$SIZE = sizeof(G4int);
+
+    }
+
+        G4int propN;
+    //FIELDMARSHAL:
+    {
+	memcpy($$, &Shadowed_param->propN, sizeof(G4int));
+    }
+    //FIELDUNMARSHAL:
+    {
+	memcpy(&Shadowed_param->propN, $$, sizeof(G4int));
+
+    }
+    //FIELDSIZE:
+    {
+	$SIZE = sizeof(G4int);
+
+    }
+
+        G4double change;
+    //FIELDMARSHAL:
+    {
+	memcpy($$, &Shadowed_param->change, sizeof(G4double));
+    }
+    //FIELDUNMARSHAL:
+    {
+	memcpy(&Shadowed_param->change, $$, sizeof(G4double));
+
+    }
+    //FIELDSIZE:
+    {
+	$SIZE = sizeof(G4double);
+
+    }
+	unmarshaling constructor {
+	$THIS = new StorkMatPropChange();
+	}
+}
+
