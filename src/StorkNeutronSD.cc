@@ -223,8 +223,10 @@ G4bool StorkNeutronSD::ProcessHits(G4Step *aStep, G4TouchableHistory*)
 		nLoss++;
 		totalLifetime += lifetime;
 		fSites.push_back(postStepPoint->GetPosition());
+
 		// changed fnenergy to collect the energy from the poststeppoint instead of the presteppoint
 		//fnEnergy.push_back(postStepPoint->GetKineticEnergy());
+
 		fnEnergy.push_back(preStepPoint->GetKineticEnergy());
 
 #ifdef STORK_EXPLICIT_LOSS

@@ -142,7 +142,6 @@ G4VPhysicalVolume* SCWRConstructor::ConstructWorld()
     G4double centralCoolantRadmax = 4.6*cm;
     G4double centralCoolantLen = reactorDim[2];
 
-
 	// Set up the materials (if necessary)
     if(matChanged)
     {

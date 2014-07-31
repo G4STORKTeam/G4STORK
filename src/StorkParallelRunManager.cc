@@ -105,6 +105,7 @@ void StorkParallelRunManager::BeamOn(G4int n_event, const char* macroFile,
                 if(TOPC_is_master())
                 {
                     TallyRunResults();
+
                     if (sourceConverged)
                         G4cout << G4endl << "#### Souce Has Converged #####" << G4endl;
                     else

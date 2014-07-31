@@ -41,6 +41,7 @@ StorkNeutronProcessBuilder::~StorkNeutronProcessBuilder()
     delete theHighElasticModel;
     delete theHighFissionModel;
     delete theHighCaptureModel;
+
 }
 
 
@@ -67,9 +68,11 @@ void StorkNeutronProcessBuilder::Build()
     }
 
     // Create the high energy elastic model
+
     //theHighElasticModel = new G4DiffuseElastic();
     theHighElasticModel = new G4ChipsElasticModel();
     //theHighElasticModel = new G4HadronElastic();
+
 
     // Set the minimum energy limit
     theHighElasticModel->SetMinEnergy(20.0*MeV);

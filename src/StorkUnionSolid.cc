@@ -63,6 +63,7 @@ StorkUnionSolid:: StorkUnionSolid( const G4String& pName,
                         ShapeEnum shape, StorkSixVector<G4double> regionDim, G4ThreeVector offset )
   : G4BooleanSolid(pName,pSolidA,pSolidB)
 {
+    //sets the shape, dimensions and position of the region that the solids will be contained in
     regShape = shape;
     for(G4int i=0;i<6;i++)
     {
@@ -84,6 +85,7 @@ StorkUnionSolid::StorkUnionSolid( const G4String& pName,
   : G4BooleanSolid(pName,pSolidA,pSolidB,rotMatrix,transVector)
 
 {
+    //sets the shape, dimensions and position of the region that the solids will be contained in
     regShape = shape;
     for(G4int i=0;i<6;i++)
     {
@@ -103,6 +105,7 @@ StorkUnionSolid::StorkUnionSolid( const G4String& pName,
                             ShapeEnum shape, StorkSixVector<G4double> regionDim, G4ThreeVector offset)
   : G4BooleanSolid(pName,pSolidA,pSolidB,transform)
 {
+    //sets the shape, dimensions and position of the region that the solids will be contained in
     regShape = shape;
     for(G4int i=0;i<6;i++)
     {
@@ -166,6 +169,9 @@ StorkUnionSolid& StorkUnionSolid::operator = (const StorkUnionSolid& rhs)
 //
 //
 
+
+// taken from G4Unionsolid, this calculates the extent of the volume based off an axis or in other words the distance the particle will travel in the solid based off its current trajectory
+//this function has been checked and confirmed
 G4bool
 StorkUnionSolid::CalculateExtent( const EAxis pAxis,
                                const G4VoxelLimits& pVoxelLimit,

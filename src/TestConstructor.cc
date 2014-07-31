@@ -15,6 +15,7 @@ TestConstructor::~TestConstructor()
 
     delete zircGridVisAtt;
 
+
 }
 
 // ConstructWorld()
@@ -81,78 +82,86 @@ G4VPhysicalVolume* TestConstructor::ConstructWorld()
         //creates the base zirconium grid slice that the holes will be subtracted from to form the upper and lower grid plate
         new G4Tubs("gridPlate",  gridPlateDim[0], gridPlateDim[1], gridPlateDim[2]/2, CLHEP::pi/3, CLHEP::pi/3);
 
-		test = new G4Tubs("sheatheTube", sheatheDim[0], sheatheDim[1], sheatheDim[2]/2, 0., 2.0*CLHEP::pi);
+		new G4Tubs("sheatheTube", sheatheDim[0], sheatheDim[1], sheatheDim[2]/2, 0., 2.0*CLHEP::pi);
 
-//		new StorkUnionSolid("TestSolid",theSolids->GetSolid("sheatheTube"),theSolids->GetSolid("sheatheTube"), 0, G4ThreeVector(1.0*cm,1.0*cm,0.)
-//                    ,cylUnit, StorkSixVector<G4double>(0.,4.*cm,0.,0.5*CLHEP::pi,-2.0*cm, 2.0*cm),G4ThreeVector(0.,0.,0.));
+		//test = new G4UnionSolid("TestSolid1",theSolids->GetSolid("sheatheTube"),theSolids->GetSolid("sheatheTube"), 0, G4ThreeVector(1.0*cm,1.0*cm,0.));
+
+		test = new StorkUnionSolid("TestSolid1",theSolids->GetSolid("sheatheTube"),theSolids->GetSolid("sheatheTube"), 0, G4ThreeVector(1.0*cm,1.0*cm,0.)
+                    ,cylUnit, StorkSixVector<G4double>(0.,4.*cm,0.,2*CLHEP::pi,-2.0*cm, 2.0*cm),G4ThreeVector(0.*cm,2.0*cm,0.));
+
+       // test = new StorkUnionSolid("TestSolid2",theSolids->GetSolid("gridPlate"),theSolids->GetSolid("TestSolid1"), 0, G4ThreeVector(0.*cm,2.0*cm,0.)
+       //             ,cylUnit, StorkSixVector<G4double>(0.,4.*cm,0.,1*CLHEP::pi,-2.0*cm, 2.0*cm),G4ThreeVector(0.,0.,0.));
+
+////		new StorkUnionSolid("TestSolid",theSolids->GetSolid("sheatheTube"),theSolids->GetSolid("sheatheTube"), 0, G4ThreeVector(1.0*cm,1.0*cm,0.)
+////                    ,cylUnit, StorkSixVector<G4double>(0.,4.*cm,0.,0.5*CLHEP::pi,-2.0*cm, 2.0*cm),G4ThreeVector(0.,0.,0.));
+////
+////        new StorkUnionSolid("TestSolid2",theSolids->GetSolid("TestSolid"),theSolids->GetSolid("sheatheTube"), 0, G4ThreeVector(-1.0*cm,1.0*cm,0.)
+////                    ,cylUnit, StorkSixVector<G4double>(0.,4.*cm,0.,CLHEP::pi,-2.0*cm, 2.0*cm),G4ThreeVector(0.,0.,0.));
+////
+////        new StorkUnionSolid("TestSolid3",theSolids->GetSolid("TestSolid2"),theSolids->GetSolid("sheatheTube"), 0, G4ThreeVector(-1.0*cm, -1.0*cm,0.)
+////                    ,cylUnit, StorkSixVector<G4double>(0.,4.*cm,0.,1.5*CLHEP::pi,-2.0*cm, 2.0*cm),G4ThreeVector(0.,0.,0.));
+////
+////		test = new StorkUnionSolid("TestSolid4",theSolids->GetSolid("TestSolid3"),theSolids->GetSolid("sheatheTube"), 0, G4ThreeVector(1.0*cm,-1.0*cm,0.)
+////                    ,cylUnit, StorkSixVector<G4double>(0.,4.*cm,0.,2*CLHEP::pi,-2.0*cm, 2.0*cm),G4ThreeVector(0.,0.,0.));
 //
-//        new StorkUnionSolid("TestSolid2",theSolids->GetSolid("TestSolid"),theSolids->GetSolid("sheatheTube"), 0, G4ThreeVector(-1.0*cm,1.0*cm,0.)
-//                    ,cylUnit, StorkSixVector<G4double>(0.,4.*cm,0.,CLHEP::pi,-2.0*cm, 2.0*cm),G4ThreeVector(0.,0.,0.));
+////        solidList sheatheTubes;
 //
-//        new StorkUnionSolid("TestSolid3",theSolids->GetSolid("TestSolid2"),theSolids->GetSolid("sheatheTube"), 0, G4ThreeVector(-1.0*cm, -1.0*cm,0.)
-//                    ,cylUnit, StorkSixVector<G4double>(0.,4.*cm,0.,1.5*CLHEP::pi,-2.0*cm, 2.0*cm),G4ThreeVector(0.,0.,0.));
+//		G4int regionIndices[3];
+//        regionIndices[0] = ceil((regionDim[1]-regionDim[0])/(unitRegionDim[1]-unitRegionDim[0]));
+//        regionIndices[1] = ceil((regionDim[3]-regionDim[2])/(unitRegionDim[3]-unitRegionDim[2]));
+//        regionIndices[2] = ceil((regionDim[5]-regionDim[4])/(unitRegionDim[5]-unitRegionDim[4]));
 //
-//		test = new StorkUnionSolid("TestSolid4",theSolids->GetSolid("TestSolid3"),theSolids->GetSolid("sheatheTube"), 0, G4ThreeVector(1.0*cm,-1.0*cm,0.)
-//                    ,cylUnit, StorkSixVector<G4double>(0.,4.*cm,0.,2*CLHEP::pi,-2.0*cm, 2.0*cm),G4ThreeVector(0.,0.,0.));
-
-//        solidList sheatheTubes;
-
-		G4int regionIndices[3];
-        regionIndices[0] = ceil((regionDim[1]-regionDim[0])/(unitRegionDim[1]-unitRegionDim[0]));
-        regionIndices[1] = ceil((regionDim[3]-regionDim[2])/(unitRegionDim[3]-unitRegionDim[2]));
-        regionIndices[2] = ceil((regionDim[5]-regionDim[4])/(unitRegionDim[5]-unitRegionDim[4]));
-
-        unitRegionDim[0] = regionDim[1]-(regionDim[1]-regionDim[0])/(regionIndices[0]);
-        unitRegionDim[1] = regionDim[1];
-        unitRegionDim[2] = regionDim[3]-(regionDim[3]-regionDim[2])/(regionIndices[1]);
-        unitRegionDim[3] = regionDim[3];
-        unitRegionDim[4] = regionDim[5]-(regionDim[5]-regionDim[4])/(regionIndices[2]);
-        unitRegionDim[5] = regionDim[5];
-
-        G4double unitRegDim[6];
-        intVec elemsRow(regionIndices[0], 0);
-        G4int count=0;
-
-        for(G4int i=0; i<regionIndices[0]; i++)
-        {
-            unitRegDim[0]=regionDim[1]-(unitRegionDim[1]-unitRegionDim[0])*(i+1);
-            unitRegDim[1]=regionDim[1]-(unitRegionDim[1]-unitRegionDim[0])*(i);
-            elemsRow[i]=ceil((unitRegDim[0]*(regionDim[3]-regionDim[2]))/(unitRegionDim[0]*(unitRegionDim[3]-unitRegionDim[2])));
-
-            for(G4int j=0; j<(elemsRow[i]); j++)
-            {
-                unitRegDim[2]=regionDim[3]-(j+1)*(regionDim[3]-regionDim[2])/(elemsRow[i]);
-                unitRegDim[3]=regionDim[3]-(j)*(regionDim[3]-regionDim[2])/(elemsRow[i]);
-
-                for(G4int k=0; k<regionIndices[2]; k++)
-                {
-                    unitRegDim[4]=regionDim[5]-(k+1)*(regionDim[5]-regionDim[4])/(regionIndices[2]);
-                    unitRegDim[5]=regionDim[5]-(k)*(regionDim[5]-regionDim[4])/(regionIndices[2]);
-                    StorkSixVector<G4double> unitRegDimTemp(unitRegDim);
-                    holeRPos={(unitRegDimTemp[1]+unitRegDimTemp[0])/2,(unitRegDimTemp[3]+unitRegDimTemp[2])/2,(unitRegDimTemp[5]+unitRegDimTemp[4])/2};
-                    holePos.setRhoPhiZ(holeRPos[0],holeRPos[1],holeRPos[2]);
-                    latticeType1.str("");
-                    latticeType1 << count;
-                    count++;
-                    test = new G4UnionSolid("TestSolid"+latticeType1.str(),test, theSolids->GetSolid("sheatheTube"), 0, holePos);
-//                                                ,cylUnit, regionDim, G4ThreeVector(0.,0.,0.));
-//                    sheatheTubes.push_back(solidPos(theSolids->GetSolid("sheatheTube"),holePos));
-
-                }
-            }
-        }
-
-//		UnionBinaryTree* sheatheTubeLat = new UnionBinaryTree(&sheatheTubes);
+//        unitRegionDim[0] = regionDim[1]-(regionDim[1]-regionDim[0])/(regionIndices[0]);
+//        unitRegionDim[1] = regionDim[1];
+//        unitRegionDim[2] = regionDim[3]-(regionDim[3]-regionDim[2])/(regionIndices[1]);
+//        unitRegionDim[3] = regionDim[3];
+//        unitRegionDim[4] = regionDim[5]-(regionDim[5]-regionDim[4])/(regionIndices[2]);
+//        unitRegionDim[5] = regionDim[5];
 //
-//		sheatheTubeLatPair = sheatheTubeLat->GetUnionSolid("sheatheTubeLat", 0, cylUnit, unitRegionDim, regionDim, 0.0, radCyl, 1.0, NULL, true);
-
-		// creates the upGridPlate and the lowGridPlate from the unions of the upGridHolesLat and lowGridHolesLat with the base gridPlate
-//		new G4SubtractionSolid("upGridPlate", theSolids->GetSolid("gridPlate"), upGridHolesLatPair.first, 0, upGridHolesLatPair.second);
-//		new G4SubtractionSolid("lowGridPlate", theSolids->GetSolid("gridPlate"), lowGridHolesLatPair.first, 0, lowGridHolesLatPair.second);
+//        G4double unitRegDim[6];
+//        intVec elemsRow(regionIndices[0], 0);
+//        G4int count=0;
 //
-//        // creates the zirconium grid slice (zircGridPlate) from the union of the upGridPlate and the lowGridPlate
-//		new G4UnionSolid("zircGridSliceP1", theSolids->GetSolid("upGridPlate"), theSolids->GetSolid("lowGridPlate"), 0, disUpGridToLowGrid);
-//		gridSlice = new G4UnionSolid("zircGridSlice", theSolids->GetSolid("gridPlate"), sheatheTubeLatPair.first, 0, sheatheTubeLatPair.second);
+//        for(G4int i=0; i<regionIndices[0]; i++)
+//        {
+//            unitRegDim[0]=regionDim[1]-(unitRegionDim[1]-unitRegionDim[0])*(i+1);
+//            unitRegDim[1]=regionDim[1]-(unitRegionDim[1]-unitRegionDim[0])*(i);
+//            elemsRow[i]=ceil((unitRegDim[0]*(regionDim[3]-regionDim[2]))/(unitRegionDim[0]*(unitRegionDim[3]-unitRegionDim[2])));
+//
+//            for(G4int j=0; j<(elemsRow[i]); j++)
+//            {
+//                unitRegDim[2]=regionDim[3]-(j+1)*(regionDim[3]-regionDim[2])/(elemsRow[i]);
+//                unitRegDim[3]=regionDim[3]-(j)*(regionDim[3]-regionDim[2])/(elemsRow[i]);
+//
+//                for(G4int k=0; k<regionIndices[2]; k++)
+//                {
+//                    unitRegDim[4]=regionDim[5]-(k+1)*(regionDim[5]-regionDim[4])/(regionIndices[2]);
+//                    unitRegDim[5]=regionDim[5]-(k)*(regionDim[5]-regionDim[4])/(regionIndices[2]);
+//                    StorkSixVector<G4double> unitRegDimTemp(unitRegDim);
+//                    holeRPos={(unitRegDimTemp[1]+unitRegDimTemp[0])/2,(unitRegDimTemp[3]+unitRegDimTemp[2])/2,(unitRegDimTemp[5]+unitRegDimTemp[4])/2};
+//                    holePos.setRhoPhiZ(holeRPos[0],holeRPos[1],holeRPos[2]);
+//                    latticeType1.str("");
+//                    latticeType1 << count;
+//                    count++;
+//                    test = new G4UnionSolid("TestSolid"+latticeType1.str(),test, theSolids->GetSolid("sheatheTube"), 0, holePos);
+////                                                ,cylUnit, regionDim, G4ThreeVector(0.,0.,0.));
+////                    sheatheTubes.push_back(solidPos(theSolids->GetSolid("sheatheTube"),holePos));
+//
+//                }
+//            }
+//        }
+//
+////		UnionBinaryTree* sheatheTubeLat = new UnionBinaryTree(&sheatheTubes);
+////
+////		sheatheTubeLatPair = sheatheTubeLat->GetUnionSolid("sheatheTubeLat", 0, cylUnit, unitRegionDim, regionDim, 0.0, radCyl, 1.0, NULL, true);
+//
+//		// creates the upGridPlate and the lowGridPlate from the unions of the upGridHolesLat and lowGridHolesLat with the base gridPlate
+////		new G4SubtractionSolid("upGridPlate", theSolids->GetSolid("gridPlate"), upGridHolesLatPair.first, 0, upGridHolesLatPair.second);
+////		new G4SubtractionSolid("lowGridPlate", theSolids->GetSolid("gridPlate"), lowGridHolesLatPair.first, 0, lowGridHolesLatPair.second);
+////
+////        // creates the zirconium grid slice (zircGridPlate) from the union of the upGridPlate and the lowGridPlate
+////		new G4UnionSolid("zircGridSliceP1", theSolids->GetSolid("upGridPlate"), theSolids->GetSolid("lowGridPlate"), 0, disUpGridToLowGrid);
+////		gridSlice = new G4UnionSolid("zircGridSlice", theSolids->GetSolid("gridPlate"), sheatheTubeLatPair.first, 0, sheatheTubeLatPair.second);
 
 		geomChanged = false;
 		std::vector<G4VSolid*> *Check = dynamic_cast<std::vector<G4VSolid*>*>(theSolids);
@@ -181,7 +190,7 @@ G4VPhysicalVolume* TestConstructor::ConstructWorld()
                       worldLogical,0,0);
 
     //    //create Zirconium grid plates
-    zircGridLogical = new G4LogicalVolume(test, matMap["Zirconium"], "zircGridLogical");
+    zircGridLogical = new G4LogicalVolume(theSolids->GetSolid("TestSolid1"), matMap["Zirconium"], "zircGridLogical");
 
     new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), zircGridLogical,"zircGridSlicePhysical",
                       cellLogical,0,0,0);
