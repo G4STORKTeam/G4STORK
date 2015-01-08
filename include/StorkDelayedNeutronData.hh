@@ -1,3 +1,4 @@
+//Decay constants and fission yields for the precursor calculation. May edit if need be.
 #ifndef STORKDELAYEDNEUTRON_H
 #define STORKDELAYEDNEUTRON_H
 
