@@ -301,6 +301,7 @@ void StorkPrimaryGeneratorAction::ShuffleSurvivors(G4int numShuffle,
 // delayed neutrons relative to the k_run values of intervening runs.
 void StorkPrimaryGeneratorAction::AddCurrentDelayed()
 {
+    //If a fission file was provided, generate delayed neutrons.	
     if(initialDelayed) GenerateDelayedNeutrons();
     // Reset delayed neutron primary counter to zero
     numDNPrimaries = 0;
@@ -309,13 +310,11 @@ void StorkPrimaryGeneratorAction::AddCurrentDelayed()
     NeutronSources delayToBeAdded;
     G4double totalWeight = 0.;
 
-  //  G4cout << "-----------------" << G4endl <<
-   // "Number of DNs: " <<dNeutrons.size()<< G4endl << "Run End: " << runEnd << G4endl;
+
     // Find the delayed neutrons that will be added in the current run
     while(!instantDelayed && it != dNeutrons.end())
     {
 
-       // G4cout << "Time: "<<(*it).first << G4endl;
         target = it;
         it++;
         delayToBeAdded.push_back(*target);
@@ -323,9 +322,6 @@ void StorkPrimaryGeneratorAction::AddCurrentDelayed()
         numDNPrimaries++;
 
     }
-
-   // G4cout<< "Delayed added: " <<delayToBeAdded.size() << G4endl
-   // << "Number of survivors: " << survivors.size() <<G4endl;
 
     // Add delayed to survivors
     survivors.insert(survivors.end(),delayToBeAdded.begin(),
