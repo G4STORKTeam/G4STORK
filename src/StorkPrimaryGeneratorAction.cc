@@ -15,6 +15,7 @@ Source code for StorkPrimaryGeneratorAction class.
 #include "StorkPrimaryGeneratorAction.hh"
 
 
+
 // Constructor
 StorkPrimaryGeneratorAction::StorkPrimaryGeneratorAction(
                                         const StorkParseInput* infile,
@@ -26,15 +27,15 @@ StorkPrimaryGeneratorAction::StorkPrimaryGeneratorAction(
     realNumPrimaries = numPrimaries;
     initEnergy = infile->GetInitialEnergy();
     uniformDis = infile->GetUniformDistribution();
-    uniformDisWithDim = infile->GetUniformDistWithDim();
     shape = infile->GetUniformDistributionShape();
-    uniDisDim = infile->GetUniformDistDim();
     origin = infile->GetInitialSourcePos();
     initialSource = false;
     primaryData = NULL;
-    theFissionFS = NULL;
     normalize = infile->GetRenormalizeAfterRun();
     instantDelayed = infile->GetInstantDelayed();
+    initialDelayed = false;
+    theNav = G4TransportationManager::GetTransportationManager()->
+    GetNavigatorForTracking();
 
     // Set initial source files (on master only)
     if(master)
@@ -66,6 +67,10 @@ StorkPrimaryGeneratorAction::StorkPrimaryGeneratorAction(
 StorkPrimaryGeneratorAction::~StorkPrimaryGeneratorAction()
 {
 	if(primaryData) delete primaryData;
+
+    if (fSites) delete [] fSites;
+
+    if (fnEnergy) delete [] fnEnergy;
 }
 
 
@@ -95,10 +100,10 @@ void StorkPrimaryGeneratorAction::GeneratePrimaries(G4Event *anEvent)
 
 // SetPrimaries()
 // Set the primaries for the current event (i.e. set on slaves by master)
-void StorkPrimaryGeneratorAction::SetPrimaries(StorkPrimaryData *primaryData)
+void StorkPrimaryGeneratorAction::SetPrimaries(StorkPrimaryData *pData)
 {
     // Assign the primaries to the current primaries vector
-    currPrimaries = *(primaryData->primaries);
+    currPrimaries = *(pData->primaries);
 }
 
 
@@ -296,6 +301,7 @@ void StorkPrimaryGeneratorAction::ShuffleSurvivors(G4int numShuffle,
 // delayed neutrons relative to the k_run values of intervening runs.
 void StorkPrimaryGeneratorAction::AddCurrentDelayed()
 {
+    if(initialDelayed) GenerateDelayedNeutrons();
     // Reset delayed neutron primary counter to zero
     numDNPrimaries = 0;
     NeutronList::iterator it = dNeutrons.begin();
@@ -303,41 +309,23 @@ void StorkPrimaryGeneratorAction::AddCurrentDelayed()
     NeutronSources delayToBeAdded;
     G4double totalWeight = 0.;
 
+  //  G4cout << "-----------------" << G4endl <<
+   // "Number of DNs: " <<dNeutrons.size()<< G4endl << "Run End: " << runEnd << G4endl;
     // Find the delayed neutrons that will be added in the current run
     while(!instantDelayed && it != dNeutrons.end())
     {
-        if((*it).first < runEnd)
-        {
-            target = it;
-            it++;
-            delayToBeAdded.push_back(*target);
-            dNeutrons.erase(target);
-            numDNPrimaries++;
-        }
-        else
-        {
-            it++;
-        }
+
+       // G4cout << "Time: "<<(*it).first << G4endl;
+        target = it;
+        it++;
+        delayToBeAdded.push_back(*target);
+        dNeutrons.erase(target);
+        numDNPrimaries++;
+
     }
 
-    // Comb delayed based on weights
-
-    // Check if weight needs to be calculated and sum all weights
-    for(G4int i=0; i < G4int(delayToBeAdded.size()); i++)
-    {
-        if(delayToBeAdded[i].ninth < 0)
-        {
-            // Get k_run product from run manager
-
-        }
-
-        // Sum weights
-        totalWeight += 1.0 / delayToBeAdded[i].ninth;
-    }
-
-    // Comb
-
-
+   // G4cout<< "Delayed added: " <<delayToBeAdded.size() << G4endl
+   // << "Number of survivors: " << survivors.size() <<G4endl;
 
     // Add delayed to survivors
     survivors.insert(survivors.end(),delayToBeAdded.begin(),
@@ -365,7 +353,7 @@ void StorkPrimaryGeneratorAction::UpdateSourceDistributions(
 	if(runMan->GetSourceConvergence())
 	{
 		// Add the delayed neutrons to the end of the delayed neutron list
-		dNeutrons.insert(dNeutrons.end(),dnSource->begin(),dnSource->end());
+		//dNeutrons.insert(dNeutrons.end(),dnSource->begin(),dnSource->end());
 	}
 
 #ifdef G4TIMEPG
@@ -414,8 +402,9 @@ G4int StorkPrimaryGeneratorAction::GetNumDNPrimaries()
 // f) delayed ...
 void StorkPrimaryGeneratorAction::LoadSource(G4String fname)
 {
-    if(initialSource) return;
-
+    if(initialSource){
+        return;
+    }
     // Variables
     std::ifstream infile;
     char buffer[256];
@@ -463,21 +452,22 @@ void StorkPrimaryGeneratorAction::LoadSource(G4String fname)
     // Reserve memory for the delayed vector
     infile >> numRecords;
 
-    // Read in delayed
-    for(G4int i=0; i<numRecords; i++)
-    {
-        // Extract the data from the file and store it in input
-        infile >> input.first >> input.second
-               >> input.third[0] >> input.third[1] >> input.third[2]
-               >> input.fourth[0] >> input.fourth[1] >> input.fourth[2]
-               >> input.fifth >> input.sixth >> input.seventh >> input.eigth
-               >> input.ninth;
-        // Correct for the current time of the records
-        input.first -= recordTime;
+    if(!initialDelayed){
+        // Read in delayed
+        for(G4int i=0; i<numRecords; i++)
+        {
+            // Extract the data from the file and store it in input
+            infile >> input.first >> input.second
+                   >> input.third[0] >> input.third[1] >> input.third[2]
+                   >> input.fourth[0] >> input.fourth[1] >> input.fourth[2]
+                   >> input.fifth >> input.sixth >> input.seventh >> input.eigth
+                   >> input.ninth;
+            // Correct for the current time of the records
+            input.first -= recordTime;
 
-        dNeutrons.push_back(input);
+            dNeutrons.push_back(input);
+        }
     }
-
     infile.close();
 
     initialSource = true;
@@ -490,6 +480,7 @@ void StorkPrimaryGeneratorAction::LoadSource(G4String fname)
 void StorkPrimaryGeneratorAction::InitialSource()
 {
     if(initialSource) return;
+
 
     G4double mass = neutron->GetPDGMass();
     G4double meanEng = initEnergy;
@@ -525,48 +516,29 @@ void StorkPrimaryGeneratorAction::InitialSource()
     }
 
     // Create the delayed neutrons
-    //CreateInitialDelayed();
+    initialDelayed = CreateInitialPrecursors();
 
     // Make sure the default source can't be called again
     initialSource = true;
 }
 
-
-// CreateInitialDelayed()
-// Create an initial delayed neutron distribution using fission data from a
-// previous simulation and the low energy neutron fission process,
-// StorkHadronFissionProcess.
-G4bool StorkPrimaryGeneratorAction::CreateInitialDelayed()
+// CreateInitialPrecursors()
+// Create an initial precursor population using fission data from previous simulation.
+G4bool StorkPrimaryGeneratorAction::CreateInitialPrecursors()
 {
 	// Local variables
 	char line[256];
-	G4int numEntries;
 	G4double avgkrun;
-	G4double avgNuD;
-	G4double nuVariance = 0.05;
-	G4int nuD;
-	G4ThreeVector *fSites;
-	G4double *fnEnergy;
-	G4double currTime = 0.0;
-	G4double runDuration;
-	G4int dnProdFail = 0;
-	G4int dnFailLimit = 25;
-	G4int dnInd;
-	G4bool prodDN = false;
-	G4ThreeVector theMomDir;
-	StorkNeutronData theDelayed;
-	G4DynamicParticle *theNeutron = NULL;
-	G4Material *theMat = NULL;
-	G4Navigator *theNav = G4TransportationManager::GetTransportationManager()->
-                                                    GetNavigatorForTracking();
+	G4int totalPrimaries;
+    G4double FissionPerPrimary;
+    std::vector<G4double> Ci(6);
+    G4int index;
+
 
 
 	// The fission process
-	StorkHadronFissionProcess *theFissionProcess =  NULL;
-	theFissionProcess = dynamic_cast<StorkHadronFissionProcess*>(
-                            StorkProcessManager::GetStorkProcessManagerPtr()->
-											GetProcess("StorkHadronFission"));
-
+	theFissionProcess = dynamic_cast<StorkHadronFissionProcess*>(StorkProcessManager::GetStorkProcessManagerPtr()->
+                                                                 GetProcess("StorkHadronFission"));
 
 
 	// Load data from file
@@ -576,7 +548,7 @@ G4bool StorkPrimaryGeneratorAction::CreateInitialDelayed()
 	if(!dnfile.good())
 	{
 		G4cerr << "*** WARNING:  Unable to open initial delayed neutron file:"
-		       << delayedSourceFile << G4endl;
+        << delayedSourceFile << G4endl;
 		return false;
 	}
 
@@ -585,7 +557,7 @@ G4bool StorkPrimaryGeneratorAction::CreateInitialDelayed()
 		dnfile.getline(line,256);
 
 	// Read in delayed neutron distribution parameters
-	dnfile >> numEntries >> runDuration >> avgkrun >> avgNuD;
+	dnfile >> numEntries >> runDuration >> avgkrun >> totalPrimaries;
 
 	// Assign memory for delayed neutron data
 	fSites = new G4ThreeVector[numEntries];
@@ -595,80 +567,132 @@ G4bool StorkPrimaryGeneratorAction::CreateInitialDelayed()
 	for(G4int i=0; i<numEntries && dnfile.good(); i++)
 	{
 		dnfile >> fSites[i][0] >> fSites[i][1] >> fSites[i][2] >> fnEnergy[i];
-	}
-
-
-	// Produce delayed neutrons until none are produced in positive time
-	while(dnProdFail < dnFailLimit)
-	{
-		// Reset flags
-		prodDN = false;
-
-		// Determine the requisite number of delayed neutrons
-		nuD = G4int(std::floor(avgNuD *
-								(1.0 + nuVariance*G4UniformRand()) + 0.5));
-
-		// Produce the requisite number of neutrons
-		for(G4int i=0; i < nuD; i++)
-		{
-			// Randomly sample a position and incoming neutron energy
-			dnInd = G4int(std::floor(G4UniformRand() *
-										G4double(numEntries) + 0.5));
-
-			// Create the incident neutron
-			theMomDir.setRThetaPhi(1.0, G4UniformRand()*CLHEP::pi,
-									G4UniformRand()*2.0*CLHEP::pi);
-			theNeutron = new G4DynamicParticle(neutron, theMomDir,
-												fnEnergy[dnInd]);
-			theNeutron->SetProperTime(currTime);
-
-			// Find the current material
-			theMat = theNav->LocateGlobalPointAndSetup(fSites[dnInd])->
-											GetLogicalVolume()->GetMaterial();
-
-			// Use nuclear data to create a delayed neutron
-			theDelayed = theFissionProcess->GetADelayedNeutron(theNeutron,
-																theMat);
-
-			// Set the position of the delayed neutron
-			theDelayed.third = fSites[dnInd];
-
-			// Correct the time of birth of the delayed neutron
-//			theDelayed.first -= currTime;
-
-			// Check if delayed neutron is viable
-			if(theDelayed.first >= 0.0)
-			{
-				// Add to delayed neutron list
-				dNeutrons.push_back(theDelayed);
-
-				// Set flag
-				prodDN = true;
-			}
-
-			// Delete dynamic variables
-			delete theNeutron;
-
-		}
-
-		// Decrement the time
-		currTime -= runDuration;
-
-		// Increment the fail counter if algorithm failed to create any viable
-		// delayed neutrons
-		if(!prodDN)
-			dnProdFail++;
 
 	}
 
+    FissionPerPrimary = G4double(numEntries) / G4double(totalPrimaries);
+
+    for(G4int i=0; i<numEntries; i++){
+
+    /* // For now assume that U235 is the only fuel, uncomment or edit if you want to factor in more types of fuel.
+       //Can also edit the StorkDelayedData.hh to change delay constants and fission yields.
+        G4String iso = theFissionProcess->GetFissionIso(fnEnergy[i],fSites[i]).GetIsotope()->GetName();
+
+        if(iso == "U235"){
+            if(fnEnergy[i]<0.0000005) index = 0;
+            else index = 3;
+
+        }
+        else if(iso == "U238"){
+            index = 6;
+
+        }
+        else if(iso == "U233"){
+            if(fnEnergy[i]<0.0000005) index = 2;
+            else index = 5;
+
+        }
+        else if(iso == "Pu239"){
+            if(fnEnergy[i]<0.0000005) index = 1;
+            else index = 4;
+        }
+        else if(iso == "Pu240"){
+            index = 7;
+        }
+        else if(iso == "Th232"){
+            index = 8;
+        }
+        else {
+            index = 0;
+        }
+        */
+
+        index = 0;
+
+        for(G4int i_=0;i_<6;i_++){
+
+            Ci[i_] += ( 0.5 + FissionYields[index][i_] / ( pow(10,-9)*runDuration*DecayConstants[index][i_]+ log(avgkrun) )
+                                                     );
+         }
 
 
-	// Delete dynamic variables
-	delete [] fSites;
-	delete [] fnEnergy;
+    }
+
+    for (G4int i__ = 0; i__<6; i__++)
+        Precursors[i__] = (G4int) std::floor(FissionPerPrimary*Ci[i__] +0.5);
+
 
     return true;
 }
+
+
+//Generate number of Delayed Neutrons based on the Precursor groups and decay constants.
+void StorkPrimaryGeneratorAction::GenerateDelayedNeutrons(){
+    G4int nuD = 0;
+    G4int dnInd;
+    G4ThreeVector theMomDir;
+	StorkNeutronData theDelayed;
+	G4DynamicParticle *theNeutron = NULL;
+	G4Material *theMat = NULL;
+
+    theNav->ResetStackAndState();
+
+
+    for(G4int i_=0; i_<6; i_++){
+
+        for(G4int i__ = 0; i__< Precursors[i_] ; i__++){
+            G4double r = G4UniformRand();
+            G4double probability = exp(-runDuration*pow(10,-9)*DecayConstants[0][i_]);
+            if (r>probability){
+                nuD++;
+                //Precursors[i_]--;
+            }
+
+        }
+    }
+
+
+
+    for(G4int i=0; i < nuD; i++)
+    {
+        // Randomly sample a position and incoming neutron energy
+        dnInd = G4int(std::floor(G4UniformRand() *
+                                 numEntries + 0.5));
+
+        // Create the incident neutron
+        theMomDir.setRThetaPhi(1.0, G4UniformRand()*CLHEP::pi,
+                               G4UniformRand()*2.0*CLHEP::pi);
+        theNeutron = new G4DynamicParticle(neutron, theMomDir,
+                                           fnEnergy[dnInd]);
+        theNeutron->SetProperTime(0.0);
+
+        // Find the current material
+        theMat = theNav->LocateGlobalPointAndSetup(fSites[dnInd])->
+        GetLogicalVolume()->GetMaterial();
+
+
+
+        // Use nuclear data to create a delayed neutron
+        theDelayed = theFissionProcess->GetADelayedNeutron(theNeutron,
+                                                               theMat);
+
+        // Set the position of the delayed neutron
+        theDelayed.third = fSites[dnInd];
+
+        // Set global time
+        theDelayed.first = runEnd+runDuration*G4UniformRand();
+
+
+        // Add to delayed neutron list
+        dNeutrons.push_back(theDelayed);
+
+
+        delete theNeutron;
+        theNeutron = NULL;
+
+    }
+}
+
 
 
 // UniformPosition()
@@ -677,30 +701,24 @@ void StorkPrimaryGeneratorAction::UniformPosition(StorkNeutronData* input)
 {
     StorkWorld *worldPointerCD = runMan->GetWorld();
 
+    // Determining the shape of the world volume
+    // By default we want to generate random
+    // points everywhere inside the world voulme
     if(shape == "Cell")
         shape = worldPointerCD->GetWorldLogicalVolume()
                                     ->GetDaughter(0)->GetLogicalVolume()
                                     ->GetSolid()->GetEntityType();
 
-    G4double limit[3];
     G4ThreeVector extent = worldPointerCD->GetWorldDimensions();
+
+    G4double limit[3];
 
     if(shape=="G4Orb")
     {
-        if(uniformDisWithDim)
-        {
-                // Select a random position
-            limit[0] = (G4UniformRand()*(uniDisDim[1]-uniDisDim[0])+uniDisDim[0])*CLHEP::cm;
-            limit[1] = (G4UniformRand()*(uniDisDim[3]-uniDisDim[2])+uniDisDim[2])*CLHEP::pi;
-            limit[2] = (G4UniformRand()*(uniDisDim[5]-uniDisDim[4])+uniDisDim[4])*CLHEP::pi;
-        }
-        else
-        {
-            // Select a random position
-            limit[0] = G4UniformRand()*extent[0];
-            limit[1] = G4UniformRand()*2.0*CLHEP::pi;
-            limit[2] = G4UniformRand()*CLHEP::pi;
-        }
+        // Select a random position
+        limit[0] = G4UniformRand()*extent[0];
+        limit[1] = G4UniformRand()*2.0*CLHEP::pi;
+        limit[2] = G4UniformRand()*CLHEP::pi;
 
         // Set position
         input->third.setRThetaPhi(limit[0],limit[2],limit[1]);
@@ -708,42 +726,23 @@ void StorkPrimaryGeneratorAction::UniformPosition(StorkNeutronData* input)
 
     else if(shape=="G4Tubs")
     {
-        if(uniformDisWithDim)
-        {
-            limit[0] = (G4UniformRand()*(uniDisDim[1]-uniDisDim[0])+uniDisDim[0])*CLHEP::cm;
-            limit[1] = (G4UniformRand()*uniDisDim[2])*CLHEP::pi;
-            limit[2] = (G4UniformRand()*uniDisDim[3]-0.5*uniDisDim[3])*CLHEP::cm;
-            input->third.setRhoPhiZ(limit[0],limit[1],limit[2]);
-            input->third.rotate((uniDisDim[4]*CLHEP::pi),(uniDisDim[5]*CLHEP::pi),0.);
+        // Select a random position
+        limit[0] = G4UniformRand()*extent[1];
+        limit[1] = G4UniformRand()*2.0*CLHEP::pi;
+        limit[2] = G4UniformRand()*extent[2]*2-extent[2];
 
-        }
-        else
-        {
-            // Select a random position
-            limit[0] = G4UniformRand()*extent[1];
-            limit[1] = G4UniformRand()*2.0*CLHEP::pi;
-            limit[2] = G4UniformRand()*2*extent[2]-extent[2];
-            input->third.setRhoPhiZ(limit[0],limit[1],limit[2]);
-        }
+        // Set position
+        input->third.setRhoPhiZ(limit[0],limit[1],limit[2]);
     }
 
     else
     {
-        if(uniformDisWithDim)
-        {
-            limit[0] = G4UniformRand()*uniDisDim[0]-0.5*uniDisDim[0];
-            limit[1] = G4UniformRand()*uniDisDim[1]-0.5*uniDisDim[1];
-            limit[2] = G4UniformRand()*uniDisDim[2]-0.5*uniDisDim[2];
-            input->third.set(limit[0],limit[2],limit[1]);
-            input->third.rotate((uniDisDim[3]*CLHEP::pi),(uniDisDim[4]*CLHEP::pi),0.);
-        }
-        else
-        {
-            limit[0] = G4UniformRand()*extent[0]*2-extent[0];
-            limit[1] = G4UniformRand()*extent[1]*2-extent[1];
-            limit[2] = G4UniformRand()*extent[2]*2-extent[2];
-            input->third.set(limit[0],limit[2],limit[1]);
-        }
+        limit[0] = G4UniformRand()*extent[0]*2-extent[0];
+        limit[1] = G4UniformRand()*extent[1]*2-extent[1];
+        limit[2] = G4UniformRand()*extent[2]*2-extent[2];
+
+        // Set position
+        input->third.set(limit[0],limit[2],limit[1]);
     }
     input->third = input->third + origin;
 }
