@@ -66,10 +66,10 @@ class StorkPrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
         // Constructor and destructor
         StorkPrimaryGeneratorAction(const StorkParseInput* infile,
                                     G4bool master);
-		~StorkPrimaryGeneratorAction();
+	~StorkPrimaryGeneratorAction();
 
         // Update the survivor and delayed neutron distributions (end of run)
-		void UpdateSourceDistributions(const NeutronSources *nSource,
+	void UpdateSourceDistributions(const NeutronSources *nSource,
                                        const NeutronSources *dnSource);
         // Initialize the primaries for the current run
         void InitializeRun();
@@ -81,17 +81,17 @@ class StorkPrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
         StorkPrimaryData* GetPrimaryData(G4int eventNum);
 
         // Get the total number of primaries/delayed neutron primaries
-		G4int GetNumPrimaries();
-		G4int GetNumDNPrimaries();
+	G4int GetNumPrimaries();
+	G4int GetNumDNPrimaries();
 
-		// Set the number of events per run
-		void SetNumEvents(G4int numE) { numEvents = numE; };
-		// Create the initial neutron source
+	// Set the number of events per run
+	void SetNumEvents(G4int numE) { numEvents = numE; };
+	// Create the initial neutron source
         void InitialSource();
 
         // Disable renormalization of the number of survivors at the start of
         // each run
-		void DisableNormalization() { normalize = false; }
+	void DisableNormalization() { normalize = false; }
 
 	private:
         // Private member funtions
@@ -101,7 +101,7 @@ class StorkPrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
         // Create the initial delayed neutron distribution (if not given)
         G4bool CreateInitialPrecursors();
 
-        // Add the delayed neutrons that are born in the current run to the
+        // Add the delayed neutrons that are born in the current run and were produced from precursors to the
         // survivors
         void AddCurrentDelayed();
 
@@ -113,6 +113,7 @@ class StorkPrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
         // Produce uniformly distributed positions in the world volume
         void UniformPosition(StorkNeutronData* input);
 
+	//Generate delayed neutrons.
         inline void GenerateDelayedNeutrons();
 
 	private:
@@ -121,30 +122,30 @@ class StorkPrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
                                 // created
         G4String sourceFile;    // Filename of source file
 
-        G4bool initialDelayed;			// Flag denotes whether an initial
-										// delayed distribution is to be used
+        G4bool initialDelayed;	// Flag denotes whether an initial
+				// delayed distribution is to be used
         G4String delayedSourceFile; 	// Filename for initial delayed source
 
         G4bool normalize;       // Flag denotes whether population is
                                 // renormalized at the start of a new run
-		G4bool instantDelayed;	// Flag denotes whether delayed neutrons are
+	G4bool instantDelayed;	// Flag denotes whether delayed neutrons are
 								// produced instantaneously
 
         G4double initEnergy;    // Initial energy of source neutrons
         G4ThreeVector origin;
         G4String shape; // The shape to be used for the Uniform Distribution
         G4double runEnd;        // End time of the run
-		G4int numPrimaries;     // Number of primary particles per event
-		G4int realNumPrimaries; // True number of primaries if normalization is
+	G4int numPrimaries;     // Number of primary particles per event
+	G4int realNumPrimaries; // True number of primaries if normalization is
                                 //not used
-		G4int numEvents;        // Number of events per run
-		G4int numDNPrimaries;   // Number of delayed neutron primaries in the
+	G4int numEvents;        // Number of events per run
+	G4int numDNPrimaries;   // Number of delayed neutron primaries in the
 		                        // current run
         G4double runDuration;   //Run duration in ns.
 
         G4int numEntries;      //Number of fission entries.
 
-		G4ParticleDefinition *neutron;  // Particle definition for neutron
+	G4ParticleDefinition *neutron;  // Particle definition for neutron
 
         NeutronSources survivors;       // Survivors of last run, source
                                         // distribution of current run
@@ -163,9 +164,9 @@ class StorkPrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
 
         StorkHadronFissionProcess* theFissionProcess;
 
-        G4ThreeVector *fSites;
-        G4double *fnEnergy;
-        G4Navigator *theNav;
+        G4ThreeVector *fSites; // Fission sites
+        G4double *fnEnergy; // Incident energy of neutrons that underwent fission.
+        G4Navigator *theNav; //Pointer to the navigator.
 
 
 
