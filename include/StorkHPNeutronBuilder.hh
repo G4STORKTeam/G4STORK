@@ -57,7 +57,7 @@ broadening is used.
 class StorkHPNeutronBuilder : public G4VNeutronBuilder
 {
     public:
-        StorkHPNeutronBuilder(G4double aT);
+        StorkHPNeutronBuilder(G4String dir);
         ~StorkHPNeutronBuilder();
 
         void Build(G4HadronElasticProcess *aP);
@@ -79,7 +79,7 @@ class StorkHPNeutronBuilder : public G4VNeutronBuilder
         G4double theIMax;
 
         // User input and limits
-        G4double temperature;
+        G4String dirName;
 
         // Models
         G4NeutronHPElastic *nElasticModel;
@@ -88,13 +88,13 @@ class StorkHPNeutronBuilder : public G4VNeutronBuilder
         G4NeutronHPCapture *nCaptureModel;
 
         // Data
-//        StorkNeutronHPCSData *theHPElasticData;
+        StorkNeutronHPCSData *HPElasticData;
         G4NeutronHPElasticData *theHPElasticData;
-//        StorkNeutronHPCSData *theHPInelasticData;
+        StorkNeutronHPCSData *HPInelasticData;
         G4NeutronHPInelasticData *theHPInelasticData;
-//        StorkNeutronHPCSData *theHPFissionData;
+        StorkNeutronHPCSData *HPFissionData;
         G4NeutronHPFissionData *theHPFissionData;
-//        StorkNeutronHPCSData *theHPCaptureData;
+        StorkNeutronHPCSData *HPCaptureData;
         G4NeutronHPCaptureData *theHPCaptureData;
 };
 

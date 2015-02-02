@@ -52,9 +52,14 @@ class StorkNeutronPhysicsList : public G4VUserPhysicsList
         // Private member variables
 
         // User inputs
+<<<<<<< HEAD
+        G4bool periodicBC;
         G4String csDirName;
+=======
         std::vector<G4int>* periodicBCVec;
         std::vector<G4int>* reflectBCVec;
+        G4double temp;
+>>>>>>> 3f962f671c5d082a2a153801b7dfb0235fbc88a7
 
         // Neutron physics builders
         StorkNeutronProcessBuilder *theNeutrons;

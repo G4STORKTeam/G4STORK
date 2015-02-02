@@ -1,11 +1,11 @@
 /*
-SCWRJasonConstructor.hh
+SCWRDopplerConstructor.hh
 
 Created by:		Wesley Ford
 Date:			14-05-2014
 Modified:       NA
 
-Header for SCWRJasonConstructor class.
+Header for SCWRDopplerConstructor class.
 
 This class creates the simulation geometry for a SCWR.  The
 material and geometric composition of the lattice cell were taken from the
@@ -18,8 +18,8 @@ Polytechnique de Montreal, 2012, pp. 148-152. IGE-174 Rev. 10.
 
 */
 
-#ifndef SCWRJasonConstructor_H
-#define SCWRJasonConstructor_H
+#ifndef SCWRDopplerConstructor_H
+#define SCWRDopplerConstructor_H
 
 // Include header files
 #include "StorkVWorldConstructor.hh"
@@ -29,13 +29,13 @@ Polytechnique de Montreal, 2012, pp. 148-152. IGE-174 Rev. 10.
 #include <sstream>
 
 
-class SCWRJasonConstructor: public StorkVWorldConstructor
+class SCWRDopplerConstructor: public StorkVWorldConstructor
 {
 	public:
 		// Public member functions
 
-		SCWRJasonConstructor();
-		virtual ~SCWRJasonConstructor();
+		SCWRDopplerConstructor();
+		virtual ~SCWRDopplerConstructor();
 
 
     protected:
@@ -136,7 +136,6 @@ class SCWRJasonConstructor: public StorkVWorldConstructor
 
         G4double centralCoolantTemp=633.79*kelvin;
         G4double centralCoolantDensity=0.58756*g/cm3;
-        //G4double centralCoolantDensity=0.001*g/cm3;
 };
 
-#endif // SCWRJasonConstructor_H
+#endif // SCWRDopplerConstructor_H

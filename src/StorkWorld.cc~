@@ -21,7 +21,10 @@ Source code for the StorkWorld class.
 #include "ZED2Constructor.hh"
 #include "SLOWPOKEConstructor.hh"
 #include "SCWRConstructor.hh"
+<<<<<<< HEAD
 #include "SCWRDopplerConstructor.hh"
+=======
+>>>>>>> 3f962f671c5d082a2a153801b7dfb0235fbc88a7
 #include "SCWRJasonConstructor.hh"
 //#include "DebugConstructor.hh"
 #include "TestConstructor.hh"
@@ -39,7 +42,10 @@ StorkWorld::StorkWorld(const StorkParseInput* infile)
     AddWorld("SLOWPOKE", new SLOWPOKEConstructor());
     AddWorld("SCWR", new SCWRConstructor());
     AddWorld("SCWRJason", new SCWRJasonConstructor());
+<<<<<<< HEAD
     AddWorld("SCWRDoppler", new SCWRDopplerConstructor());
+=======
+>>>>>>> 3f962f671c5d082a2a153801b7dfb0235fbc88a7
 //    AddWorld("Debug", new DebugConstructor());
     AddWorld("Test", new TestConstructor());
 
@@ -59,7 +65,10 @@ StorkWorld::StorkWorld()
     AddWorld("SLOWPOKE", new SLOWPOKEConstructor());
     AddWorld("SCWR", new SCWRConstructor());
     AddWorld("SCWRJason", new SCWRJasonConstructor());
+<<<<<<< HEAD
     AddWorld("SCWRDoppler", new SCWRDopplerConstructor());
+=======
+>>>>>>> 3f962f671c5d082a2a153801b7dfb0235fbc88a7
 //    AddWorld("Debug", new DebugConstructor());
     AddWorld("Test", new TestConstructor());
 }

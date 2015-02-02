@@ -560,14 +560,14 @@ G4VPhysicalVolume* SCWRConstructor::ConstructWorld()
     outFuelVisAtt = new G4VisAttributes(G4Colour(1.,0.,0.));
     outFuelVisAtt->SetVisibility(true);
     outFuelLogical1->SetVisAttributes(outFuelVisAtt);
-    outFuelLogical2->SetVisAttributes(G4VisAttributes(G4Colour(1.,1.,0.)));
+    outFuelLogical2->SetVisAttributes(outFuelVisAtt);
     outFuelLogical3->SetVisAttributes(outFuelVisAtt);
     outFuelLogical4->SetVisAttributes(outFuelVisAtt);
 
     inFuelVisAtt = new G4VisAttributes(G4Colour(1.,0.5,0.));
     inFuelVisAtt->SetVisibility(true);
     inFuelLogical1->SetVisAttributes(inFuelVisAtt);
-    inFuelLogical2->SetVisAttributes(G4VisAttributes(G4Colour(1.,1.,0.)));
+    inFuelLogical2->SetVisAttributes(inFuelVisAtt);
     inFuelLogical3->SetVisAttributes(inFuelVisAtt);
     inFuelLogical4->SetVisAttributes(inFuelVisAtt);
 
@@ -820,8 +820,7 @@ void SCWRConstructor::ConstructMaterials()
     ExelLiner->AddElement(Nb,0.8*perCent);
     ExelLiner->AddElement(Zr,94.9*perCent);
 
-    ZircSteel = new G4Material("ZircSteel", 1, 10, kStateSolid,
-							   1);
+    ZircSteel = new G4Material("ZircSteel", 1, 10, kStateSolid, 1);
     ZircSteel->AddElement(C,0.034*perCent);
     ZircSteel->AddElement(Si,0.51*perCent);
     ZircSteel->AddElement(Mn,0.74*perCent);

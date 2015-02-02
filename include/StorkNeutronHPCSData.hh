@@ -34,7 +34,7 @@ need for Doppler broadening which speeds up the calculation.
 
 #include "G4Neutron.hh"
 #include "G4ElementTable.hh"
-#include "G4NeutronHPData.hh"
+#include "StorkNeutronHPDataConstructor.hh"
 
 #include "G4Nucleus.hh"
 #include "G4NucleiProperties.hh"
@@ -45,7 +45,7 @@ class StorkNeutronHPCSData : public G4VCrossSectionDataSet
 {
     public:
 
-        StorkNeutronHPCSData(G4int OL, G4int IL, G4double aT, char aType);
+        StorkNeutronHPCSData(char aType, G4String dirName);
         ~StorkNeutronHPCSData();
 
         G4bool IsApplicable(const G4DynamicParticle*, const G4Element*);
@@ -59,7 +59,7 @@ class StorkNeutronHPCSData : public G4VCrossSectionDataSet
         G4double GetCrossSection(const G4DynamicParticle*, const G4Element*,
 								 G4double aT);
 
-        void BuildPhysicsTable(const G4ParticleDefinition&);
+        void BuildPhysicsTable(const G4ParticleDefinition&, G4String dirName);
         void DumpPhysicsTable(const G4ParticleDefinition&);
 
 
@@ -69,7 +69,6 @@ class StorkNeutronHPCSData : public G4VCrossSectionDataSet
 
         G4int numMaxOL;
         G4int numIL;
-        G4double temperature;
         char reactionType;
 };
 

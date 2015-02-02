@@ -32,6 +32,8 @@ The main purpose of this class is to simplify coding else where in the code
 #include "G4ios.hh"
 #include "G4Isotope.hh"
 #include "G4Element.hh"
+#include "StorkElement.hh"
+#include "StorkMaterial.hh"
 #include "G4Material.hh"
 #include "G4NistManager.hh"
 #include "G4SolidStore.hh"

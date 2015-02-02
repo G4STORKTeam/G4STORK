@@ -385,10 +385,13 @@ G4bool StorkParseInput::ReadInputFile(G4String filename)
 			{
 
 			}
+<<<<<<< HEAD
 			else if(keyWord=="SCWRDoppler")
 			{
 
 			}
+=======
+>>>>>>> 3f962f671c5d082a2a153801b7dfb0235fbc88a7
 			else if(keyWord=="SCWRJason")
 			{
 

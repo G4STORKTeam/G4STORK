@@ -71,6 +71,9 @@ class StorkParseInput
 		G4double GetCSTemperature() const { return xsTemp; }
 		void SetCSTemperature(G4double csTemp) { xsTemp=csTemp; }
 
+		G4String GetCSDirName() const { return csDirName; }
+		void SetCSDirName(G4String CSDirName) { csDirName=CSDirName; }
+
 		G4double GetInitialEnergy() const { return initEnergy; }
 		void SetInitialEnergy(G4double initialEnergy) { initEnergy=initialEnergy; }
 
@@ -209,6 +212,7 @@ class StorkParseInput
 		// World properties
 		G4String worldName;
 		G4int reactorMat;
+		G4String csDirName;
 		G4long randomSeed;
 		G4bool overrideInitRandomSeed;
 

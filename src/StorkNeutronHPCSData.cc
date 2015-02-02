@@ -25,17 +25,15 @@ G4bool StorkNeutronHPCSData::IsApplicable(const G4DynamicParticle*aP,
 }
 
 
-StorkNeutronHPCSData::StorkNeutronHPCSData(G4int /*OL*/, G4int IL, G4double aT, char aType)
+StorkNeutronHPCSData::StorkNeutronHPCSData(char aType, G4String dirName)
 {
     // TKDB
     theCrossSections = 0;
 //    numMaxOL = OL;
 	numMaxOL = INT_MAX;
-    numIL = IL;
-    temperature = aT;
     reactionType = aType;
 
-    BuildPhysicsTable(*G4Neutron::Neutron());
+    BuildPhysicsTable(*G4Neutron::Neutron(), dirName);
 }
 
 
@@ -48,7 +46,7 @@ StorkNeutronHPCSData::~StorkNeutronHPCSData()
 }
 
 
-void StorkNeutronHPCSData::BuildPhysicsTable(const G4ParticleDefinition& aP)
+void StorkNeutronHPCSData::BuildPhysicsTable(const G4ParticleDefinition& aP, G4String dirName)
 {
 
   if(&aP!=G4Neutron::Neutron())
@@ -84,20 +82,20 @@ void StorkNeutronHPCSData::BuildPhysicsTable(const G4ParticleDefinition& aP)
   	switch(reactionType)
   	{
   		case 'C':
-			physVec = G4NeutronHPData::
-				Instance()->MakePhysicsVector((*theElementTable)[i], Cptr);
+			physVec = StorkNeutronHPDataConstructor::
+				Instance(dirName)->MakePhysicsVector((*theElementTable)[i], Cptr, dirName);
 			break;
 		case 'E':
-			physVec = G4NeutronHPData::
-				Instance()->MakePhysicsVector((*theElementTable)[i], Eptr);
+			physVec = StorkNeutronHPDataConstructor::
+				Instance(dirName)->MakePhysicsVector((*theElementTable)[i], Eptr, dirName);
 			break;
 		case 'I':
-			physVec = G4NeutronHPData::
-				Instance()->MakePhysicsVector((*theElementTable)[i], Iptr);
+			physVec = StorkNeutronHPDataConstructor::
+				Instance(dirName)->MakePhysicsVector((*theElementTable)[i], Iptr, dirName);
 			break;
 		case 'F':
-			physVec = G4NeutronHPData::
-				Instance()->MakePhysicsVector((*theElementTable)[i], Fptr);
+			physVec = StorkNeutronHPDataConstructor::
+				Instance(dirName)->MakePhysicsVector((*theElementTable)[i], Fptr, dirName);
 			break;
   	}
 
@@ -166,8 +164,10 @@ void StorkNeutronHPCSData::DumpPhysicsTable(const G4ParticleDefinition& aP)
 
 
 G4double StorkNeutronHPCSData::
-GetCrossSection(const G4DynamicParticle* aP, const G4Element*anE, G4double aT)
+GetCrossSection(const G4DynamicParticle* aP, const G4Element* elem, G4double aT)
 {
+    StorkElement *anE = dynamic_cast <StorkElement*> (const_cast<G4Element*>(elem));
+
     if(reactionType == 'F' && anE->GetZ() < 90) return 0;
 
     G4bool outOfRange;
@@ -191,9 +191,12 @@ GetCrossSection(const G4DynamicParticle* aP, const G4Element*anE, G4double aT)
     eleMass = (G4NucleiProperties::GetNuclearMass(static_cast<G4int>(theA+eps),
 			static_cast<G4int>(theZ+eps))) / G4Neutron::Neutron()->GetPDGMass();
 
+    if(anE->GetCSDataTemp())
+        return 0.;
+
 	// Find the temperature difference between the temperature the cross
 	// section was evaluated at versus the temperature of the material
-	G4double tempDiff = aT - temperature;
+	G4double tempDiff = aT - anE->GetCSDataTemp();
 
 	// If there is no temperature difference, return the cross section directly
 	if(std::abs(tempDiff) <= 0.1)

@@ -515,7 +515,7 @@ void StorkPrimaryGeneratorAction::InitialSource()
         theta = G4UniformRand()*CLHEP::pi;
 
         // Select a random energy (Gaussian distribution)
-        rEng = G4RandGauss::shoot(meanEng,stdEng) + mass;
+        rEng = abs(G4RandGauss::shoot(meanEng,stdEng)) + mass;
 		rMom = std::sqrt(rEng*rEng - mass*mass);
 
         // Set momentum
