@@ -136,6 +136,7 @@ class SCWRJasonConstructor: public StorkVWorldConstructor
 
         G4double centralCoolantTemp=633.79*kelvin;
         G4double centralCoolantDensity=0.58756*g/cm3;
+        //G4double centralCoolantDensity=0.001*g/cm3;
 };
 
 #endif // SCWRJasonConstructor_H

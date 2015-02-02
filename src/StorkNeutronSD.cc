@@ -16,8 +16,8 @@ Source code file for StorkNeutronSD class.
 
 
 // Constructor
-StorkNeutronSD::StorkNeutronSD(G4String name, G4bool instD, G4bool pBC)
-:G4VSensitiveDetector(name), periodicBC(pBC), instantDelayed(instD)
+StorkNeutronSD::StorkNeutronSD(G4String name, G4bool instD/*, G4bool pBC*/)
+:G4VSensitiveDetector(name), /*periodicBC(pBC),*/ instantDelayed(instD)
 {
     // Set collection name and initialize ID
     collectionName.insert("Tally");
@@ -255,6 +255,7 @@ G4bool StorkNeutronSD::ProcessHits(G4Step *aStep, G4TouchableHistory*)
 	}
 	// If the neutron leaves the simulation world, update the loss counter and
 	// lifetime total.
+	/*
 	else if(!periodicBC && postStepPoint->GetPhysicalVolume()->GetName()
 			== "worldPhysical")
 	{
@@ -268,6 +269,7 @@ G4bool StorkNeutronSD::ProcessHits(G4Step *aStep, G4TouchableHistory*)
 		nEsc++;
 #endif
 	}
+	*/
 	// If an inelastic collision occurs, set the first daughter to be the
 	// incident neutron, and then any others (n,2n; etc.) are simply
 	// daughter neutrons. Update the production and loss totals.
@@ -323,16 +325,31 @@ G4bool StorkNeutronSD::ProcessHits(G4Step *aStep, G4TouchableHistory*)
 			{
 				(*itr)->SetTrackStatus(fKillTrackAndSecondaries);
 			}
+			// this production here may be wrong, I am not sure why it is here
+			/*
             else
             {
-                nProd++;
+                //nProd++;
             }
+            */
 		}
+	}
+	else if(hitProcess == "StorkZeroBCStepLimiter")
+	{
+		nLoss++;
+		totalLifetime += lifetime;
+
+		// Kill the neutron
+		aTrack->SetTrackStatus(fKillTrackAndSecondaries);
+
+        #ifdef STORK_EXPLICIT_LOSS
+                nEsc++;
+        #endif
 	}
 	else
 	{
 		if(hitProcess != "Transportation" &&
-		   hitProcess != "StorkPeriodicBCStepLimiter")
+		   hitProcess != "StorkUserBCStepLimiter")
 			G4cerr << "***WARNING: Untracked process is" << hitProcess << G4endl;
 	}
 

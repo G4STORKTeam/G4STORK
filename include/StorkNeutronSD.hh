@@ -55,7 +55,7 @@ class StorkNeutronSD : public G4VSensitiveDetector
         // Public member functions
 
         // Constructor and destructor
-        StorkNeutronSD(G4String name, G4bool instD = false, G4bool pBC = false);
+        StorkNeutronSD(G4String name, G4bool instD = false);
         ~StorkNeutronSD() {;}
 
         void Initialize(G4HCofThisEvent *HCE);

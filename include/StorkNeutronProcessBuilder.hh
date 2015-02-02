@@ -22,13 +22,14 @@ processes and models (fission, capture, elastic, inelastic, and step limiters).
 #include "StorkHadronElasticProcess.hh"
 #include "StorkHPNeutronBuilder.hh"
 #include "StorkTimeStepLimiter.hh"
-#include "StorkPeriodicBCStepLimiter.hh"
+#include "StorkUserBCStepLimiter.hh"
+#include "StorkZeroBCStepLimiter.hh"
 
 // Include Geant4 headers
 #include "G4VNeutronBuilder.hh"
 //#include "G4LElastic.hh"
-//#include "G4DiffuseElastic.hh"
-#include "G4ChipsElasticModel.hh"
+#include "G4DiffuseElastic.hh"
+//#include "G4ChipsElasticModel.hh"
 //#include "G4HadronElastic.hh"
 #include "G4LFission.hh"
 #include "G4NeutronRadCapture.hh"
@@ -48,7 +49,7 @@ class StorkNeutronProcessBuilder
     public:
         // Public member functions
 
-        StorkNeutronProcessBuilder(G4bool pBC = false);
+        StorkNeutronProcessBuilder(std::vector<G4int>* pBCVec, std::vector<G4int>* rBCVec);
         ~StorkNeutronProcessBuilder();
 
         // Build and register the models
@@ -67,10 +68,11 @@ class StorkNeutronProcessBuilder
         StorkHadronCaptureProcess  * theNeutronCapture;
         StorkHadronElasticProcess * theNeutronElastic;
         StorkTimeStepLimiter * theStepLimiter;
-        StorkPeriodicBCStepLimiter * thePeriodicBoundary;
+        StorkUserBCStepLimiter * TheUserBoundaryCond;
+        StorkZeroBCStepLimiter * TheZeroBoundaryCond;
 
-        //G4DiffuseElastic *theHighElasticModel;
-        G4ChipsElasticModel *theHighElasticModel;
+        G4DiffuseElastic *theHighElasticModel;
+        //G4ChipsElasticModel *theHighElasticModel;
         //G4HadronElastic *theHighElasticModel;
         G4LFission *theHighFissionModel;
         G4NeutronRadCapture *theHighCaptureModel;
@@ -78,7 +80,6 @@ class StorkNeutronProcessBuilder
         std::vector<G4VNeutronBuilder *> theModelCollections;
 
         G4bool wasActivated;
-        G4bool periodicBC;
 };
 
 #endif // STORKNEUTRONPROCESSBUILDER_H

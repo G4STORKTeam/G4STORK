@@ -7,14 +7,9 @@ Modified:       NA
 
 Header for SCWRConstructor class.
 
-This class creates the simulation geometry for a SCWR.  The
-material and geometric composition of the lattice cell were taken from the
-DRAGON manual[1].
+This class creates the simulation geometry for a SCWR.
 
 Based on the "C6World" class created by Wesley Ford 10-05-2012.
-
-[1] G. Marleau, A. Hebert, and R. Roy, "A User Guide for DRAGON 3.06".  Ecole
-Polytechnique de Montreal, 2012, pp. 148-152. IGE-174 Rev. 10.
 
 */
 
@@ -113,7 +108,8 @@ class SCWRConstructor: public StorkVWorldConstructor
         G4double linerDensity=7.9*g/cm3;
 
         G4double coolantTemp=680.62*kelvin;
-        G4double coolantDensity=0.1512*g/cm3;
+        //G4double coolantDensity=0.1512*g/cm3;
+        G4double coolantDensity=0.001*g/cm3;
 
         G4double inSheatheTemp=768.8200*kelvin;
         G4double inSheatheDensity=7.9*g/cm3;
@@ -142,7 +138,8 @@ class SCWRConstructor: public StorkVWorldConstructor
         G4double flowTubeDensity=7.9*g/cm3;
 
         G4double centralCoolantTemp=629.0100*kelvin;
-        G4double centralCoolantDensity=0.6059*g/cm3;
+        //G4double centralCoolantDensity=0.6059*g/cm3;
+        G4double centralCoolantDensity=0.001*g/cm3;
 };
 
 #endif // SCWRCONSTRUCTOR_H

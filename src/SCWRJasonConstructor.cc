@@ -686,8 +686,7 @@ void SCWRJasonConstructor::ConstructMaterials()
 
 
     // Create Coolant
-	Coolant = new G4Material("Coolant", coolantDensity, 1, kStateLiquid,
-							 coolantTemp);
+    Coolant = new G4Material("Coolant", coolantDensity, 1, kStateLiquid, coolantTemp);
     Coolant->AddMaterial(H2O,  100*perCent);
 
     //Create Moderator

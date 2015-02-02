@@ -125,12 +125,37 @@ class StorkUnionSolid : public G4BooleanSolid
 
     void DescribeYourselfTo ( G4VGraphicsScene& scene ) const ;
     G4Polyhedron* CreatePolyhedron () const ;
+
+    ShapeEnum const GetRegionShape() const
+    {
+        return regShape;
+    }
+    void SetRegionShape(ShapeEnum shape)
+    {
+        regShape=shape;
+    }
+    StorkSixVector<G4double> GetRegionDim() const
+    {
+        return regDim;
+    }
+    void SetRegionDim(StorkSixVector<G4double> regionDim)
+    {
+        regDim=regionDim;
+    }
+    G4ThreeVector const GetRegionOffSet() const
+    {
+        return regOffSet;
+    }
+    void SetRegionOffSet(G4ThreeVector offSet)
+    {
+        regOffSet=offSet;
+    }
     //G4NURBS*      CreateNURBS      () const ;
 
     private:
 
     ShapeEnum regShape;
-    G4double regDim[6];
+    StorkSixVector<G4double> regDim;
     G4ThreeVector regOffSet;
 
 
