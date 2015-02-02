@@ -15,8 +15,8 @@ Source code for StorkNeutronProcessBuilder class.
 
 
 // Constructor
-StorkNeutronProcessBuilder::StorkNeutronProcessBuilder(G4bool pBC)
-:wasActivated(false), periodicBC(pBC)
+StorkNeutronProcessBuilder::StorkNeutronProcessBuilder(std::vector<G4int>* pBCVec, std::vector<G4int>* rBCVec)
+:wasActivated(false)
 {
     // Create the physics processes
     theNeutronElastic = new StorkHadronElasticProcess;
@@ -24,7 +24,8 @@ StorkNeutronProcessBuilder::StorkNeutronProcessBuilder(G4bool pBC)
     theNeutronCapture = new StorkHadronCaptureProcess;
     theNeutronFission = new StorkHadronFissionProcess;
     theStepLimiter = new StorkTimeStepLimiter;
-    thePeriodicBoundary = new StorkPeriodicBCStepLimiter;
+    TheUserBoundaryCond = new StorkUserBCStepLimiter(pBCVec,rBCVec);
+    TheZeroBoundaryCond = new StorkZeroBCStepLimiter(pBCVec,rBCVec);
 }
 
 
@@ -37,7 +38,8 @@ StorkNeutronProcessBuilder::~StorkNeutronProcessBuilder()
     delete theNeutronCapture;
     delete theNeutronFission;
     delete theStepLimiter;
-    delete thePeriodicBoundary;
+    delete TheUserBoundaryCond;
+    delete TheZeroBoundaryCond;
     delete theHighElasticModel;
     delete theHighFissionModel;
     delete theHighCaptureModel;
@@ -69,8 +71,8 @@ void StorkNeutronProcessBuilder::Build()
 
     // Create the high energy elastic model
 
-    //theHighElasticModel = new G4DiffuseElastic();
-    theHighElasticModel = new G4ChipsElasticModel();
+    theHighElasticModel = new G4DiffuseElastic();
+    //theHighElasticModel = new G4ChipsElasticModel();
     //theHighElasticModel = new G4HadronElastic();
 
 
@@ -97,8 +99,10 @@ void StorkNeutronProcessBuilder::Build()
     theHighCaptureModel->SetMinEnergy(20.0*MeV);
     theHighCaptureModel->SetMaxEnergy(20000.*GeV);
 
+
     // Register model with fission process
     theNeutronCapture->RegisterMe(theHighCaptureModel);
+
 
     // Add processes to the process manager
     G4ProcessManager * theProcMan = G4Neutron::Neutron()->GetProcessManager();
@@ -108,10 +112,8 @@ void StorkNeutronProcessBuilder::Build()
     theProcMan->AddDiscreteProcess(theNeutronCapture);
     theProcMan->AddDiscreteProcess(theNeutronFission);
     theProcMan->AddDiscreteProcess(theStepLimiter);
-
-	// Only add infinite boundary process if flag is set to true
-    if(periodicBC)
-        theProcMan->AddDiscreteProcess(thePeriodicBoundary);
+    theProcMan->AddDiscreteProcess(TheUserBoundaryCond);
+    theProcMan->AddDiscreteProcess(TheZeroBoundaryCond);
 }
 
 

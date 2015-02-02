@@ -20,7 +20,8 @@ StorkNeutronPhysicsList::StorkNeutronPhysicsList(const StorkParseInput* infile)
     SetVerboseLevel(0);
 
     temp = infile->GetCSTemperature();
-    periodicBC = infile->GetPeriodicBC();
+    periodicBCVec = infile->GetPeriodicBCVector();
+    reflectBCVec = infile->GetReflectBCVector();
 
     // Insure that the slave processes do not output the physics process table
 #ifdef G4USE_TOPC
@@ -76,7 +77,7 @@ void StorkNeutronPhysicsList::ConstructParticle()
 void StorkNeutronPhysicsList::ConstructProcess()
 {
     // Create the Bertini neutron processes ( > 20 MeV)
-    theNeutrons = new StorkNeutronProcessBuilder(periodicBC);
+    theNeutrons = new StorkNeutronProcessBuilder(periodicBCVec, reflectBCVec);
 
     // Create and register the builders
     theNeutrons->RegisterMe(theHPNeutron = new StorkHPNeutronBuilder(temp));

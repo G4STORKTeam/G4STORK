@@ -39,7 +39,6 @@ StorkParseInput::StorkParseInput(G4bool master)
 	loadSources=false;
 	logData=false;
 	instantDelayed=false;
-	periodicBC=false;
 	normalize = true;
 	uniformDis = false;
 	uniformDisWithDim = false;
@@ -203,13 +202,19 @@ void StorkParseInput::SetWorld(G4String worldNam)
         else if(worldNam=="C6Lattice")
         {
             reactorMat=6;
-            periodicBC=true;
+            for(int i=0; i<6; i++)
+            {
+                periodicBC.push_back(i);
+            }
             theWorldProps[MatPropPair(all,dimension)] = 28.575*cm;
         }
         else if(worldNam=="Cube")
         {
             reactorMat=8;
-            periodicBC=true;
+            for(int i=0; i<6; i++)
+            {
+                periodicBC.push_back(i);
+            }
             uniformDis = true;
 
             theWorldProps[MatPropPair(all,dimension)] = 50.*cm;
@@ -348,13 +353,19 @@ G4bool StorkParseInput::ReadInputFile(G4String filename)
 			else if(keyWord=="C6Lattice")
 			{
 				reactorMat=6;
-				periodicBC=true;
+				for(int i=0; i<6; i++)
+                {
+                    periodicBC.push_back(i);
+                }
 				theWorldProps[MatPropPair(all,dimension)] = 28.575*cm;
 			}
 			else if(keyWord=="Cube")
 			{
 				reactorMat=8;
-				periodicBC=true;
+				for(int i=0; i<6; i++)
+                {
+                    periodicBC.push_back(i);
+                }
 				uniformDis = true;
 
 				theWorldProps[MatPropPair(all,dimension)] = 50.*cm;
@@ -366,6 +377,10 @@ G4bool StorkParseInput::ReadInputFile(G4String filename)
 
 			}
 			else if(keyWord=="SCWR")
+			{
+
+			}
+			else if(keyWord=="SCWRJason")
 			{
 
 			}
@@ -452,7 +467,25 @@ G4bool StorkParseInput::ReadInputFile(G4String filename)
 		}
 		else if(keyWord=="PERIODIC_BC")
 		{
-			infile >> periodicBC;
+            G4int nPBCSides;
+			infile >> nPBCSides;
+			G4String side;
+			for(int i=0; i<nPBCSides; i++)
+			{
+                infile >> side;
+                periodicBC.push_back(ConvertSide(side));
+			}
+		}
+		else if(keyWord=="REFLECT_BC")
+		{
+			G4int nRBCSides;
+			infile >> nRBCSides;
+			G4String side;
+			for(int i=0; i<nRBCSides; i++)
+			{
+                infile >> side;
+                reflectBC.push_back(ConvertSide(side));
+			}
 		}
 		else if(keyWord=="RENORMALIZE")
 		{
@@ -668,6 +701,30 @@ G4bool StorkParseInput::ReadInputFile(G4String filename)
 	return ErrorChecking();
 }
 
+G4int StorkParseInput::ConvertSide(G4String side)
+{
+    G4int sideNum=0;
+    G4bool check1=false, check2=false;
+    for(G4int i=0; i<G4int(side.size()); i++)
+    {
+        if((side[i]=='-')&&(!check1))
+        {
+            sideNum++;
+            check1=true;
+        }
+        else if((side[i]=='y')&&(!check2))
+        {
+            sideNum+=2;
+            check2=true;
+        }
+        else if((side[i]=='z')&&(!check2))
+        {
+            sideNum+=4;
+            check2=true;
+        }
+    }
+    return sideNum;
+}
 
 // AddWorldType()
 // Add user defined world type to ParseInput

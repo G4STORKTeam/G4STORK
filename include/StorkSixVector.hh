@@ -32,23 +32,29 @@ class StorkSixVector
                 data[i]=dataP[i];
             }
         }
-        T operator [] (G4int a)
+        T& operator [] (G4int a)
         {
-            return data[a];
+            return (this->data[a]);
         }
-        void operator = (T* dataP)
+        T operator [] (G4int a) const
+        {
+            return (this->data[a]);
+        }
+        StorkSixVector& operator = (T* dataP)
         {
             for(G4int i=0;i<6;i++)
             {
                 data[i]=dataP[i];
             }
+            return *this;
         }
-        void operator = (StorkSixVector dataP)
+        StorkSixVector& operator = (StorkSixVector dataP)
         {
             for(G4int i=0;i<6;i++)
             {
                 data[i]=dataP[i];
             }
+            return *this;
         }
         T data[6];
     protected:

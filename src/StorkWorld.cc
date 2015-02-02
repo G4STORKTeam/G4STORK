@@ -20,6 +20,7 @@ Source code for the StorkWorld class.
 #include "InfiniteUniformLatticeConstructor.hh"
 #include "SLOWPOKEConstructor.hh"
 #include "SCWRConstructor.hh"
+#include "SCWRJasonConstructor.hh"
 //#include "DebugConstructor.hh"
 #include "TestConstructor.hh"
 
@@ -34,6 +35,7 @@ StorkWorld::StorkWorld(const StorkParseInput* infile)
     AddWorld("Cube", new InfiniteUniformLatticeConstructor());
     AddWorld("SLOWPOKE", new SLOWPOKEConstructor());
     AddWorld("SCWR", new SCWRConstructor());
+    AddWorld("SCWRJason", new SCWRJasonConstructor());
 //    AddWorld("Debug", new DebugConstructor());
     AddWorld("Test", new TestConstructor());
 
@@ -51,6 +53,7 @@ StorkWorld::StorkWorld()
     AddWorld("Cube", new InfiniteUniformLatticeConstructor());
     AddWorld("SLOWPOKE", new SLOWPOKEConstructor());
     AddWorld("SCWR", new SCWRConstructor());
+    AddWorld("SCWRJason", new SCWRJasonConstructor());
 //    AddWorld("Debug", new DebugConstructor());
     AddWorld("Test", new TestConstructor());
 }

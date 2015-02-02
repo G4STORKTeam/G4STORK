@@ -405,7 +405,7 @@ G4bool StorkRunManager::UpdateCheckSourceConvergence()
 	// If the source has already converged, do nothing
 	if(sourceConverged) return true;
 	//changed elseif so that it checks convergence when there is no known discontuinity in the shannon entropy instead of every totalConv runs has passed
-	else if(runIDCounter < totalConv | convergeStop > (runIDCounter-totalConv) ) return false;
+	else if((runIDCounter < totalConv) | (convergeStop > (runIDCounter-totalConv)) ) return false;
 
 	// Local variables
 	G4int i=0;

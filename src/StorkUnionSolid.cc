@@ -56,7 +56,7 @@
 //
 // Transfer all data members to G4BooleanSolid which is responsible
 // for them. pName will be in turn sent to G4VSolid
-
+//### this function has been checked ###
 StorkUnionSolid:: StorkUnionSolid( const G4String& pName,
                                    G4VSolid* pSolidA ,
                                    G4VSolid* pSolidB,
@@ -65,17 +65,15 @@ StorkUnionSolid:: StorkUnionSolid( const G4String& pName,
 {
     //sets the shape, dimensions and position of the region that the solids will be contained in
     regShape = shape;
-    for(G4int i=0;i<6;i++)
-    {
-        regDim[i]=(regionDim[i]);
-    }
+    regDim=regionDim;
+    // the offset is the vector from the origin of pSolidA to the origin of the region
     regOffSet = offset;
 }
 
 /////////////////////////////////////////////////////////////////////
 //
 // Constructor
-
+//### this function has been checked ###
 StorkUnionSolid::StorkUnionSolid( const G4String& pName,
                                   G4VSolid* pSolidA ,
                                   G4VSolid* pSolidB ,
@@ -85,19 +83,19 @@ StorkUnionSolid::StorkUnionSolid( const G4String& pName,
   : G4BooleanSolid(pName,pSolidA,pSolidB,rotMatrix,transVector)
 
 {
+    //rotMatrix set the rotation of the referance frame of pSolidB relative to pSolidA
+    //transVector sets the vector from the origin of pSolidA to the origin of pSolidB before pSolidB is rotated
     //sets the shape, dimensions and position of the region that the solids will be contained in
     regShape = shape;
-    for(G4int i=0;i<6;i++)
-    {
-        regDim[i]=(regionDim[i]);
-    }
+    regDim=regionDim;
+    // the offset is the vector from the origin of pSolidA to the origin of the region
     regOffSet= offset;
 }
 
 ///////////////////////////////////////////////////////////
 //
 // Constructor
-
+//### this function has been checked ###
 StorkUnionSolid::StorkUnionSolid( const G4String& pName,
                                   G4VSolid* pSolidA ,
                                   G4VSolid* pSolidB ,
@@ -105,12 +103,12 @@ StorkUnionSolid::StorkUnionSolid( const G4String& pName,
                             ShapeEnum shape, StorkSixVector<G4double> regionDim, G4ThreeVector offset)
   : G4BooleanSolid(pName,pSolidA,pSolidB,transform)
 {
+    //transform sets the vector from the origin of pSolidA to the origin of pSolidB and
+    //then it sets the rotation of the referance frame of pSolidB relative to pSolidA
     //sets the shape, dimensions and position of the region that the solids will be contained in
     regShape = shape;
-    for(G4int i=0;i<6;i++)
-    {
-        regDim[i]=(regionDim[i]);
-    }
+    regDim=regionDim;
+    // the offset is the vector from the origin of pSolidA to the origin of the region
     regOffSet= offset;
 }
 
@@ -125,7 +123,7 @@ StorkUnionSolid::StorkUnionSolid( const G4String& pName,
 //
 // Fake default constructor - sets only member data and allocates memory
 //                            for usage restricted to object persistency.
-
+//### this function has been checked ###
 StorkUnionSolid::StorkUnionSolid( __void__& a )
   : G4BooleanSolid(a)
 {
@@ -134,7 +132,7 @@ StorkUnionSolid::StorkUnionSolid( __void__& a )
 ///////////////////////////////////////////////////////////
 //
 // Destructor
-
+//### this function has been checked ###
 StorkUnionSolid::~StorkUnionSolid()
 {
 }
@@ -142,16 +140,21 @@ StorkUnionSolid::~StorkUnionSolid()
 ///////////////////////////////////////////////////////////////
 //
 // Copy constructor
-
+// ### I fixed the copy constructor 2014 Aug 19
+//### this function has been checked ###
 StorkUnionSolid::StorkUnionSolid(const StorkUnionSolid& rhs)
   : G4BooleanSolid (rhs)
 {
+    regShape=rhs.GetRegionShape();
+    regDim=rhs.GetRegionDim();
+    regOffSet=rhs.GetRegionOffSet();
 }
 
 ///////////////////////////////////////////////////////////////
 //
 // Assignment operator
-
+// ### I fixed the assignment operator 2014 Aug 19
+//### this function has been checked ###
 StorkUnionSolid& StorkUnionSolid::operator = (const StorkUnionSolid& rhs)
 {
   // Check assignment to self
@@ -162,6 +165,10 @@ StorkUnionSolid& StorkUnionSolid::operator = (const StorkUnionSolid& rhs)
   //
   G4BooleanSolid::operator=(rhs);
 
+  regShape=rhs.GetRegionShape();
+  regDim=rhs.GetRegionDim();
+  regOffSet=rhs.GetRegionOffSet();
+
   return *this;
 }
 
@@ -171,7 +178,7 @@ StorkUnionSolid& StorkUnionSolid::operator = (const StorkUnionSolid& rhs)
 
 
 // taken from G4Unionsolid, this calculates the extent of the volume based off an axis or in other words the distance the particle will travel in the solid based off its current trajectory
-//this function has been checked and confirmed
+//### this function has been checked ###
 G4bool
 StorkUnionSolid::CalculateExtent( const EAxis pAxis,
                                const G4VoxelLimits& pVoxelLimit,
@@ -204,6 +211,7 @@ StorkUnionSolid::CalculateExtent( const EAxis pAxis,
 // surface the surface points will be considered as kSurface, while points
 // located around will correspond to kInside
 
+//### this function has been checked ###
 EInside StorkUnionSolid::Inside( const G4ThreeVector& p ) const
 {
     EInside positionA = kOutside, positionB = kOutside;
@@ -220,21 +228,22 @@ EInside StorkUnionSolid::Inside( const G4ThreeVector& p ) const
           fPtrSolidB->SurfaceNormal(p) ).mag2() <
           1000*G4GeometryTolerance::GetInstance()->GetRadialTolerance() ) )
     {
-    return kInside;
+        return kInside;
     }
     else
     {
-    if( ( positionB == kSurface ) || ( positionA == kSurface ) )
-      { return kSurface; }
-    else
-      { return kOutside; }
+        if( ( positionB == kSurface ) || ( positionA == kSurface ) )
+          { return kSurface; }
+        else
+          { return kOutside; }
     }
 }
 
 //////////////////////////////////////////////////////////////
 //
 //
-
+//### fixed 2014 Aug 19
+//### this function has been checked ###
 G4ThreeVector
 StorkUnionSolid::SurfaceNormal( const G4ThreeVector& p ) const
 {
@@ -256,31 +265,22 @@ StorkUnionSolid::SurfaceNormal( const G4ThreeVector& p ) const
 
     if(this->InsideRegion(p))
     {
-        if(fPtrSolidA->GetEntityType()=="StorkUnionSolid")
-            normal= fPtrSolidA->SurfaceNormal( p );
-
-        else if(fPtrSolidA->Inside(p) == kSurface)
+        if(fPtrSolidA->Inside(p) == kSurface && fPtrSolidB->Inside(p) != kInside)
         {
-            normal= fPtrSolidA->SurfaceNormal(p) ;
+           normal= fPtrSolidA->SurfaceNormal(p) ;
         }
-        if(normal==check)
+        else if(fPtrSolidB->Inside(p) == kSurface &&
+                fPtrSolidA->Inside(p) != kInside)
         {
-            if(fPtrSolidB->GetEntityType()=="StorkUnionSolid")
-            {
-                normal= fPtrSolidB->SurfaceNormal( p );
-            }
-            else if(fPtrSolidB->Inside(p) == kSurface)
-            {
-                normal= fPtrSolidB->SurfaceNormal(p) ;
-            }
-            else
-            {
-                normal= fPtrSolidA->SurfaceNormal(p) ;
-            }
+           normal= fPtrSolidB->SurfaceNormal(p) ;
+        }
+        else
+        {
+          normal= fPtrSolidA->SurfaceNormal(p) ;
         }
     }
-    else
-        normal= fPtrSolidA->SurfaceNormal( p );
+        else
+            normal= fPtrSolidA->SurfaceNormal( p );
 
 #ifdef G4BOOLDEBUG
       if(Inside(p)==kInside)
@@ -524,7 +524,7 @@ G4VSolid* StorkUnionSolid::Clone() const
 //
 G4bool StorkUnionSolid::InsideRegion( const G4ThreeVector& p ) const
 {
-    G4ThreeVector q=p+regOffSet;
+    G4ThreeVector q=p-regOffSet;
 
     static const G4double delta=0.5*kCarTolerance;
     static const G4double delta2=0.5*(G4GeometryTolerance::GetInstance()->GetRadialTolerance());
@@ -533,14 +533,14 @@ G4bool StorkUnionSolid::InsideRegion( const G4ThreeVector& p ) const
 
     if(regShape==0)
     {
-        if(q.rho()>regDim[0]-delta2&&q.rho()<regDim[1]+delta2&&q.phi()>regDim[2]-delta3&&q.phi()<regDim[3]+delta3&&q.z()>regDim[4]-delta&&q.z()<regDim[5]+delta)
+        if((q.rho()>=regDim[0]-delta2)&&(q.rho()<=regDim[1]+delta2)&&(q.phi()>=regDim[2]-delta3)&&(q.phi()<=regDim[3]+delta3)&&(q.z()>=regDim[4]-delta)&&(q.z()<=regDim[5]+delta))
         {
             return true;
         }
     }
     else if(regShape==1)
     {
-        if(q.x()>regDim[0]-delta&&q.x()<regDim[1]+delta&&q.y()>regDim[2]-delta&&q.y()<regDim[3]+delta&&q.z()>regDim[4]-delta&&q.z()<regDim[5]+delta)
+        if((q.x()>=regDim[0]-delta)&&(q.x()<=regDim[1]+delta)&&(q.y()>=regDim[2]-delta)&&(q.y()<=regDim[3]+delta)&&(q.z()>=regDim[4]-delta)&&(q.z()<=regDim[5]+delta))
         {
             return true;
         }
@@ -548,7 +548,7 @@ G4bool StorkUnionSolid::InsideRegion( const G4ThreeVector& p ) const
 
     else
     {
-        if(q.r()>regDim[0]-delta2&&q.r()<regDim[1]+delta2&&q.phi()>regDim[2]-delta3&&q.phi()<regDim[3]+delta3&&q.theta()>regDim[4]-delta3&&q.theta()<regDim[5]+delta3)
+        if((q.r()>=regDim[0]-delta2)&&(q.r()<=regDim[1]+delta2)&&(q.phi()>=regDim[2]-delta3)&&(q.phi()<=regDim[3]+delta3)&&(q.theta()>=regDim[4]-delta3)&&(q.theta()<=regDim[5]+delta3))
         {
             return true;
         }
@@ -566,7 +566,11 @@ G4bool StorkUnionSolid::DistInRegion( const G4ThreeVector& q, const G4ThreeVecto
     if (this->InsideRegion(q))
         return true;
 
-    G4ThreeVector p=q+regOffSet;
+    G4ThreeVector p=q-regOffSet;
+
+    //This function finds the intervals over which the given trajectory is within the boundaries of each dimension
+    //and then it checks to see if the intervals overlap, if they do then the trajectory will pass through the region
+    //if no then the trajectory will not pass through the region
     if(regShape==0)
     {
         swap[0] = (regDim[4]-p[2])/(v[2]);
@@ -690,7 +694,7 @@ G4bool StorkUnionSolid::DistInRegion( const G4ThreeVector& q, const G4ThreeVecto
 
 G4double StorkUnionSolid::DistInRegion( const G4ThreeVector& q ) const
 {
-    G4ThreeVector p=q+regOffSet;
+    G4ThreeVector p=q-regOffSet;
     if(regShape==0)
     {
         G4double safe=0.0, rho, safe1, safe2, safe3 ;
@@ -758,7 +762,7 @@ void StorkUnionSolid::AddRegionToMe( DirEnum dir, StorkSixVector<G4double> regio
     {
         if(regShape==cylUnit)
         {
-            regDim[2]=regionDim[2];
+            (regDim[2])=(regionDim[2]);
         }
         else if(regShape==cubicUnit)
         {

@@ -45,6 +45,7 @@ class StorkParseInput
 
         // Read and print the parsed input file
 		G4bool ReadInputFile(G4String filename);
+		G4int ConvertSide(G4String side);
 		void PrintInput(std::ostream *output) const;	// Print input values to stream
 		G4bool FinalizeInputs();
 
@@ -161,8 +162,11 @@ class StorkParseInput
 		G4bool GetInstantDelayed() const{return instantDelayed;}
 		void SetInstantDelayed(G4bool instantDelay) { instantDelayed=instantDelay; }
 
-		G4bool GetPeriodicBC() const{return periodicBC;}
-		void SetPeriodicBC(G4bool pBCond) { periodicBC=pBCond; }
+		std::vector<G4int>* GetPeriodicBCVector() const{return &periodicBC;}
+		void SetPeriodicBCVector(std::vector<G4int>* pBC) { periodicBC=(*pBC); }
+
+		std::vector<G4int>* GetReflectBCVector() const{return &reflectBC;}
+		void SetReflectBCVector(std::vector<G4int>* rBC) { reflectBC=(*rBC); }
 
 		G4bool GetRenormalizeAfterRun() const {return normalize;}
 		void SetRenormalizeAfterRun(G4bool renormalize) { normalize=renormalize; }
@@ -215,7 +219,8 @@ class StorkParseInput
 		StorkSixVector<G4double> uniDisDim;
 		G4bool interpStart;
 		G4bool instantDelayed;
-		G4bool periodicBC;
+		std::vector<G4int> reflectBC;
+        std::vector<G4int> periodicBC;
 		G4bool normalize;
 
 		// Number of runs, events and primaries per event

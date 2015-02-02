@@ -10,7 +10,7 @@ Implementation of StorkTrackInfo class.
 This class is used to attach a particle weight (for combing) to a track
 by deriving it from the G4VUserTrackInformation class. The track information
 also is used to StorkPrimaryNeutronInfo for neutrons created by the
-StorkPeriodicBCStepLimiter process.
+StorkUserBCStepLimiter process.
 
 */
 
