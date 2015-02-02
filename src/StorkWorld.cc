@@ -18,8 +18,11 @@ Source code for the StorkWorld class.
 #include "BareSphereConstructor.hh"
 #include "C6LatticeConstructor.hh"
 #include "InfiniteUniformLatticeConstructor.hh"
+#include "ZED2Constructor.hh"
 #include "SLOWPOKEConstructor.hh"
 #include "SCWRConstructor.hh"
+#include "SCWRDopplerConstructor.hh"
+#include "SCWRJasonConstructor.hh"
 //#include "DebugConstructor.hh"
 #include "TestConstructor.hh"
 
@@ -32,8 +35,11 @@ StorkWorld::StorkWorld(const StorkParseInput* infile)
     AddWorld("C6Lattice", new C6LatticeConstructor());
     AddWorld("Sphere", new BareSphereConstructor());
     AddWorld("Cube", new InfiniteUniformLatticeConstructor());
+    AddWorld("ZED2", new ZED2Constructor());
     AddWorld("SLOWPOKE", new SLOWPOKEConstructor());
     AddWorld("SCWR", new SCWRConstructor());
+    AddWorld("SCWRJason", new SCWRJasonConstructor());
+    AddWorld("SCWRDoppler", new SCWRDopplerConstructor());
 //    AddWorld("Debug", new DebugConstructor());
     AddWorld("Test", new TestConstructor());
 
@@ -48,9 +54,12 @@ StorkWorld::StorkWorld()
     // Add the three basic worlds to the world map
     AddWorld("C6Lattice", new C6LatticeConstructor());
     AddWorld("Sphere", new BareSphereConstructor());
+    AddWorld("ZED2", new ZED2Constructor());
     AddWorld("Cube", new InfiniteUniformLatticeConstructor());
     AddWorld("SLOWPOKE", new SLOWPOKEConstructor());
     AddWorld("SCWR", new SCWRConstructor());
+    AddWorld("SCWRJason", new SCWRJasonConstructor());
+    AddWorld("SCWRDoppler", new SCWRDopplerConstructor());
 //    AddWorld("Debug", new DebugConstructor());
     AddWorld("Test", new TestConstructor());
 }

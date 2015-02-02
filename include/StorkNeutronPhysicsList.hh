@@ -53,7 +53,7 @@ class StorkNeutronPhysicsList : public G4VUserPhysicsList
 
         // User inputs
         G4bool periodicBC;
-        G4double temp;
+        G4String csDirName;
 
         // Neutron physics builders
         StorkNeutronProcessBuilder *theNeutrons;

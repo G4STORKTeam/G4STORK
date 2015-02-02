@@ -19,7 +19,7 @@ StorkNeutronPhysicsList::StorkNeutronPhysicsList(const StorkParseInput* infile)
 {
     SetVerboseLevel(0);
 
-    temp = infile->GetCSTemperature();
+    csDirName = infile->GetCSDirName();
     periodicBC = infile->GetPeriodicBC();
 
     // Insure that the slave processes do not output the physics process table
@@ -79,7 +79,7 @@ void StorkNeutronPhysicsList::ConstructProcess()
     theNeutrons = new StorkNeutronProcessBuilder(periodicBC);
 
     // Create and register the builders
-    theNeutrons->RegisterMe(theHPNeutron = new StorkHPNeutronBuilder(temp));
+    theNeutrons->RegisterMe(theHPNeutron = new StorkHPNeutronBuilder(csDirName));
     theNeutrons->RegisterMe(theBertiniNeutron = new G4BertiniNeutronBuilder);
     //theNeutrons->RegisterMe(theLEPNeutron = new G4LEPNeutronBuilder);
 

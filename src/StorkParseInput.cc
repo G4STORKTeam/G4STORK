@@ -20,6 +20,7 @@ StorkParseInput::StorkParseInput(G4bool master)
 	// Default values
 	worldName = "Unknown";
 	reactorMat = 0;
+	csDirName = "DEFAULT";
 
 	numSteps[0]=20;
 	numSteps[1]=20;
@@ -361,11 +362,23 @@ G4bool StorkParseInput::ReadInputFile(G4String filename)
 				theWorldProps[MatPropPair(fuel,concentration)] = 0.7204*perCent;
 				theWorldProps[MatPropPair(moderator,concentration)] = 90.0*perCent;
 			}
+			else if(keyWord=="ZED2")
+			{
+
+			}
 			else if(keyWord=="SLOWPOKE")
 			{
 
 			}
 			else if(keyWord=="SCWR")
+			{
+
+			}
+			else if(keyWord=="SCWRDoppler")
+			{
+
+			}
+			else if(keyWord=="SCWRJason")
 			{
 
 			}
@@ -392,6 +405,11 @@ G4bool StorkParseInput::ReadInputFile(G4String filename)
 			infile >> reactorMat;
 		}
 
+		//CSDataFileLocation
+		else if(keyWord=="CS_DATA_DIR")
+		{
+			infile >> csDirName;
+		}
 
 		// Shannon Entropy
 		else if(keyWord=="SE_MESH")

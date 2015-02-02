@@ -158,11 +158,11 @@ void BareSphereConstructor::ConstructMaterials()
 
     // Elements, isotopes and materials
     G4Isotope *U234, *U235, *U238, *D2, *O16;
-    G4Element *Uranium, *Oxygen, *Deuterium, *PureU235, *EU;
-    G4Material *World, *UHW, *U235Mat, *HeavyWater, *Godiva;
+    StorkElement *Uranium, *Oxygen, *Deuterium, *PureU235, *EU;
+    StorkMaterial *World, *UHW, *U235Mat, *HeavyWater, *Godiva;
 
     // Create the world environment
-    World = new G4Material("Galactic", 1, 1, 1.e-25*g/cm3, kStateGas,
+    World = new StorkMaterial("Galactic", 1, 1, 1.e-25*g/cm3, kStateGas,
                                       2.73*kelvin, 3.e-18*pascal);
 
     // Make the uranium isotopes and element
@@ -170,37 +170,37 @@ void BareSphereConstructor::ConstructMaterials()
     U235 = new G4Isotope("U235", 92, 235, 235.0439*g/mole);
     U238 = new G4Isotope("U238", 92, 238, 238.0508*g/mole);
 
-    Uranium = new G4Element("Uranium", "U", 2);
+    Uranium = new StorkElement("Uranium", "U", 2);
     Uranium->AddIsotope(U235, abunU235);
     Uranium->AddIsotope(U238, abunU238);
 
     // Make heavy water isotopes and elements
     D2 = new G4Isotope("D2", 1, 2, 2.014*g/mole);
-    Deuterium = new G4Element("Deuterium", "D", 1);
+    Deuterium = new StorkElement("Deuterium", "D", 1);
     Deuterium->AddIsotope(D2, 100*perCent);
 
     O16 = new G4Isotope("O16", 8, 16, 15.995*g/mole);
-    Oxygen = new G4Element("Oxygen", "O", 1);
+    Oxygen = new StorkElement("Oxygen", "O", 1);
     Oxygen->AddIsotope(O16, 100*perCent);
 
     // Make the U235 material
-    U235Mat = new G4Material("U235 Material", matDensity[e_U235], 1,
+    U235Mat = new StorkMaterial("U235 Material", matDensity[e_U235], 1,
 							 kStateSolid, matTemp);
-    PureU235 = new G4Element("Uranium-235","U235",1);
+    PureU235 = new StorkElement("Uranium-235","U235",1);
     PureU235->AddIsotope(U235, 100*perCent);
     U235Mat->AddElement(PureU235,1);
 
     // Make Godiva material
-    Godiva = new G4Material("Godiva", matDensity[e_Godiva], 1, kStateSolid,
+    Godiva = new StorkMaterial("Godiva", matDensity[e_Godiva], 1, kStateSolid,
 							matTemp);
-    EU = new G4Element("Enriched Uranium","EU",3);
+    EU = new StorkElement("Enriched Uranium","EU",3);
     EU->AddIsotope(U234, 1.0252*perCent);
     EU->AddIsotope(U235, 93.7695*perCent);
     EU->AddIsotope(U238, 5.2053*perCent);
     Godiva->AddElement(EU,1);
 
     // Make the heavy water material
-    HeavyWater = new G4Material("Heavy Water", 1.1056*g/cm3, 2, kStateLiquid,
+    HeavyWater = new StorkMaterial("Heavy Water", 1.1056*g/cm3, 2, kStateLiquid,
                                 matTemp);
     HeavyWater->AddElement(Deuterium, 2);
     HeavyWater->AddElement(Oxygen, 1);
@@ -212,7 +212,7 @@ void BareSphereConstructor::ConstructMaterials()
 				(abunU235 * 18.75*g/cm3 + abunU238 * 18.9*g/cm3) * massFracU;
     }
 
-    UHW = new G4Material("UHW", matDensity[e_UHW], 2, kStateSolid, matTemp);
+    UHW = new StorkMaterial("UHW", matDensity[e_UHW], 2, kStateSolid, matTemp);
     UHW->AddMaterial(HeavyWater, massFracW);
     UHW->AddElement(Uranium, massFracU);
 

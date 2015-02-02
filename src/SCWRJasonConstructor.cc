@@ -1,5 +1,5 @@
 /*
-SCWRConstructor.cc
+SCWRJasonConstructor.cc
 
 Created by:		Wesley Ford
 Date:			23-05-2012
@@ -9,14 +9,14 @@ Source code for the CANDU 6 lattice geometry and materials
 
 */
 
-#include "SCWRConstructor.hh"
+#include "SCWRJasonConstructor.hh"
 
 // Constructor
-SCWRConstructor::SCWRConstructor()
-: StorkVWorldConstructor(), cellLogical(0), pressTubeLogical1(0), pressTubeLogical2(0), pressTubeLogical3(0), pressTubeLogical4(0), outLinerLogical(0), insulatorLogical1(0),
-  insulatorLogical2(0), insulatorLogical3(0), insulatorLogical4(0), linerLogical(0), coolantLogical(0), outSheatheLogical(0), inSheatheLogical(0), outFuelLogical1(0),
-  outFuelLogical2(0), outFuelLogical3(0), outFuelLogical4(0), inFuelLogical1(0), inFuelLogical2(0), inFuelLogical3(0), inFuelLogical4(0), /*outFlowTubeLogical(0), flowTubeLogical1(0), flowTubeLogical2(0), inFlowTubeLogical(0)*/ flowTubeLogical(0),
-  centralCoolantLogical(0)
+SCWRJasonConstructor::SCWRJasonConstructor()
+: StorkVWorldConstructor(), cellLogical(0), pressTubeLogical(0), outLinerLogical(0), insulatorLogical(0),
+  linerLogical(0), coolantLogical(0), outSheatheLogical(0), outSheatheLogicalH1(0), outSheatheLogicalH2(0),
+  inSheatheLogical(0), inSheatheLogicalH1(0), inSheatheLogicalH2(0), outFuelLogical(0), outFuelLogicalH1(0),
+  outFuelLogicalH2(0), inFuelLogical(0), inFuelLogicalH1(0), inFuelLogicalH2(0), centralCoolantLogical(0)
 {
 	// Set default member variables (from file or default values)
 
@@ -36,7 +36,7 @@ SCWRConstructor::SCWRConstructor()
 
 
 // Desturctor
-SCWRConstructor::~SCWRConstructor()
+SCWRJasonConstructor::~SCWRJasonConstructor()
 {
 	// Delete visualization attributes
 	delete cellVisAtt;
@@ -56,13 +56,15 @@ SCWRConstructor::~SCWRConstructor()
 }
 
 
+//Checked geometry dimensions against Jasons
+
 // ConstructWorld()
 // Construct the geometry and materials of the CANDU 6 lattice cell.
-G4VPhysicalVolume* SCWRConstructor::ConstructWorld()
+G4VPhysicalVolume* SCWRJasonConstructor::ConstructWorld()
 {
 	// Lattic cell dimensions
 	G4double buffer = 1.0*cm;
-	reactorDim = G4ThreeVector(latticePitch/2.0,latticePitch/2.0,latticePitch/2.0);
+	reactorDim = G4ThreeVector(latticePitch/4.0,latticePitch/4.0,latticePitch/2.0);
 
 	encWorldDim = 2.0 * G4ThreeVector(reactorDim[0]+buffer,reactorDim[1]+buffer,
 									  reactorDim[2]+buffer);
@@ -72,11 +74,8 @@ G4VPhysicalVolume* SCWRConstructor::ConstructWorld()
 
 	// Set static dimensions
 
-    // Pressure Tube dimensions
-    G4double pressTube1Radmax = 8.15*cm;
-    G4double pressTube2Radmax = 8.45*cm;
-    G4double pressTube3Radmax = 8.75*cm;
-    G4double pressTube4Radmax = 9.05*cm;
+    // Pressure Tube dimension
+    G4double pressTubeRadmax = 9.05*cm;
     G4double pressTubeLen = reactorDim[2];
 
     // outer liner dimensions
@@ -84,10 +83,7 @@ G4VPhysicalVolume* SCWRConstructor::ConstructWorld()
     G4double outLinerLen = reactorDim[2];
 
     // insulator dimensions
-    G4double insulator1Radmax = 7.388*cm;
-    G4double insulator2Radmax = 7.525*cm;
-    G4double insulator3Radmax = 7.663*cm;
-    G4double insulator4Radmax = 7.8*cm;
+    G4double insulatorRadmax = 7.8*cm;
     G4double insulatorLen = reactorDim[2];
 
     // liner dimensions
@@ -111,32 +107,15 @@ G4VPhysicalVolume* SCWRConstructor::ConstructWorld()
     G4double secondRingOffset = 0.*radian;
 
     // outer fuel dimensions
-    G4double outFuel1Radmax = 0.11*cm;
-    G4double outFuel2Radmax = 0.22*cm;
-    G4double outFuel3Radmax = 0.33*cm;
-    G4double outFuel4Radmax = 0.44*cm;
+    G4double outFuelRadmax = 0.44*cm;
     G4double outFuelLen = reactorDim[2];
 
     // inner fuel dimensions
-    G4double inFuel1Radmax = 0.104*cm;
-    G4double inFuel2Radmax = 0.208*cm;
-    G4double inFuel3Radmax = 0.311*cm;
-    G4double inFuel4Radmax = 0.415*cm;
+    G4double inFuelRadmax = 0.415*cm;
     G4double inFuelLen = reactorDim[2];
 
-//    // outer fuel dimensions
-//    G4double outFlowTubeRadmax = 4.7*cm;
-//    G4double outFlowTubeLen = reactorDim[2];
-
-    // Pressure Tube dimensions
-//    G4double flowTube1Radmax = 4.65*cm;
-//    G4double flowTube2Radmax = 4.7*cm;
     G4double flowTubeRadmax = 4.7*cm;
     G4double flowTubeLen = reactorDim[2];
-
-//    // inner fuel dimensions
-//    G4double inFlowTubeRadmax = 3.65*cm;
-//    G4double inFlowTubeLen = reactorDim[2];
 
     // central coolant dimensions
     G4double centralCoolantRadmax = 4.6*cm;
@@ -168,87 +147,60 @@ G4VPhysicalVolume* SCWRConstructor::ConstructWorld()
 		// Create the lattice cell solid
 		new G4Box("cellBox", reactorDim[0], reactorDim[1], reactorDim[2]);
 
-		// Create pressure tube
-		new G4Tubs("pressTube1", 0., pressTube1Radmax, pressTubeLen, 0.,
-					2.0*CLHEP::pi);
 
-        new G4Tubs("pressTube2", 0., pressTube2Radmax, pressTubeLen, 0.,
-					2.0*CLHEP::pi);
-
-        new G4Tubs("pressTube3", 0., pressTube3Radmax, pressTubeLen, 0.,
-					2.0*CLHEP::pi);
-
-        new G4Tubs("pressTube4", 0., pressTube4Radmax, pressTubeLen, 0.,
-					2.0*CLHEP::pi);
+        new G4Tubs("pressTube", 0., pressTubeRadmax, pressTubeLen, 0.,
+					0.5*CLHEP::pi);
 
 		// Create outer liner tube
-		new G4Tubs("outLinerTube", 0., outLinerRadmax, outLinerLen, 0., 2.0*CLHEP::pi);
+		new G4Tubs("outLinerTube", 0., outLinerRadmax, outLinerLen, 0., 0.5*CLHEP::pi);
 		// Create insulator
 
-		new G4Tubs("insulatorTube1", 0., insulator1Radmax, insulatorLen, 0.,
-					2.0*CLHEP::pi);
 
-        new G4Tubs("insulatorTube2", 0., insulator2Radmax, insulatorLen, 0.,
-					2.0*CLHEP::pi);
-
-        new G4Tubs("insulatorTube3", 0., insulator3Radmax, insulatorLen, 0.,
-					2.0*CLHEP::pi);
-
-        new G4Tubs("insulatorTube4", 0., insulator4Radmax, insulatorLen, 0.,
-					2.0*CLHEP::pi);
+        new G4Tubs("insulatorTube", 0., insulatorRadmax, insulatorLen, 0.,
+					0.5*CLHEP::pi);
 
 		// Create liner tube
 		new G4Tubs("linerTube", 0., linerRadmax, linerLen, 0.,
-					2.0*CLHEP::pi);
+					0.5*CLHEP::pi);
+
 		// Create coolant solid
 		new G4Tubs("coolantTube", 0., coolantRadmax, coolantLen, 0.,
-					2.0*CLHEP::pi);
+					0.5*CLHEP::pi);
+
 		// Create the sheathe for fuel pins
-		new G4Tubs("outSheatheTube", 0., outSheatheRadmax, outSheatheLen, 0.,
-					2.0*CLHEP::pi);
+		new G4Tubs("outSheatheTube", 0., outSheatheRadmax, outSheatheLen, 0.,2.0*CLHEP::pi);
+
+        new G4Tubs("outSheatheTubeH1", 0., outSheatheRadmax, outSheatheLen, 0.,1.0*CLHEP::pi);
+
+        new G4Tubs("outSheatheTubeH2", 0., outSheatheRadmax, outSheatheLen, -0.5*CLHEP::pi, 1.0*CLHEP::pi);
+
         // Create the sheathe for fuel pins
-		new G4Tubs("inSheatheTube", 0., inSheatheRadmax, inSheatheLen, 0.,
-					2.0*CLHEP::pi);
+		new G4Tubs("inSheatheTube", 0., inSheatheRadmax, inSheatheLen, 0.,2.0*CLHEP::pi);
+
+        new G4Tubs("inSheatheTubeH1", 0., inSheatheRadmax, inSheatheLen, 0.,1.0*CLHEP::pi);
+
+        new G4Tubs("inSheatheTubeH2", 0., inSheatheRadmax, inSheatheLen, -0.5*CLHEP::pi, 1.0*CLHEP::pi);
 
 		// Create outer fuel pins
-		new G4Tubs("outFuelCyl1", 0., outFuel1Radmax, outFuelLen, 0.,2.0*CLHEP::pi);
+		new G4Tubs("outFuelCyl", 0., outFuelRadmax, outFuelLen, 0.,2.0*CLHEP::pi);
 
-		new G4Tubs("outFuelCyl2", 0., outFuel2Radmax, outFuelLen, 0.,2.0*CLHEP::pi);
+		new G4Tubs("outFuelCylH1", 0., outFuelRadmax, outFuelLen, 0.,1.0*CLHEP::pi);
 
-		new G4Tubs("outFuelCyl3", 0., outFuel3Radmax, outFuelLen, 0.,2.0*CLHEP::pi);
-
-		new G4Tubs("outFuelCyl4", 0., outFuel4Radmax, outFuelLen, 0.,2.0*CLHEP::pi);
+		new G4Tubs("outFuelCylH2", 0., outFuelRadmax, outFuelLen, -0.5*CLHEP::pi, 1.0*CLHEP::pi);
 
 		// Create inner fuel pins
-		new G4Tubs("inFuelCyl1", 0., inFuel1Radmax, inFuelLen, 0., 2.0*CLHEP::pi);
+		new G4Tubs("inFuelCyl", 0., inFuelRadmax, inFuelLen, 0., 2.0*CLHEP::pi);
 
-		new G4Tubs("inFuelCyl2", 0., inFuel2Radmax, inFuelLen, 0., 2.0*CLHEP::pi);
+		new G4Tubs("inFuelCylH1", 0., inFuelRadmax, inFuelLen, 0., 1.0*CLHEP::pi);
 
-		new G4Tubs("inFuelCyl3", 0., inFuel3Radmax, inFuelLen, 0., 2.0*CLHEP::pi);
-
-		new G4Tubs("inFuelCyl4", 0., inFuel4Radmax, inFuelLen, 0., 2.0*CLHEP::pi);
-
-
-//		// Create outter flow tube
-//		new G4Tubs("outFlowTube", 0., outFlowTubeRadmax, outFlowTubeLen, 0.,
-//					2.0*CLHEP::pi);
-
-		// Create flow tube
-//		new G4Tubs("flowTube1", 0., flowTube1Radmax, flowTubeLen, 0.,
-//					2.0*CLHEP::pi);
-//
-//        new G4Tubs("flowTube2", 0., flowTube2Radmax, flowTubeLen, 0.,
-//					2.0*CLHEP::pi);
+		new G4Tubs("inFuelCylH2", 0., inFuelRadmax, inFuelLen, -0.5*CLHEP::pi, 1.0*CLHEP::pi);
 
         new G4Tubs("flowTube", 0., flowTubeRadmax, flowTubeLen, 0.,
-					2.0*CLHEP::pi);
+					0.5*CLHEP::pi);
 
-//		// Create inner flow tube
-//		new G4Tubs("inFlowTube", 0., inFlowTubeRadmax, inFlowTubeLen, 0.,
-//					2.0*CLHEP::pi);
 		// Create the central coolant
 		new G4Tubs("centralCoolantCyl", 0., centralCoolantRadmax, centralCoolantLen, 0.,
-					2.0*CLHEP::pi);
+					0.5*CLHEP::pi);
 
 		geomChanged = false;
 	}
@@ -268,68 +220,33 @@ G4VPhysicalVolume* SCWRConstructor::ConstructWorld()
                       worldLogical,0,0);
 
     // Create the Pressure Tube
-    pressTubeLogical1 = new G4LogicalVolume(theSolids->GetSolid("pressTube1"),
-                        matMap["PressTube1"], "pressTubeLogical1",0,0,0);
-
-    pressTubeLogical2 = new G4LogicalVolume(theSolids->GetSolid("pressTube2"),
-                        matMap["PressTube2"], "pressTubeLogical2",0,0,0);
-
-    pressTubeLogical3 = new G4LogicalVolume(theSolids->GetSolid("pressTube3"),
-                        matMap["PressTube3"], "pressTubeLogical3",0,0,0);
-
-    pressTubeLogical4 = new G4LogicalVolume(theSolids->GetSolid("pressTube4"),
-                        matMap["PressTube4"], "pressTubeLogical4",0,0,0);
+    pressTubeLogical = new G4LogicalVolume(theSolids->GetSolid("pressTube"),
+                        matMap["PressTube"], "pressTubeLogical",0,0,0);
 
 
-    new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), pressTubeLogical4,
-					  "pressTubePhysical4",cellLogical,0,0);
-
-    new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), pressTubeLogical3,
-					  "pressTubePhysical3",pressTubeLogical4,0,0);
-
-    new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), pressTubeLogical2,
-					  "pressTubePhysical2",pressTubeLogical3,0,0);
-
-    new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), pressTubeLogical1,
-					  "pressTubePhysical1",pressTubeLogical2,0,0);
+    new G4PVPlacement(0, G4ThreeVector(-reactorDim[0],-reactorDim[1],0.), pressTubeLogical,
+					  "pressTubePhysical",cellLogical,0,0);
 
     // Create the Pressure Tube
     outLinerLogical = new G4LogicalVolume(theSolids->GetSolid("outLinerTube"),
                         matMap["OutLiner"], "outLinerLogical",0,0,0);
 
     new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), outLinerLogical,
-					  "outLinerPhysical",pressTubeLogical1,0,0);
-    // Create the Pressure Tube
-    insulatorLogical1 = new G4LogicalVolume(theSolids->GetSolid("insulatorTube1"),
-                        matMap["Insulator1"], "insulatorLogical1",0,0,0);
+					  "outLinerPhysical",pressTubeLogical,0,0);
 
-    insulatorLogical2 = new G4LogicalVolume(theSolids->GetSolid("insulatorTube2"),
-                        matMap["Insulator2"], "insulatorLogical2",0,0,0);
+    // Create the insulator
+    insulatorLogical = new G4LogicalVolume(theSolids->GetSolid("insulatorTube"),
+                        matMap["Insulator"], "insulatorLogical",0,0,0);
 
-    insulatorLogical3 = new G4LogicalVolume(theSolids->GetSolid("insulatorTube3"),
-                        matMap["Insulator3"], "insulatorLogical3",0,0,0);
-
-    insulatorLogical4 = new G4LogicalVolume(theSolids->GetSolid("insulatorTube4"),
-                        matMap["Insulator4"], "insulatorLogical4",0,0,0);
-
-    new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), insulatorLogical4,
-					  "insulatorPhysical4",outLinerLogical,0,0);
-
-    new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), insulatorLogical3,
-					  "insulatorPhysical3",insulatorLogical4,0,0);
-
-    new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), insulatorLogical2,
-					  "insulatorPhysical2",insulatorLogical3,0,0);
-
-    new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), insulatorLogical1,
-					  "insulatorPhysical1",insulatorLogical2,0,0);
+    new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), insulatorLogical,
+					  "insulatorPhysical",outLinerLogical,0,0);
 
 	// Create the Pressure Tube
     linerLogical = new G4LogicalVolume(theSolids->GetSolid("linerTube"),
                         matMap["Liner"], "linerLogical",0,0,0);
 
     new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), linerLogical,
-					  "linerPhysical",insulatorLogical1,0,0);
+					  "linerPhysical",insulatorLogical,0,0);
 
     // Create the Coolant
     coolantLogical = new G4LogicalVolume(theSolids->GetSolid("coolantTube"),
@@ -342,72 +259,48 @@ G4VPhysicalVolume* SCWRConstructor::ConstructWorld()
     outSheatheLogical = new G4LogicalVolume(theSolids->GetSolid("outSheatheTube"),
                         matMap["OutSheathe"], "outSheatheLogical",0,0,0);
 
+    outSheatheLogicalH1 = new G4LogicalVolume(theSolids->GetSolid("outSheatheTubeH1"),
+                        matMap["OutSheathe"], "outSheatheLogicalH1",0,0,0);
+
+    outSheatheLogicalH2 = new G4LogicalVolume(theSolids->GetSolid("outSheatheTubeH2"),
+                        matMap["OutSheathe"], "outSheatheLogicalH2",0,0,0);
+
+
     inSheatheLogical = new G4LogicalVolume(theSolids->GetSolid("inSheatheTube"),
                         matMap["InSheathe"], "inSheatheLogical",0,0,0);
 
+    inSheatheLogicalH1 = new G4LogicalVolume(theSolids->GetSolid("inSheatheTubeH1"),
+                        matMap["InSheathe"], "inSheatheLogicalH1",0,0,0);
+
+    inSheatheLogicalH2 = new G4LogicalVolume(theSolids->GetSolid("inSheatheTubeH2"),
+                        matMap["InSheathe"], "inSheatheLogicalH2",0,0,0);
 
     // Create a fuel
-    outFuelLogical1 = new G4LogicalVolume(theSolids->GetSolid("outFuelCyl1"),
-                        matMap["OuterFuel1"], "outFuelLogical1",0,0,0);
-    // Create a fuel
-    outFuelLogical2 = new G4LogicalVolume(theSolids->GetSolid("outFuelCyl2"),
-                        matMap["OuterFuel2"], "outFuelLogical2",0,0,0);
-    // Create a fuel
-    outFuelLogical3 = new G4LogicalVolume(theSolids->GetSolid("outFuelCyl3"),
-                        matMap["OuterFuel3"], "outFuelLogical3",0,0,0);
-    // Create a fuel
-    outFuelLogical4 = new G4LogicalVolume(theSolids->GetSolid("outFuelCyl4"),
-                        matMap["OuterFuel4"], "outFuelLogical4",0,0,0);
+    outFuelLogical = new G4LogicalVolume(theSolids->GetSolid("outFuelCyl"),
+                        matMap["OuterFuel"], "outFuelLogical",0,0,0);
 
+    outFuelLogicalH1 = new G4LogicalVolume(theSolids->GetSolid("outFuelCylH1"),
+                        matMap["OuterFuel"], "outFuelLogicalH1",0,0,0);
+
+    outFuelLogicalH2 = new G4LogicalVolume(theSolids->GetSolid("outFuelCylH2"),
+                        matMap["OuterFuel"], "outFuelLogicalH2",0,0,0);
 
     // Create a fuel
-    inFuelLogical1 = new G4LogicalVolume(theSolids->GetSolid("inFuelCyl1"),
-                        matMap["InnerFuel1"], "inFuelLogical1",0,0,0);
+    inFuelLogical = new G4LogicalVolume(theSolids->GetSolid("inFuelCyl"),
+                        matMap["InnerFuel"], "inFuelLogical",0,0,0);
 
-    inFuelLogical2 = new G4LogicalVolume(theSolids->GetSolid("inFuelCyl2"),
-                        matMap["InnerFuel2"], "inFuelLogical2",0,0,0);
+    inFuelLogicalH1 = new G4LogicalVolume(theSolids->GetSolid("inFuelCylH1"),
+                        matMap["InnerFuel"], "inFuelLogicalH1",0,0,0);
 
-    inFuelLogical3 = new G4LogicalVolume(theSolids->GetSolid("inFuelCyl3"),
-                        matMap["InnerFuel3"], "inFuelLogical3",0,0,0);
+    inFuelLogicalH2 = new G4LogicalVolume(theSolids->GetSolid("inFuelCylH2"),
+                        matMap["InnerFuel"], "inFuelLogicalH2",0,0,0);
 
-    inFuelLogical4 = new G4LogicalVolume(theSolids->GetSolid("inFuelCyl4"),
-                        matMap["InnerFuel4"], "inFuelLogical4",0,0,0);
-
-//                        // Create the Pressure Tube
-//    outFlowTubeLogical = new G4LogicalVolume(theSolids->GetSolid("outFlowTube"),
-//                        matMap["OutFlowTube"], "outFlowTubeLogical",0,0,0);
-//
-//    new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), outFlowTubeLogical,
-//					  "outFlowTubePhysical",coolantLogical,0,0);
-//
-//
-//    // Create the Pressure Tube
-//    flowTubeLogical1 = new G4LogicalVolume(theSolids->GetSolid("flowTube1"),
-//                        matMap["FlowTube1"], "flowTubeLogical1",0,0,0);
-//
-//    // Create the Pressure Tube
-//    flowTubeLogical2 = new G4LogicalVolume(theSolids->GetSolid("flowTube2"),
-//                        matMap["FlowTube2"], "flowTubeLogical2",0,0,0);
-//
-//    new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), flowTubeLogical2,
-//					  "flowTubePhysical2",outFlowTubeLogical,0,0);
-//
-//    new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), flowTubeLogical1,
-//					  "flowTubePhysical1",flowTubeLogical2,0,0);
 
     flowTubeLogical = new G4LogicalVolume(theSolids->GetSolid("flowTube"),
                         matMap["FlowTube"], "flowTubeLogical",0,0,0);
 
     new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), flowTubeLogical,
 					  "flowTubePhysical",coolantLogical,0,0);
-
-
-//    // Create the Pressure Tube
-//    inFlowTubeLogical = new G4LogicalVolume(theSolids->GetSolid("inFlowTube"),
-//                        matMap["InFlowTube"], "inFlowTubeLogical",0,0,0);
-//
-//    new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), inFlowTubeLogical,
-//					  "inFlowTubePhysical",flowTubeLogical1,0,0);
 
 	// Create the Pressure Tube
     centralCoolantLogical = new G4LogicalVolume(theSolids->GetSolid("centralCoolantCyl"),
@@ -425,8 +318,13 @@ G4VPhysicalVolume* SCWRConstructor::ConstructWorld()
     // Set name for sheathe physical volume
     volName << 0;
 
+    new G4PVPlacement(0, G4ThreeVector(ringRad[0],0.,0.), outSheatheLogicalH1, "outSheathePhysicalH1",coolantLogical,0,0);
+
+    new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), outFuelLogicalH1,"outFuelPhysicalH1",
+					  outSheatheLogicalH1,0,0);
+
     // Place pins for outer ring
-    for( G4int i = 0; i < 32; i++ )
+    for( G4int i = 1; i < 8; i++ )
     {
         // Reset string stream
         volName.str("");
@@ -441,20 +339,22 @@ G4VPhysicalVolume* SCWRConstructor::ConstructWorld()
 
     }
 
-    new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), outFuelLogical4,"outFuelPhysical4",
+    new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), outFuelLogical,"outFuelPhysical",
 					  outSheatheLogical,0,0);
 
-    new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), outFuelLogical3,"outFuelPhysical3",
-					  outFuelLogical4,0,0);
+    new G4PVPlacement(0, G4ThreeVector(0.,ringRad[0],0.), outSheatheLogicalH2, "outSheathePhysicalH2",coolantLogical,0,0);
 
-    new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), outFuelLogical2,"outFuelPhysical2",
-					  outFuelLogical3,0,0);
+    new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), outFuelLogicalH2,"outFuelPhysicalH2",
+					  outSheatheLogicalH2,0,0);
 
-    new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), outFuelLogical1,"outFuelPhysical1",
-					  outFuelLogical2,0,0);
+
+    new G4PVPlacement(0, G4ThreeVector(ringRad[1],0.,0.), inSheatheLogicalH1, "inSheathePhysicalH1",coolantLogical,0,0);
+
+    new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), inFuelLogicalH1,"inFuelPhysicalH1",
+					  inSheatheLogicalH1,0,0);
 
 	// Place pins for inner ring
-    for( G4int i = 0; i < 32; i++ )
+    for( G4int i = 1; i < 8; i++ )
     {
         // Reset string stream
         volName.str("");
@@ -469,47 +369,36 @@ G4VPhysicalVolume* SCWRConstructor::ConstructWorld()
 
     }
 
-    new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), inFuelLogical4,"inFuelPhysical4",
+    new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), inFuelLogical,"inFuelPhysical",
 					  inSheatheLogical,0,0);
 
-    new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), inFuelLogical3,"inFuelPhysical3",
-					  inFuelLogical4,0,0);
+    new G4PVPlacement(0, G4ThreeVector(0.,ringRad[1],0.), inSheatheLogicalH2, "inSheathePhysicalH2",coolantLogical,0,0);
 
-    new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), inFuelLogical2,"inFuelPhysical2",
-					  inFuelLogical3,0,0);
+    new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), inFuelLogicalH2,"inFuelPhysicalH2",
+					  inSheatheLogicalH2,0,0);
 
-    new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), inFuelLogical1,"inFuelPhysical1",
-					  inFuelLogical2,0,0);
 
 	// Add sensitive detector to ALL logical volumes
 	worldLogical->SetSensitiveDetector( sDReactor );
 	cellLogical->SetSensitiveDetector( sDReactor );
-	pressTubeLogical1->SetSensitiveDetector( sDReactor );
-	pressTubeLogical2->SetSensitiveDetector( sDReactor );
-	pressTubeLogical3->SetSensitiveDetector( sDReactor );
-	pressTubeLogical4->SetSensitiveDetector( sDReactor );
+	pressTubeLogical->SetSensitiveDetector( sDReactor );
 	outLinerLogical->SetSensitiveDetector( sDReactor );
-	insulatorLogical1->SetSensitiveDetector( sDReactor );
-	insulatorLogical2->SetSensitiveDetector( sDReactor );
-	insulatorLogical3->SetSensitiveDetector( sDReactor );
-	insulatorLogical4->SetSensitiveDetector( sDReactor );
+	insulatorLogical->SetSensitiveDetector( sDReactor );
 	linerLogical->SetSensitiveDetector( sDReactor );
 	coolantLogical->SetSensitiveDetector( sDReactor );
 	outSheatheLogical->SetSensitiveDetector( sDReactor );
+	outSheatheLogicalH1->SetSensitiveDetector( sDReactor );
+	outSheatheLogicalH2->SetSensitiveDetector( sDReactor );
 	inSheatheLogical->SetSensitiveDetector( sDReactor );
-	outFuelLogical1->SetSensitiveDetector( sDReactor );
-	outFuelLogical2->SetSensitiveDetector( sDReactor );
-	outFuelLogical3->SetSensitiveDetector( sDReactor );
-	outFuelLogical4->SetSensitiveDetector( sDReactor );
-	inFuelLogical1->SetSensitiveDetector( sDReactor );
-	inFuelLogical2->SetSensitiveDetector( sDReactor );
-	inFuelLogical3->SetSensitiveDetector( sDReactor );
-	inFuelLogical4->SetSensitiveDetector( sDReactor );
-//	outFlowTubeLogical->SetSensitiveDetector( sDReactor );
-//	flowTubeLogical1->SetSensitiveDetector( sDReactor );
-//	flowTubeLogical2->SetSensitiveDetector( sDReactor );
+	inSheatheLogicalH1->SetSensitiveDetector( sDReactor );
+	inSheatheLogicalH2->SetSensitiveDetector( sDReactor );
+	outFuelLogical->SetSensitiveDetector( sDReactor );
+	outFuelLogicalH1->SetSensitiveDetector( sDReactor );
+	outFuelLogicalH2->SetSensitiveDetector( sDReactor );
+	inFuelLogical->SetSensitiveDetector( sDReactor );
+	inFuelLogicalH1->SetSensitiveDetector( sDReactor );
+	inFuelLogicalH2->SetSensitiveDetector( sDReactor );
 	flowTubeLogical->SetSensitiveDetector( sDReactor );
-//	inFlowTubeLogical->SetSensitiveDetector( sDReactor );
 	centralCoolantLogical->SetSensitiveDetector( sDReactor );
 
 
@@ -525,10 +414,7 @@ G4VPhysicalVolume* SCWRConstructor::ConstructWorld()
 
     pressTubeVisAtt = new G4VisAttributes(G4Colour(1,0,0));
     pressTubeVisAtt->SetVisibility(1);
-    pressTubeLogical1->SetVisAttributes(pressTubeVisAtt);
-    pressTubeLogical2->SetVisAttributes(pressTubeVisAtt);
-    pressTubeLogical3->SetVisAttributes(pressTubeVisAtt);
-    pressTubeLogical4->SetVisAttributes(pressTubeVisAtt);
+    pressTubeLogical->SetVisAttributes(pressTubeVisAtt);
 
     outLinerVisAtt = new G4VisAttributes(G4Colour(1,0.5,0));
     outLinerVisAtt->SetVisibility(1);
@@ -536,10 +422,7 @@ G4VPhysicalVolume* SCWRConstructor::ConstructWorld()
 
     insulatorVisAtt = new G4VisAttributes(G4Colour(1,1,0.5));
     insulatorVisAtt->SetVisibility(1);
-    insulatorLogical1->SetVisAttributes(insulatorVisAtt);
-    insulatorLogical2->SetVisAttributes(insulatorVisAtt);
-    insulatorLogical3->SetVisAttributes(insulatorVisAtt);
-    insulatorLogical4->SetVisAttributes(insulatorVisAtt);
+    insulatorLogical->SetVisAttributes(insulatorVisAtt);
 
     linerVisAtt = new G4VisAttributes(G4Colour(0,1,0));
     linerVisAtt->SetVisibility(1);
@@ -552,36 +435,30 @@ G4VPhysicalVolume* SCWRConstructor::ConstructWorld()
     outSheatheVisAtt = new G4VisAttributes(G4Colour(0.5,0,1));
     outSheatheVisAtt->SetVisibility(true);
     outSheatheLogical->SetVisAttributes(outSheatheVisAtt);
+    outSheatheLogicalH1->SetVisAttributes(outSheatheVisAtt);
+    outSheatheLogicalH2->SetVisAttributes(outSheatheVisAtt);
 
     inSheatheVisAtt = new G4VisAttributes(G4Colour(1,0,1));
     inSheatheVisAtt->SetVisibility(true);
     inSheatheLogical->SetVisAttributes(inSheatheVisAtt);
+    inSheatheLogicalH1->SetVisAttributes(inSheatheVisAtt);
+    inSheatheLogicalH2->SetVisAttributes(inSheatheVisAtt);
 
     outFuelVisAtt = new G4VisAttributes(G4Colour(1.,0.,0.));
     outFuelVisAtt->SetVisibility(true);
-    outFuelLogical1->SetVisAttributes(outFuelVisAtt);
-    outFuelLogical2->SetVisAttributes(outFuelVisAtt);
-    outFuelLogical3->SetVisAttributes(outFuelVisAtt);
-    outFuelLogical4->SetVisAttributes(outFuelVisAtt);
+    outFuelLogical->SetVisAttributes(outFuelVisAtt);
+    outFuelLogicalH1->SetVisAttributes(outFuelVisAtt);
+    outFuelLogicalH2->SetVisAttributes(outFuelVisAtt);
 
     inFuelVisAtt = new G4VisAttributes(G4Colour(1.,0.5,0.));
     inFuelVisAtt->SetVisibility(true);
-    inFuelLogical1->SetVisAttributes(inFuelVisAtt);
-    inFuelLogical2->SetVisAttributes(inFuelVisAtt);
-    inFuelLogical3->SetVisAttributes(inFuelVisAtt);
-    inFuelLogical4->SetVisAttributes(inFuelVisAtt);
+    inFuelLogical->SetVisAttributes(inFuelVisAtt);
+    inFuelLogicalH1->SetVisAttributes(inFuelVisAtt);
+    inFuelLogicalH2->SetVisAttributes(inFuelVisAtt);
 
-//    outFlowTubeVisAtt = new G4VisAttributes(G4Colour(1,1,0));
-//    outFlowTubeLogical->SetVisAttributes(outFlowTubeVisAtt);
-//
     flowTubeVisAtt = new G4VisAttributes(G4Colour(0,1,0));
     flowTubeVisAtt->SetVisibility(1);
     flowTubeLogical->SetVisAttributes(flowTubeVisAtt);
-//    flowTubeLogical1->SetVisAttributes(flowTubeVisAtt);
-//    flowTubeLogical2->SetVisAttributes(flowTubeVisAtt);
-//
-//    inFlowTubeVisAtt = new G4VisAttributes(G4Colour(0.5,0.,1.));
-//    inFlowTubeLogical->SetVisAttributes(inFlowTubeVisAtt);
 
     centralCoolantVisAtt = new G4VisAttributes(G4Colour(0.,1.,1.));
     centralCoolantVisAtt->SetVisibility(1);
@@ -595,23 +472,26 @@ G4VPhysicalVolume* SCWRConstructor::ConstructWorld()
 
 // ConstructMaterials()
 // Define and build the materials in the C6 lattice cell.
-void SCWRConstructor::ConstructMaterials()
+void SCWRJasonConstructor::ConstructMaterials()
 {
     // Elements, isotopes and materials
     G4Isotope *H1, *H2, *C12, *C13, *O16, *Si28, *Si29, *Si30, *P31, *S32, *S33, *S34, *S36,
-              *Cr50, *Cr52, *Cr53, *Cr54, *Mn55, *Fe54, *Fe56, *Fe57, *Fe58, *Ni58, *Ni60, *Ni64,
-              *Nb93, *Y89, *Mo92, *Mo94, *Mo95, *Mo96, *Mo97, *Mo98, *Mo100,
+              *Cr50, *Cr52, *Cr53, *Cr54, *Mn55, *Fe54, *Fe56, *Fe57, *Fe58, *Ni58, *Ni60, *Ni61,
+              *Ni62, *Ni64, *Nb93, *Y89, *Mo92, *Mo94, *Mo95, *Mo96, *Mo97, *Mo98, *Mo100,
               *Sn112, *Sn114, *Sn115, *Sn116, *Sn117, *Sn118, *Sn119, *Sn120, *Sn122, *Sn124,
               *Zr90, *Zr91, *Zr92, *Zr94, *Zr96, *Th232, *Pu238, *Pu239, *Pu240, *Pu241, *Pu242;
 
     G4Element *H, *D, *C, *Oxygen, *Si, *P, *S, *Cr, *Mn, *Fe, *Ni, *Nb, *Y, *Mo, *Sn, *Zr, *Th, *Pu;
 
-    G4Material *World, *Moderator, *PressTube1, *PressTube2, *PressTube3, *PressTube4, *OutLiner, *Insulator1, *Insulator2, *Insulator3, *Insulator4, *Liner, *OutSheathe, *InSheathe,
-    *OuterFuel1, *OuterFuel2, *OuterFuel3, *OuterFuel4, *InnerFuel1, *InnerFuel2, *InnerFuel3, *InnerFuel4, /*OutFlowTube, *FlowTube1, *FlowTube2, *InFlowTube,*/ *FlowTube, *CentralCoolant ,*ExelLiner,
-    *ZircSteel, *ZircHydrid, *OuterFuel, *InnerFuel, *H2O, *D2O, *Coolant, *Insulator;
+    G4Material *World, *Moderator, *PressTube, *OutLiner, *Insulator, *Liner, *OutSheathe, *InSheathe,
+    *OuterFuel, *InnerFuel, *FlowTube, *CentralCoolant ,*ExelLiner,
+    *ZircSteel, *ZircHydrid, *H2O, *D2O, *Coolant;
 
-
-    // Make hydrogen elements
+    // check material compositions against jasons files for inconsistancies
+    // Checked, inner fuel and outer fuel
+    // checked temperature and density
+    // need to check geometry as well
+    // checked all the isotope and material compositions against AECL and wikipedia get Jasons abundance list
     H1 = new G4Isotope("H1", 1, 1, 1.008*g/mole);
     H = new G4Element("Hydrogen", "H", 1);
     H->AddIsotope(H1, 1.0);
@@ -621,10 +501,10 @@ void SCWRConstructor::ConstructMaterials()
     D->AddIsotope(H2, 1.0);
 
     C12 = new G4Isotope("C12", 6, 12, 12.0*g/mole);
-    C13 = new G4Isotope("C13", 6, 13, 13.00335*g/mole);
+    C13 = new G4Isotope("C13", 6, 13, 13.0033548378*g/mole);
 
     C = new G4Element("Carbon", "C", 2);
-    C->AddIsotope(C12, 98.83*perCent);
+    C->AddIsotope(C12, 98.93*perCent);
     C->AddIsotope(C13,  1.07*perCent);
 
 
@@ -667,10 +547,10 @@ void SCWRConstructor::ConstructMaterials()
     Cr54 = new G4Isotope("Cr54", 24, 54, 53.9388804*g/mole);
 
     Cr = new G4Element("Chromium", "Cr", 4);
-    Cr->AddIsotope(Cr50,  4.1737*perCent);
-    Cr->AddIsotope(Cr52, 83.7003*perCent);
-    Cr->AddIsotope(Cr53,  9.6726*perCent);
-    Cr->AddIsotope(Cr54,  2.4534*perCent);
+    Cr->AddIsotope(Cr50,  4.345*perCent);
+    Cr->AddIsotope(Cr52, 83.789*perCent);
+    Cr->AddIsotope(Cr53,  9.501*perCent);
+    Cr->AddIsotope(Cr54,  2.365*perCent);
 
     //make chromium isotopes and element
     Mn55 = new G4Isotope("Mn55", 25, 55, 54.9380*g/mole);
@@ -685,20 +565,24 @@ void SCWRConstructor::ConstructMaterials()
     Fe58 = new G4Isotope("Fe58", 26, 58, 57.9332756*g/mole);
 
     Fe = new G4Element("Iron", "Fe", 4);
-    Fe->AddIsotope(Fe54,  5.80*perCent);
-    Fe->AddIsotope(Fe56, 91.72*perCent);
-    Fe->AddIsotope(Fe57,  2.20*perCent);
-    Fe->AddIsotope(Fe58,  0.28*perCent);
+    Fe->AddIsotope(Fe54,  5.845*perCent);
+    Fe->AddIsotope(Fe56, 91.754*perCent);
+    Fe->AddIsotope(Fe57,  2.119*perCent);
+    Fe->AddIsotope(Fe58,  0.282*perCent);
 
     //make nickel isotopes and element
     Ni58 = new G4Isotope("Ni58", 28, 58, 57.9353429*g/mole);
     Ni60 = new G4Isotope("Ni60", 28, 60, 59.9307864*g/mole);
+    Ni61 = new G4Isotope("Ni61", 28, 61, 60.9310560*g/mole);
+    Ni62 = new G4Isotope("Ni62", 28, 62, 61.9283451*g/mole);
     Ni64 = new G4Isotope("Ni64", 28, 64, 63.9279660*g/mole);
 
-    Ni = new G4Element("Nickel", "Ni", 3);
-    Ni->AddIsotope(Ni58, 70.913*perCent);
-    Ni->AddIsotope(Ni60, 28.044*perCent);
-    Ni->AddIsotope(Ni64,  1.043*perCent);
+    Ni = new G4Element("Nickel", "Ni", 5);
+    Ni->AddIsotope(Ni58, 68.0769*perCent);
+    Ni->AddIsotope(Ni60, 26.2231*perCent);
+    Ni->AddIsotope(Ni61, 1.1399*perCent);
+    Ni->AddIsotope(Ni62, 3.6345*perCent);
+    Ni->AddIsotope(Ni64,  0.9256*perCent);
 
     //make niobium isotopes and element
     Nb93 = new G4Isotope("Nb93", 41, 93, 92.9063781*g/mole);
@@ -760,18 +644,18 @@ void SCWRConstructor::ConstructMaterials()
     Zr96 = new G4Isotope("Zr96", 40, 96, 95.9082734*g/mole);
 
     Zr = new G4Element("Zirconium", "Zr", 5);
-    Zr->AddIsotope(Zr90, 50.706645*perCent);
-    Zr->AddIsotope(Zr91, 11.180922*perCent);
-    Zr->AddIsotope(Zr92, 17.277879*perCent);
-    Zr->AddIsotope(Zr94, 17.890875*perCent);
-    Zr->AddIsotope(Zr96,  2.943679*perCent);
+    Zr->AddIsotope(Zr90, 51.45*perCent);
+    Zr->AddIsotope(Zr91, 11.22*perCent);
+    Zr->AddIsotope(Zr92, 17.15*perCent);
+    Zr->AddIsotope(Zr94, 17.38*perCent);
+    Zr->AddIsotope(Zr96,  2.80*perCent);
 
     Th232 = new G4Isotope("Th232", 90, 232, 232.0381*g/mole);
 
     Th = new G4Element("Thorium", "Th", 1);
     Th->AddIsotope(Th232, 100.*perCent);
 
-    //make Zirconium isotopes and element
+    //make Plutonium isotopes and element
     Pu238 = new G4Isotope("Pu238", 94, 238, 238.0496*g/mole);
     Pu239 = new G4Isotope("Pu239", 94, 239, 239.0522*g/mole);
     Pu240 = new G4Isotope("Pu240", 94, 240, 240.0538*g/mole);
@@ -820,7 +704,8 @@ void SCWRConstructor::ConstructMaterials()
     ExelLiner->AddElement(Nb,0.8*perCent);
     ExelLiner->AddElement(Zr,94.9*perCent);
 
-    ZircSteel = new G4Material("ZircSteel", 1, 10, kStateSolid, 1);
+    ZircSteel = new G4Material("ZircSteel", 1, 10, kStateSolid,
+							   1);
     ZircSteel->AddElement(C,0.034*perCent);
     ZircSteel->AddElement(Si,0.51*perCent);
     ZircSteel->AddElement(Mn,0.74*perCent);
@@ -836,28 +721,21 @@ void SCWRConstructor::ConstructMaterials()
     ZircHydrid->AddElement(Zr,98.26*perCent);
     ZircHydrid->AddElement(H,1.74*perCent);
 
-    Insulator = new G4Material("Insulator", 1, 3, kStateSolid, 1);
+    Insulator = new G4Material("Insulator", insulatorDensity, 3, kStateSolid, insulatorTemp);
     Insulator->AddElement(Zr,66.63*perCent);
     Insulator->AddElement(Y,7.87*perCent);
     Insulator->AddElement(Oxygen,25.5*perCent);
 
     //Create Fuel
-    OuterFuel = new G4Material("OuterFuel", 1, 3, kStateSolid, 1);
+    OuterFuel = new G4Material("OuterFuel", outerFuelDensity, 3, kStateSolid, outerFuelTemp);
     OuterFuel->AddElement(Oxygen,12.08*perCent);
     OuterFuel->AddElement(Pu,10.59*perCent);
     OuterFuel->AddElement(Th,77.34*perCent);
 
-    InnerFuel = new G4Material("InnerFuel", 1, 3, kStateSolid, 1);
+    InnerFuel = new G4Material("InnerFuel", innerFuelDensity, 3, kStateSolid, innerFuelTemp);
     InnerFuel->AddElement(Oxygen,12.07*perCent);
     InnerFuel->AddElement(Pu,13.23*perCent);
     InnerFuel->AddElement(Th,74.7*perCent);
-
-
-//    InFlowTube = new G4Material("InFlowTube", inFlowTubeDensity, 1, kStateSolid, inFlowTubeTemp);
-//    InFlowTube->AddMaterial(ZircSteel,100*perCent);
-
-//    OutFlowTube = new G4Material("OutFlowTube", outFlowTubeDensity, 1, kStateSolid, outFlowTubeTemp);
-//    OutFlowTube->AddMaterial(ZircSteel,100*perCent);
 
     OutSheathe = new G4Material("OutSheathe", outSheatheDensity, 1, kStateSolid, outSheatheTemp);
     OutSheathe->AddMaterial(ZircSteel,100*perCent);
@@ -868,75 +746,14 @@ void SCWRConstructor::ConstructMaterials()
     Liner = new G4Material("Liner", linerDensity, 1, kStateSolid, linerTemp);
     Liner->AddMaterial(ZircSteel,100*perCent);
 
-
-
-//    FlowTube1 = new G4Material("FlowTube1", flowTubeDensity, 1, kStateSolid, flowTubeTemp[0]);
-//    FlowTube1->AddMaterial(ZircSteel,100*perCent);
-//
-//    FlowTube2 = new G4Material("FlowTube2", flowTubeDensity, 1, kStateSolid, flowTubeTemp[1]);
-//    FlowTube2->AddMaterial(ZircSteel,100*perCent);
-//
     FlowTube = new G4Material("FlowTube", flowTubeDensity, 1, kStateSolid, flowTubeTemp);
     FlowTube->AddMaterial(ZircSteel,100*perCent);
 
-
-
-
-    PressTube1 = new G4Material("PressTube1", pressTubeDensity, 1, kStateSolid, pressTubeTemp[0]);
-    PressTube1->AddMaterial(ExelLiner,100*perCent);
-
-    PressTube2 = new G4Material("PressTube2", pressTubeDensity, 1, kStateSolid, pressTubeTemp[1]);
-    PressTube2->AddMaterial(ExelLiner,100*perCent);
-
-    PressTube3 = new G4Material("PressTube3", pressTubeDensity, 1, kStateSolid, pressTubeTemp[2]);
-    PressTube3->AddMaterial(ExelLiner,100*perCent);
-
-    PressTube4 = new G4Material("PressTube4", pressTubeDensity, 1, kStateSolid, pressTubeTemp[3]);
-    PressTube4->AddMaterial(ExelLiner,100*perCent);
+    PressTube = new G4Material("PressTube", pressTubeDensity, 1, kStateSolid, pressTubeTemp);
+    PressTube->AddMaterial(ExelLiner,100*perCent);
 
     OutLiner = new G4Material("OutLiner", outLinerDensity, 1, kStateSolid, outLinerTemp);
     OutLiner->AddMaterial(ExelLiner,100*perCent);
-
-
-
-    Insulator1 = new G4Material("Insulator1", insulatorDensity, 1, kStateSolid, insulatorTemp[0]);
-    Insulator1->AddMaterial(Insulator,100*perCent);
-
-    Insulator2 = new G4Material("Insulator2", insulatorDensity, 1, kStateSolid, insulatorTemp[1]);
-    Insulator2->AddMaterial(Insulator,100*perCent);
-
-    Insulator3 = new G4Material("Insulator3", insulatorDensity, 1, kStateSolid, insulatorTemp[2]);
-    Insulator3->AddMaterial(Insulator,100*perCent);
-
-    Insulator4 = new G4Material("Insulator4", insulatorDensity, 1, kStateSolid, insulatorTemp[3]);
-    Insulator4->AddMaterial(Insulator,100*perCent);
-
-
-    InnerFuel1 = new G4Material("InnerFuel1", innerFuelDensity, 1, kStateSolid, innerFuelTemp[0]);
-    InnerFuel1->AddMaterial(InnerFuel,100*perCent);
-
-    InnerFuel2 = new G4Material("InnerFuel2", innerFuelDensity, 1, kStateSolid, innerFuelTemp[1]);
-    InnerFuel2->AddMaterial(InnerFuel,100*perCent);
-
-    InnerFuel3 = new G4Material("InnerFuel3", innerFuelDensity, 1, kStateSolid, innerFuelTemp[2]);
-    InnerFuel3->AddMaterial(InnerFuel,100*perCent);
-
-    InnerFuel4 = new G4Material("InnerFuel4", innerFuelDensity, 1, kStateSolid, innerFuelTemp[3]);
-    InnerFuel4->AddMaterial(InnerFuel,100*perCent);
-
-
-
-    OuterFuel1 = new G4Material("OuterFuel1", outerFuelDensity, 1, kStateSolid, outerFuelTemp[0]);
-    OuterFuel1->AddMaterial(OuterFuel,100*perCent);
-
-    OuterFuel2 = new G4Material("OuterFuel2", outerFuelDensity, 1, kStateSolid, outerFuelTemp[1]);
-    OuterFuel2->AddMaterial(OuterFuel,100*perCent);
-
-    OuterFuel3 = new G4Material("OuterFuel3", outerFuelDensity, 1, kStateSolid, outerFuelTemp[2]);
-    OuterFuel3->AddMaterial(OuterFuel,100*perCent);
-
-    OuterFuel4 = new G4Material("OuterFuel4", outerFuelDensity, 1, kStateSolid, outerFuelTemp[3]);
-    OuterFuel4->AddMaterial(OuterFuel,100*perCent);
 
     CentralCoolant = new G4Material("CentralCoolant", centralCoolantDensity, 1, kStateLiquid, centralCoolantTemp);
     CentralCoolant->AddMaterial(Coolant,  100*perCent);
@@ -946,32 +763,16 @@ void SCWRConstructor::ConstructMaterials()
     // For composite materials:  world is 0, heavy water is 1, UHW is 2
     matMap["Galactic"] = World;
     matMap["Moderator"] = Moderator;
-    matMap["PressTube1"] = PressTube1;
-    matMap["PressTube2"] = PressTube2;
-    matMap["PressTube3"] = PressTube3;
-    matMap["PressTube4"] = PressTube4;
+    matMap["PressTube"] = PressTube;
     matMap["OutLiner"] = OutLiner;
-    matMap["Insulator1"] = Insulator1;
-    matMap["Insulator2"] = Insulator2;
-    matMap["Insulator3"] = Insulator3;
-    matMap["Insulator4"] = Insulator4;
+    matMap["Insulator"] = Insulator;
     matMap["Liner"] = Liner;
     matMap["Coolant"] = Coolant;
     matMap["OutSheathe"] = OutSheathe;
     matMap["InSheathe"] = InSheathe;
-    matMap["OuterFuel1"] = OuterFuel1;
-    matMap["OuterFuel2"] = OuterFuel2;
-    matMap["OuterFuel3"] = OuterFuel3;
-    matMap["OuterFuel4"] = OuterFuel4;
-    matMap["InnerFuel1"] = InnerFuel1;
-    matMap["InnerFuel2"] = InnerFuel2;
-    matMap["InnerFuel3"] = InnerFuel3;
-    matMap["InnerFuel4"] = InnerFuel4;
-//    matMap["OutFlowTube"] = OutFlowTube;
-//    matMap["FlowTube1"] = FlowTube1;
-//    matMap["FlowTube2"] = FlowTube2;
+    matMap["OuterFuel"] = OuterFuel;
+    matMap["InnerFuel"] = InnerFuel;
     matMap["FlowTube"] = FlowTube;
-//    matMap["InFlowTube"] = InFlowTube;
     matMap["CentralCoolant"] = CentralCoolant;
 
     matChanged = false;

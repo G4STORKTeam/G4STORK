@@ -14,10 +14,10 @@ Source code for StorkHPNeutronBuilder class.
 #include "StorkHPNeutronBuilder.hh"
 
 // Constructor
-StorkHPNeutronBuilder::StorkHPNeutronBuilder(G4double aT)
+StorkHPNeutronBuilder::StorkHPNeutronBuilder(G4String dir)
 {
     // Set temperature for cross sections
-	temperature = aT;
+	dirName = dir;
 
 	// Initialize the applicability limits
 	theMin = theIMin = 0.*MeV;
@@ -28,6 +28,10 @@ StorkHPNeutronBuilder::StorkHPNeutronBuilder(G4double aT)
 	theHPInelasticData = 0;
 	theHPElasticData = 0;
 	theHPFissionData = 0;
+	HPCaptureData = 0;
+	HPInelasticData = 0;
+	HPElasticData = 0;
+	HPFissionData = 0;
 	nElasticModel = 0;
 	nInelasticModel = 0;
 	nFissionModel = 0;
@@ -47,10 +51,22 @@ StorkHPNeutronBuilder::StorkHPNeutronBuilder(G4double aT)
 StorkHPNeutronBuilder::~StorkHPNeutronBuilder()
 {
     // Delete the cross section data
-    delete theHPCaptureData;
-	delete theHPInelasticData;
-	delete theHPFissionData;
-	delete theHPElasticData;
+    if(theHPCaptureData!=NULL)
+        delete theHPCaptureData;
+    if(theHPInelasticData!=NULL)
+        delete theHPInelasticData;
+	if(theHPFissionData!=NULL)
+        delete theHPFissionData;
+	if(theHPElasticData!=NULL)
+        delete theHPElasticData;
+	if(HPCaptureData!=NULL)
+        delete HPCaptureData;
+	if(HPInelasticData!=NULL)
+        delete HPInelasticData;
+	if(HPFissionData!=NULL)
+        delete HPFissionData;
+	if(HPElasticData!=NULL)
+        delete HPElasticData;
 }
 
 
@@ -62,15 +78,23 @@ void StorkHPNeutronBuilder::Build(G4HadronElasticProcess *aP)
     // Create the model and data
     if(nElasticModel==0) nElasticModel = new G4NeutronHPElastic();
     if(theHPElasticData==0)
-        theHPElasticData = new G4NeutronHPElasticData();
-//        theHPElasticData = new StorkNeutronHPCSData(maxOL,numIL,temperature,'E');
+    {
+        if(dirName == "DEFAULT")
+            theHPElasticData = new G4NeutronHPElasticData();
+        else
+            HPElasticData = new StorkNeutronHPCSData('E', dirName);
+    }
+
 
     // Set the limits of the model
     nElasticModel->SetMinEnergy(theMin);
     nElasticModel->SetMaxEnergy(theMax);
 
     // Register both
-    aP->AddDataSet(theHPElasticData);
+    if(dirName == "DEFAULT")
+        aP->AddDataSet(theHPElasticData);
+    else
+        aP->AddDataSet(HPElasticData);
     aP->RegisterMe(nElasticModel);
 }
 
@@ -83,15 +107,21 @@ void StorkHPNeutronBuilder::Build(G4NeutronInelasticProcess *aP)
     // Create the model and data
     if(nInelasticModel==0) nInelasticModel = new G4NeutronHPInelastic();
     if(theHPInelasticData==0)
-        theHPInelasticData = new G4NeutronHPInelasticData();
-//        theHPInelasticData = new StorkNeutronHPCSData(maxOL,numIL,temperature,'I');
-
+    {
+        if(dirName == "DEFAULT")
+            theHPInelasticData = new G4NeutronHPInelasticData();
+        else
+            HPInelasticData = new StorkNeutronHPCSData('I', dirName);
+    }
     // Set the limits of the model
     nInelasticModel->SetMinEnergy(theIMin);
     nInelasticModel->SetMaxEnergy(theIMax);
 
     // Register both
-    aP->AddDataSet(theHPInelasticData);
+    if(dirName == "DEFAULT")
+        aP->AddDataSet(theHPInelasticData);
+    else
+        aP->AddDataSet(HPInelasticData);
     aP->RegisterMe(nInelasticModel);
 }
 
@@ -104,15 +134,21 @@ void StorkHPNeutronBuilder::Build(G4HadronFissionProcess *aP)
     // Create the model and data
     if(nFissionModel==0) nFissionModel = new G4NeutronHPFission();
     if(theHPFissionData==0)
-        theHPFissionData = new G4NeutronHPFissionData();
-//        theHPFissionData = new StorkNeutronHPCSData(maxOL,numIL,temperature,'F');
-
+    {
+        if(dirName == "DEFAULT")
+            theHPFissionData = new G4NeutronHPFissionData();
+        else
+            HPFissionData = new StorkNeutronHPCSData('F', dirName);
+    }
     // Set the limits of the model
     nFissionModel->SetMinEnergy(theMin);
     nFissionModel->SetMaxEnergy(theMax);
 
     // Register both
-    aP->AddDataSet(theHPFissionData);
+    if(dirName == "DEFAULT")
+        aP->AddDataSet(theHPFissionData);
+    else
+        aP->AddDataSet(HPFissionData);
     aP->RegisterMe(nFissionModel);
 }
 
@@ -125,15 +161,21 @@ void StorkHPNeutronBuilder::Build(G4HadronCaptureProcess *aP)
     // Create the model and data
     if(nCaptureModel==0) nCaptureModel = new G4NeutronHPCapture();
     if(theHPCaptureData==0)
-        theHPCaptureData = new G4NeutronHPCaptureData();
-//        theHPCaptureData = new StorkNeutronHPCSData(maxOL,numIL,temperature,'C');
-
+    {
+        if(dirName == "DEFAULT")
+            theHPCaptureData = new G4NeutronHPCaptureData();
+        else
+            HPCaptureData = new StorkNeutronHPCSData('C', dirName);
+    }
     // Set the limits of the model
     nCaptureModel->SetMinEnergy(theMin);
     nCaptureModel->SetMaxEnergy(theMax);
 
     // Register both
-    aP->AddDataSet(theHPCaptureData);
+    if(dirName == "DEFAULT")
+        aP->AddDataSet(theHPCaptureData);
+    else
+        aP->AddDataSet(HPCaptureData);
     aP->RegisterMe(nCaptureModel);
 }
 
