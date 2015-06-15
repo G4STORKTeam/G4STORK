@@ -61,11 +61,16 @@
 
   StorkNeutronHPElementData::~StorkNeutronHPElementData()
   {
-    delete theFissionData;
-    delete theCaptureData;
-    delete theElasticData;
-    delete theInelasticData;
-    delete [] theIsotopeWiseData;
+    if(theFissionData)
+        delete theFissionData;
+    if(theCaptureData)
+        delete theCaptureData;
+    if(theElasticData)
+        delete theElasticData;
+    if(theInelasticData)
+        delete theInelasticData;
+    if(theIsotopeWiseData)
+        delete [] theIsotopeWiseData;
   }
 
   void StorkNeutronHPElementData::Init(G4Element * theElement)

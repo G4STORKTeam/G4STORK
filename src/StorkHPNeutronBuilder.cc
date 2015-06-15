@@ -77,7 +77,7 @@ void StorkHPNeutronBuilder::Build(G4HadronElasticProcess *aP)
 {
     // Create the model and data
     if(nElasticModel==0) nElasticModel = new G4NeutronHPElastic();
-    if(theHPElasticData==0)
+    if(theHPElasticData==0&&HPElasticData==0)
     {
         if(dirName == "DEFAULT")
             theHPElasticData = new G4NeutronHPElasticData();
@@ -106,7 +106,7 @@ void StorkHPNeutronBuilder::Build(G4NeutronInelasticProcess *aP)
 {
     // Create the model and data
     if(nInelasticModel==0) nInelasticModel = new G4NeutronHPInelastic();
-    if(theHPInelasticData==0)
+    if(theHPInelasticData==0&&HPInelasticData==0)
     {
         if(dirName == "DEFAULT")
             theHPInelasticData = new G4NeutronHPInelasticData();
@@ -133,7 +133,7 @@ void StorkHPNeutronBuilder::Build(G4HadronFissionProcess *aP)
 {
     // Create the model and data
     if(nFissionModel==0) nFissionModel = new G4NeutronHPFission();
-    if(theHPFissionData==0)
+    if(theHPFissionData==0&&HPFissionData==0)
     {
         if(dirName == "DEFAULT")
             theHPFissionData = new G4NeutronHPFissionData();
@@ -160,7 +160,7 @@ void StorkHPNeutronBuilder::Build(G4HadronCaptureProcess *aP)
 {
     // Create the model and data
     if(nCaptureModel==0) nCaptureModel = new G4NeutronHPCapture();
-    if(theHPCaptureData==0)
+    if(theHPCaptureData==0&&HPCaptureData==0)
     {
         if(dirName == "DEFAULT")
             theHPCaptureData = new G4NeutronHPCaptureData();

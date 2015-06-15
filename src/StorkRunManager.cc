@@ -422,7 +422,6 @@ G4bool StorkRunManager::UpdateCheckSourceConvergence()
 	for(i=0; i < totalConv; i++)
 	{
 		seSelect[i] = runData[6][runIDCounter - totalConv + i];
-		G4cout << G4endl << "seSelect[" << i << "]= " << seSelect[i] << G4endl;
 	}
 
 	// Find the mean of the selected shannon entropy
@@ -431,13 +430,8 @@ G4bool StorkRunManager::UpdateCheckSourceConvergence()
 		seMean += seSelect[i];
 	}
 
-	G4cout << G4endl << "before division seMean= " << seMean << G4endl;
-
 	// Divide mean by total
 	seMean /= G4double(totalConv);
-
-	G4cout << G4endl << "after division seMean= " << seMean << G4endl;
-	G4cout << G4endl << "totalConv= " << totalConv << G4endl;
 
 	// Check whether se values are within the convergence limit of the mean
 	for(i=0; i < totalConv; i++)
@@ -453,7 +447,6 @@ G4bool StorkRunManager::UpdateCheckSourceConvergence()
 	// Convergence has been achieved, set convergence flag
 	//sourceConverged = true;
 	nConv = runIDCounter;
-	G4cout << G4endl << "#### Souce Has Converged #####" << G4endl;
 	return true;
 }
 

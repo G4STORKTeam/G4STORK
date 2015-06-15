@@ -33,16 +33,26 @@ StorkNeutronProcessBuilder::StorkNeutronProcessBuilder(std::vector<G4int>* pBCVe
 StorkNeutronProcessBuilder::~StorkNeutronProcessBuilder()
 {
     // Delete the processes
-    delete theNeutronElastic;
-    delete theNeutronInelastic;
-    delete theNeutronCapture;
-    delete theNeutronFission;
-    delete theStepLimiter;
-    delete TheUserBoundaryCond;
-    delete TheZeroBoundaryCond;
-    delete theHighElasticModel;
-    delete theHighFissionModel;
-    delete theHighCaptureModel;
+    if(theNeutronElastic)
+        delete theNeutronElastic;
+    if(theNeutronInelastic)
+        delete theNeutronInelastic;
+    if(theNeutronCapture)
+        delete theNeutronCapture;
+    if(theNeutronFission)
+        delete theNeutronFission;
+    if(theStepLimiter)
+        delete theStepLimiter;
+    if(TheUserBoundaryCond)
+        delete TheUserBoundaryCond;
+    if(TheZeroBoundaryCond)
+        delete TheZeroBoundaryCond;
+    if(theHighElasticModel)
+        delete theHighElasticModel;
+    if(theHighFissionModel)
+        delete theHighFissionModel;
+    if(theHighCaptureModel)
+        delete theHighCaptureModel;
 
 }
 

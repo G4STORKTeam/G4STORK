@@ -49,8 +49,8 @@ StorkUserBCStepLimiter::StorkUserBCStepLimiter(std::vector<G4int>* PeriodicBC, s
         n2=GetNormal((*PeriodicBC)[i+1]);
         BCTransform[(*PeriodicBC)[i]]= new StorkPeriodicBCTransform(n1,n2);
         BCTransform[(*PeriodicBC)[i+1]]= new StorkPeriodicBCTransform(n2,n1);
-        zeroSides.erase(zeroSides.begin()+(*PeriodicBC)[i]-offset[G4int((*ReflectBC)[i])]);
-        for(G4int j=(*ReflectBC)[i]; j<6; j++)
+        zeroSides.erase(zeroSides.begin()+(*PeriodicBC)[i]-offset[G4int((*PeriodicBC)[i])]);
+        for(G4int j=(*PeriodicBC)[i]; j<6; j++)
         {
             offset[j]=offset[j]+1;
         }
@@ -172,6 +172,11 @@ StorkUserBCStepLimiter::PostStepDoIt(const G4Track &aTrack,
     }
 
     (BCTransform[side])->Transform(newPos, newMomDir);
+
+    if(newMomDir==G4ThreeVector(0.,0.,0.))
+    {
+        G4cout << "Bad Transform" << G4endl;
+    }
 
 	// Create a new dynamic particle from the parent dynamic particle
     G4DynamicParticle *newDynamicParticle = new G4DynamicParticle();
