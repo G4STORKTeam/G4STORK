@@ -102,7 +102,7 @@
             {
             //        G4cout <<" Init: normal case"<<G4endl;
                 G4int A = theElement->GetIsotope(i1)->GetN();
-                if(!theIsotopeWiseData[0].FileExists(A, Z, dirName+csDataNameVec[i]))
+                if(!theIsotopeWiseData[i1].FileExists(A, Z, dirName+csDataNameVec[i]))
                     break;
                 else if(i1==nIso-1)
                     check=true;
@@ -121,14 +121,14 @@
             dirName=dirName+csDataNameVec[index];
             elem->SetCSDataTemp(csDataTempVec[index]);
             for (G4int i1=0; i1<nIso; i1++)
-          {
-    //        G4cout <<" Init: normal case"<<G4endl;
-            G4int A = theElement->GetIsotope(i1)->GetN();
-            G4int M = theElement->GetIsotope(i1)->Getm();
-            G4double frac = theElement->GetRelativeAbundanceVector()[i1]/perCent;
-            //UpdateData(A, Z, count++, frac);
-            UpdateData(A, Z, M, count++, frac);
-          }
+            {
+                //        G4cout <<" Init: normal case"<<G4endl;
+                G4int A = theElement->GetIsotope(i1)->GetN();
+                G4int M = theElement->GetIsotope(i1)->Getm();
+                G4double frac = theElement->GetRelativeAbundanceVector()[i1]/perCent;
+                //UpdateData(A, Z, count++, frac);
+                UpdateData(A, Z, M, count++, frac);
+            }
         }
         else
         {
@@ -150,7 +150,7 @@
             {
             //        G4cout <<" Init: normal case"<<G4endl;
                 G4int A = theElement->GetIsotope(i1)->GetN();
-                if(!theIsotopeWiseData[0].FileExists(A, Z, dirName+csDataNameVec[i]))
+                if(!theIsotopeWiseData[i1].FileExists(A, Z, dirName+csDataNameVec[i]))
                     break;
                 else if(i1==nIso-1)
                     check=true;
@@ -226,7 +226,7 @@
         }
         for(G4int i=0; i<G4int(csDataTempVec.size()-1); i++)
         {
-            for(G4int j=i; j<G4int(csDataTempVec.size()); j++)
+            for(G4int j=i+1; j<G4int(csDataTempVec.size()); j++)
             {
                 if((temp-csDataTempVec[i])>(temp-csDataTempVec[j]))
                 {
@@ -309,10 +309,6 @@
             {
                 check = true;
                 startPos=endPos=index;
-            }
-            else if(index=='0')
-            {
-                return check;
             }
         }
         index--;

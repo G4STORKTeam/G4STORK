@@ -1,0 +1,30 @@
+# Example input for a SLOWPOKE reactor
+
+
+# Build a SLOPOKE reactor
+WORLD SLOPOKE
+
+# Number of runs, events per run and primaries per event
+NUM_RUNS 50
+NUM_EVENTS 50
+NUM_PRIMARY_PER_EVENT 1
+
+# Initial random seed
+SEED 2013092304
+
+# Produce delayed neutrons instantaneously
+INSTANT_DELAYED 1
+
+# Duration of each run (ns)
+RUN_DURATION 5e5
+
+# Initial neutron energy (MeV)
+NEUTRON_ENERGY 2.0
+
+# Output files 
+OUTPUT_LOG Log_SCWR.txt
+OUTPUT_SOURCE Src_SCWR.txt
+
+# Frequency of source output
+OUTPUT_SRC_FREQ 50
+
