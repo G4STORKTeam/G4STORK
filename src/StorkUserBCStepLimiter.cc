@@ -173,6 +173,11 @@ StorkUserBCStepLimiter::PostStepDoIt(const G4Track &aTrack,
 
     (BCTransform[side])->Transform(newPos, newMomDir);
 
+    if(newMomDir==G4ThreeVector(0.,0.,0.))
+    {
+        G4cout << "Bad Transform" << G4endl;
+    }
+
 	// Create a new dynamic particle from the parent dynamic particle
     G4DynamicParticle *newDynamicParticle = new G4DynamicParticle();
     *newDynamicParticle = *(aTrack.GetDynamicParticle());

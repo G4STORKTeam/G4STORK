@@ -146,33 +146,35 @@
         {
             filename = GetName(A, Z, DirName+processes[i], "/CrossSection");
             in = new std::ifstream ( filename.c_str() , std::ios::binary );
-            if(in->good())
-            {
-                in->close();
-                delete in;
-                return true;
-            }
-            else
+            if(!(in->good()))
             {
                 in->close();
                 delete in;
                 filename+=".z";
                 in = new std::ifstream ( filename.c_str() , std::ios::binary );
-                if(in->good())
+                if(!(in->good()))
                 {
                     in->close();
                     delete in;
-                    return true;
+                    return false;
+                }
+                else
+                {
+                    in->close();
+                    delete in;
                 }
             }
+            else
+            {
+                in->close();
+                delete in;
 
-            in->close();
-            delete in;
+            }
 
         }
     }
 
-    return false;
+    return true;
   }
 
   G4String StorkNeutronHPIsoData::GetName(G4int A, G4int Z, G4String base, G4String rest)

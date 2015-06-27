@@ -144,6 +144,7 @@ G4VPhysicalVolume* SCWRJasonConstructor::ConstructWorld()
 		// Create world solid
 		new G4Box("worldBox", encWorldDim[0]/2, encWorldDim[1]/2,
 				  encWorldDim[2]/2);
+
 		// Create the lattice cell solid
 		new G4Box("cellBox", reactorDim[0], reactorDim[1], reactorDim[2]);
 

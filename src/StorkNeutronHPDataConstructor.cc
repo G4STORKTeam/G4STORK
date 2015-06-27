@@ -44,7 +44,11 @@
 
   StorkNeutronHPDataConstructor::~StorkNeutronHPDataConstructor()
   {
-     for ( std::vector<StorkNeutronHPElementData*>::iterator it = theData.begin() ; it != theData.end() ; it++ ) delete *it;
+     for ( std::vector<StorkNeutronHPElementData*>::iterator it = theData.begin() ; it != theData.end() ; it++ )
+     {
+        if(*it)
+            delete *it;
+     }
      theData.clear();
   }
 
