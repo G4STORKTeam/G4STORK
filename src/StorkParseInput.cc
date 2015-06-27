@@ -68,6 +68,8 @@ StorkParseInput::~StorkParseInput()
 		delete logStream;
 		logStream = NULL;
 	}
+	if(theMPMan)
+        delete theMPMan;
 }
 
 G4bool StorkParseInput::FinalizeInputs()
@@ -354,10 +356,12 @@ G4bool StorkParseInput::ReadInputFile(G4String filename)
 			else if(keyWord=="C6Lattice")
 			{
 				reactorMat=6;
+
 				for(int i=0; i<6; i++)
                 {
                     periodicBC.push_back(i);
                 }
+
 				theWorldProps[MatPropPair(all,dimension)] = 28.575*cm;
 			}
 			else if(keyWord=="Cube")
@@ -394,6 +398,10 @@ G4bool StorkParseInput::ReadInputFile(G4String filename)
 
 			}
 			 else if(keyWord=="Test")
+			{
+
+			}
+			else if(keyWord=="Q_ZED2")
 			{
 
 			}

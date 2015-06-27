@@ -326,12 +326,10 @@ G4bool StorkNeutronSD::ProcessHits(G4Step *aStep, G4TouchableHistory*)
 				(*itr)->SetTrackStatus(fKillTrackAndSecondaries);
 			}
 			// this production here may be wrong, I am not sure why it is here
-			/*
             else
             {
                 //nProd++;
             }
-            */
 		}
 	}
 	else if(hitProcess == "StorkZeroBCStepLimiter")

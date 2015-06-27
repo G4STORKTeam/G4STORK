@@ -49,8 +49,8 @@ StorkUserBCStepLimiter::StorkUserBCStepLimiter(std::vector<G4int>* PeriodicBC, s
         n2=GetNormal((*PeriodicBC)[i+1]);
         BCTransform[(*PeriodicBC)[i]]= new StorkPeriodicBCTransform(n1,n2);
         BCTransform[(*PeriodicBC)[i+1]]= new StorkPeriodicBCTransform(n2,n1);
-        zeroSides.erase(zeroSides.begin()+(*PeriodicBC)[i]-offset[G4int((*ReflectBC)[i])]);
-        for(G4int j=(*ReflectBC)[i]; j<6; j++)
+        zeroSides.erase(zeroSides.begin()+(*PeriodicBC)[i]-offset[G4int((*PeriodicBC)[i])]);
+        for(G4int j=(*PeriodicBC)[i]; j<6; j++)
         {
             offset[j]=offset[j]+1;
         }

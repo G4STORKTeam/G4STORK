@@ -70,6 +70,8 @@ void StorkEventAction::EndOfEventAction(const G4Event *anEvent)
     StorkTallyHit *aTally = NULL;
 
     // Create a new event data container
+    if(eventData) delete eventData;
+    eventData = NULL;
     eventData = new StorkEventData();
     eventData->eventNum = anEvent->GetEventID();
 

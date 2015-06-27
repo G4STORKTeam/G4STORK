@@ -140,9 +140,10 @@ class StorkRunManager: public G4RunManager
         G4double convergenceLimit;		// Required convergence precision
         G4double *seSelect;				// Current selection of Shannon entropy
 										// being tested for convergence
-        G4int totalConv;
-        G4int convergeStop;				// Total number of SE values needed for
-										// convergence
+
+        G4int totalConv;                // Total number of SE values needed for
+                                        // convergence
+        G4int convergeStop;
 		G4int nConv;					// Run when convergence achieved
 
         // Class pointers

@@ -1,0 +1,39 @@
+# Example input for a SLOWPOKE reactor
+
+
+# Build a SLOPOKE reactor
+WORLD Test
+
+# Number of runs, events per run and primaries per event
+NUM_RUNS 100
+NUM_EVENTS 1
+NUM_PRIMARY_PER_EVENT 50
+
+# Initial random seed
+SEED 2013092304
+
+# Produce delayed neutrons instantaneously
+INSTANT_DELAYED 1
+
+# Duration of each run (ns)
+RUN_DURATION 5e5
+
+# Initial neutron energy (MeV)
+NEUTRON_ENERGY 2.0
+
+# Initial Source Position
+INITIAL_SOURCE_POS -300.0 -300.0 -2289.58
+
+# Uniform Distribution
+UNIFORM_DISTRIBUTION 1 G4Tubs
+
+# Output files 
+#OUTPUT_LOG Log_SLOWPOKE.txt
+OUTPUT_SOURCE Src_SLOWPOKE.txt
+
+# Frequency of source output
+OUTPUT_SRC_FREQ 50
+
+#Interpolation of the control rod height
+#INTERPOLATION_DATA controlrod position SLOWPOKERodHData.txt
+
