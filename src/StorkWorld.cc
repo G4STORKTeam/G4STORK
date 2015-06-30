@@ -23,6 +23,7 @@ Source code for the StorkWorld class.
 #include "SCWRConstructor.hh"
 #include "SCWRDopplerConstructor.hh"
 #include "SCWRJasonConstructor.hh"
+#include "Q_ZED2Constructor.hh"
 //#include "DebugConstructor.hh"
 #include "TestConstructor.hh"
 
@@ -40,6 +41,7 @@ StorkWorld::StorkWorld(const StorkParseInput* infile)
     AddWorld("SCWR", new SCWRConstructor());
     AddWorld("SCWRJason", new SCWRJasonConstructor());
     AddWorld("SCWRDoppler", new SCWRDopplerConstructor());
+    AddWorld("Q_ZED2", new Q_ZED2Constructor());
 //    AddWorld("Debug", new DebugConstructor());
     AddWorld("Test", new TestConstructor());
 
@@ -60,6 +62,7 @@ StorkWorld::StorkWorld()
     AddWorld("SCWR", new SCWRConstructor());
     AddWorld("SCWRJason", new SCWRJasonConstructor());
     AddWorld("SCWRDoppler", new SCWRDopplerConstructor());
+    AddWorld("Q_ZED2", new Q_ZED2Constructor());
 //    AddWorld("Debug", new DebugConstructor());
     AddWorld("Test", new TestConstructor());
 }

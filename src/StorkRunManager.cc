@@ -404,12 +404,16 @@ G4bool StorkRunManager::UpdateCheckSourceConvergence()
 {
 	// If the source has already converged, do nothing
 	if(sourceConverged) return true;
+	if(runIDCounter>=25)
+	{
+        G4cout << "Here we are" << G4endl;
+	}
 	//changed elseif so that it checks convergence when there is no known discontuinity in the shannon entropy instead of every totalConv runs has passed
-	else if((runIDCounter < totalConv) | (convergeStop > (runIDCounter-totalConv)) ) return false;
+	else if((runIDCounter < totalConv) || (convergeStop > (runIDCounter-totalConv)) ) return false;
 
 	// Local variables
 	G4int i=0;
-	G4double seMean;
+	G4double seMean=0.;
 
 
 	// Clear the seSelect array if full
@@ -438,8 +442,8 @@ G4bool StorkRunManager::UpdateCheckSourceConvergence()
 	{
 		if(convergenceLimit < std::abs(seSelect[i] - seMean))
 		{
+            G4cout << "\nRun " << i << " has a Shannon Entropy of " << seSelect[i] << " which differed from the mean of " << seMean << " beyond the limit of " << convergenceLimit << G4endl;
             convergeStop = runIDCounter - totalConv + i;
-            G4cout << G4endl << "Souce Convergence was stopped at run " << convergeStop << " which has a Shannon Entropy of " << seSelect[i] << "which differed from the mean value of " << seMean << G4endl;
 			return false;
 		}
 	}

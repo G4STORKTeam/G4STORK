@@ -148,7 +148,7 @@ G4VPhysicalVolume* SCWRJasonConstructor::ConstructWorld()
 		// Create the lattice cell solid
 		new G4Box("cellBox", reactorDim[0], reactorDim[1], reactorDim[2]);
 
-        //Create the pressure tube
+        // Create Pressure Tube
         new G4Tubs("pressTube", 0., pressTubeRadmax, pressTubeLen, 0.,
 					0.5*CLHEP::pi);
 
@@ -195,12 +195,10 @@ G4VPhysicalVolume* SCWRJasonConstructor::ConstructWorld()
 
 		new G4Tubs("inFuelCylH2", 0., inFuelRadmax, inFuelLen, -0.5*CLHEP::pi, 1.0*CLHEP::pi);
 
-        new G4Tubs("flowTube", 0., flowTubeRadmax, flowTubeLen, 0.,
-					0.5*CLHEP::pi);
+        new G4Tubs("flowTube", 0., flowTubeRadmax, flowTubeLen, 0., 0.5*CLHEP::pi);
 
 		// Create the central coolant
-		new G4Tubs("centralCoolantCyl", 0., centralCoolantRadmax, centralCoolantLen, 0.,
-					0.5*CLHEP::pi);
+		new G4Tubs("centralCoolantCyl", 0., centralCoolantRadmax, centralCoolantLen, 0., 0.5*CLHEP::pi);
 
 		geomChanged = false;
 	}

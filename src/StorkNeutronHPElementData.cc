@@ -41,7 +41,7 @@
      theInelasticData = new G4NeutronHPVector;
     theIsotopeWiseData = 0;
      theBuffer = NULL;
-     if(DirName.back()!='/')
+     if(DirName[G4int(DirName.size()-1)]!='/')
         DirName.push_back('/');
      dirName=DirName;
 
