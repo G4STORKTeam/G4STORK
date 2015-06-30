@@ -45,6 +45,58 @@ StorkNeutronHPCSData::~StorkNeutronHPCSData()
     delete theCrossSections;
 }
 
+G4bool StorkNeutronHPCSData::IsIsoApplicable( const G4DynamicParticle* dp ,
+                                                G4int /*Z*/ , G4int /*A*/ ,
+                                                const G4Element* /*elm*/ ,
+                                                const G4Material* /*mat*/ )
+{
+
+   G4double eKin = dp->GetKineticEnergy();
+   if ( eKin > GetMaxKinEnergy()
+     || eKin < GetMinKinEnergy()
+     || dp->GetDefinition() != G4Neutron::Neutron() ) return false;
+
+   return true;
+}
+
+
+/*G4bool StorkNeutronHPCSData::IsElementApplicable(const G4DynamicParticle*, G4int, const G4Material*)
+{
+  G4double eKin = dp->GetKineticEnergy();
+   if ( eKin > GetMaxKinEnergy()
+     || eKin < GetMinKinEnergy()
+     || dp->GetDefinition() != G4Neutron::Neutron() ) return false;
+
+   return true;
+}*/
+
+G4double StorkNeutronHPCSData::GetIsoCrossSection( const G4DynamicParticle* dp ,
+                                   G4int /*Z*/ , G4int /*A*/ ,
+                                   const G4Isotope* /*iso*/  ,
+                                   const G4Element* element ,
+                                   const G4Material* material )
+{
+   if ( dp->GetKineticEnergy() == ke_cache && element == element_cache &&  material == material_cache ) return xs_cache;
+
+   ke_cache = dp->GetKineticEnergy();
+   element_cache = element;
+   material_cache = material;
+   G4double xs = GetCrossSection( dp , element , material->GetTemperature() );
+   xs_cache = xs;
+   return xs;
+}
+
+/*G4double StorkNeutronHPCSData::GetElementCrossSection(const G4DynamicParticle* dynPart, G4int Z, const G4Material* mat)
+{
+  if ( dp->GetKineticEnergy() == ke_cache && mat == material_cache ) return xs_cache;
+
+   ke_cache = dp->GetKineticEnergy();
+   material_cache = mat;
+   G4double xs = GetCrossSection( dp , element , mat->GetTemperature() );
+   xs_cache = xs;
+   return xs;
+}*/
+
 
 void StorkNeutronHPCSData::BuildPhysicsTable(const G4ParticleDefinition& aP, G4String dirName)
 {
@@ -72,6 +124,9 @@ void StorkNeutronHPCSData::BuildPhysicsTable(const G4ParticleDefinition& aP, G4S
   G4NeutronHPFissionData *Fptr = NULL;
   G4NeutronHPElasticData *Eptr = NULL;
   G4NeutronHPInelasticData *Iptr = NULL;
+
+  ElementNames elemNames;
+  elemNames.SetElementNames();
 
   // make a PhysicsVector for each element
   static const G4ElementTable *theElementTable = G4Element::GetElementTable();
@@ -101,6 +156,8 @@ void StorkNeutronHPCSData::BuildPhysicsTable(const G4ParticleDefinition& aP, G4S
 
     theCrossSections->push_back(physVec);
   }
+
+  elemNames.ClearStore();
 }
 
 
@@ -183,6 +240,7 @@ GetCrossSection(const G4DynamicParticle* aP, const G4Element* elem, G4double aT)
 
     // prepare thermal nucleus
     G4Nucleus aNuc;
+    G4double xSection;
     G4double eps = 0.0001;
     G4double theA = anE->GetN();
     G4double theZ = anE->GetZ();
@@ -191,7 +249,7 @@ GetCrossSection(const G4DynamicParticle* aP, const G4Element* elem, G4double aT)
     eleMass = (G4NucleiProperties::GetNuclearMass(static_cast<G4int>(theA+eps),
 			static_cast<G4int>(theZ+eps))) / G4Neutron::Neutron()->GetPDGMass();
 
-    if(anE->GetCSDataTemp())
+    if(anE->GetCSDataTemp()==-1)
         return 0.;
 
 	// Find the temperature difference between the temperature the cross
@@ -201,7 +259,9 @@ GetCrossSection(const G4DynamicParticle* aP, const G4Element* elem, G4double aT)
 	// If there is no temperature difference, return the cross section directly
 	if(std::abs(tempDiff) <= 0.1)
 	{
-		return (*((*theCrossSections)(index))).GetValue(eKinetic, outOfRange);
+        xSection = (*((*theCrossSections)(index))).GetValue(eKinetic, outOfRange);
+        //G4cout << "For element Z: " << theZ << " A: " << theA << " for reaction type: " << reactionType << " at energy: " << eKinetic << " the cross-section is " << xSection << endl;
+		return xSection;
 	}
 
     // Declarations for averaging loop
@@ -221,8 +281,7 @@ GetCrossSection(const G4DynamicParticle* aP, const G4Element* elem, G4double aT)
 	//numIL = 1;
 
     // Find the Doppler broadened cross section
-    while(counter < numMaxOL &&
-		std::abs((buffer-result/(std::max(1,counter)*numIL))/buffer) > 0.03)
+    while((counter < numMaxOL) && (std::abs((buffer-result/(std::max(1,counter)*numIL))/std::max(1.0,buffer)) > 0.03))
     {
         if(counter)
             buffer = result/(numIL*counter);
@@ -257,5 +316,7 @@ GetCrossSection(const G4DynamicParticle* aP, const G4Element* elem, G4double aT)
         counter++;
     }
 
-    return result/(numIL*counter);
+    xSection = result/(numIL*counter);
+    //G4cout << "For element Z: " << theZ << " A: " << theA << " for reaction type: " << reactionType << " at energy: " << eKinetic << " the cross-section is " << xSection << endl;
+    return xSection;
 }

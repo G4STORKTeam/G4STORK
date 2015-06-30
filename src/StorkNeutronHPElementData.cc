@@ -102,7 +102,7 @@
             {
             //        G4cout <<" Init: normal case"<<G4endl;
                 G4int A = theElement->GetIsotope(i1)->GetN();
-                if(!theIsotopeWiseData[i1].FileExists(A, Z, dirName+csDataNameVec[i]))
+                if(!theIsotopeWiseData[0].FileExists(A, Z, dirName+csDataNameVec[i]))
                     break;
                 else if(i1==nIso-1)
                     check=true;
@@ -150,7 +150,7 @@
             {
             //        G4cout <<" Init: normal case"<<G4endl;
                 G4int A = theElement->GetIsotope(i1)->GetN();
-                if(!theIsotopeWiseData[i1].FileExists(A, Z, dirName+csDataNameVec[i]))
+                if(!theIsotopeWiseData[0].FileExists(A, Z, dirName+csDataNameVec[i]))
                     break;
                 else if(i1==nIso-1)
                     check=true;
@@ -294,7 +294,7 @@
     {
         if(check)
         {
-            if((name[index]>='0')&&(name[index]<='9'))
+            if(((name[index]>='0')&&(name[index]<='9'))||(name[index]>='.'))
             {
                 startPos--;
             }
@@ -307,6 +307,10 @@
         {
             if((name[index]>='0')&&(name[index]<='9'))
             {
+                if((index+1==int(name.size()))||!((name[index+1]=='k')||(name[index+1]=='K')))
+                {
+                    return false;
+                }
                 check = true;
                 startPos=endPos=index;
             }

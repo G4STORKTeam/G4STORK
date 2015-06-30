@@ -39,6 +39,7 @@ need for Doppler broadening which speeds up the calculation.
 #include "G4Nucleus.hh"
 #include "G4NucleiProperties.hh"
 #include "G4Electron.hh"
+#include "ElementNames.hh"
 
 
 class StorkNeutronHPCSData : public G4VCrossSectionDataSet
@@ -56,6 +57,19 @@ class StorkNeutronHPCSData : public G4VCrossSectionDataSet
 							  G4double /*AA*/)
             { return false;}
 
+        //G4bool IsElementApplicable(const G4DynamicParticle*, G4int, const G4Material*);
+        //G4double GetElementCrossSection(const G4DynamicParticle* dynPart, G4int Z, const G4Material* mat);
+        G4bool IsIsoApplicable( const G4DynamicParticle* dp ,
+                                                G4int /*Z*/ , G4int /*A*/ ,
+                                                const G4Element* /*elm*/ ,
+                                                const G4Material* /*mat*/ );
+
+        G4double GetIsoCrossSection( const G4DynamicParticle* dp ,
+                                   G4int /*Z*/ , G4int /*A*/ ,
+                                   const G4Isotope* /*iso*/  ,
+                                   const G4Element* element ,
+                                   const G4Material* material );
+
         G4double GetCrossSection(const G4DynamicParticle*, const G4Element*,
 								 G4double aT);
 
@@ -70,6 +84,11 @@ class StorkNeutronHPCSData : public G4VCrossSectionDataSet
         G4int numMaxOL;
         G4int numIL;
         char reactionType;
+
+        G4double ke_cache;
+        G4double xs_cache;
+        const G4Element* element_cache;
+        const G4Material* material_cache;
 };
 
 #endif // NEUTRONHPCSDATA_H

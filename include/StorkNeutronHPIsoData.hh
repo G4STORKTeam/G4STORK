@@ -39,6 +39,7 @@
 #include <stdlib.h>
 #include "G4NeutronHPVector.hh"
 #include "StorkNeutronHPNames.hh"
+#include "ElementNames.hh"
 
 
 class StorkNeutronHPIsoData
@@ -82,7 +83,6 @@ public:
     {return theChannelData;}
 
   G4bool FileExists(G4int A, G4int Z, G4String DirName );
-  G4String GetName(G4int A, G4int Z, G4String base, G4String rest);
 
   inline void FillChannelData(G4NeutronHPVector * aBuffer)
   {

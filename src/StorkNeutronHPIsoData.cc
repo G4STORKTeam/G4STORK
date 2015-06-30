@@ -38,12 +38,14 @@
   G4bool StorkNeutronHPIsoData::Init(G4int A, G4int Z, G4int M, G4double abun, G4String dirName, G4String aFSType)
   {
     theChannelData = 0;
+
     G4double abundance = abun/100.;
     G4String filename;
     G4bool result = true;
     //G4NeutronHPDataUsed aFile = theNames.GetName(A, Z, dirName, aFSType, result);
     G4NeutronHPDataUsed aFile = theNames.GetName(A, Z, M, dirName, aFSType, result);
     filename = aFile.GetName();
+    //G4cout << "File name: " << filename << " for Z: " << Z << " and A: " << A << endl;
 //    if(filename=="") return false;
    //std::ifstream theChannel(filename);
    std::istringstream theChannel(filename,std::ios::in);
@@ -139,13 +141,20 @@
   {
     G4String processes[4] = {"/Inelastic", "/Elastic", "/Capture", "/Fission"};
     G4String filename;
+    ElementNames elemNames;
+    std::stringstream stream;
     std::ifstream *in;
+
     for(G4int i =0; i<4; i++)
     {
         if(!((Z<88)&&(i==3)))
         {
-            filename = GetName(A, Z, DirName+processes[i], "/CrossSection");
-            in = new std::ifstream ( filename.c_str() , std::ios::binary );
+            stream.str("");
+            stream.clear();
+            stream << DirName << processes[i] << "/CrossSection/" << Z << "_" << A << "_" << elemNames.GetName(Z);
+            filename = stream.str();
+
+            in = new std::ifstream ( filename.c_str() );
             if(!(in->good()))
             {
                 in->close();
@@ -156,7 +165,36 @@
                 {
                     in->close();
                     delete in;
-                    return false;
+                    stream.str("");
+                    stream.clear();
+                    stream << DirName << processes[i] << "/CrossSection/" << Z << "_" << "nat" << "_" << elemNames.GetName(Z);
+                    filename = stream.str();
+
+                    in = new std::ifstream ( filename.c_str() );
+                    if(!(in->good()))
+                    {
+                        in->close();
+                        delete in;
+                        filename+=".z";
+                        in = new std::ifstream ( filename.c_str() , std::ios::binary );
+                        if(!(in->good()))
+                        {
+                            in->close();
+                            delete in;
+                            return false;
+                        }
+                        else
+                        {
+                            in->close();
+                            delete in;
+                        }
+                    }
+                    else
+                    {
+                        in->close();
+                        delete in;
+                    }
+
                 }
                 else
                 {
@@ -175,11 +213,5 @@
     }
 
     return true;
-  }
-
-  G4String StorkNeutronHPIsoData::GetName(G4int A, G4int Z, G4String base, G4String rest)
-  {
-    G4bool dbool;
-    return (theNames.GetName(A, Z, base, rest, dbool)).GetName();
   }
 
