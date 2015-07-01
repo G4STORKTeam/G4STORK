@@ -17,18 +17,32 @@ StorkMaterial::StorkMaterial(const G4String& name, G4double z,
                        G4State state, G4double temp, G4double pressure)
   : G4Material(name, z, a, density, state, temp, pressure)
 {
+    G4int index;
     G4Material* mat = dynamic_cast<G4Material*>(this);
     G4ElementVector* elemVec = const_cast<G4ElementVector*>(mat->GetElementVector());
 
     (*elemVec)[0]->GetElementTable()->pop_back();
 
     StorkElement* elem = new StorkElement(*((*elemVec)[0]));
-    elem->SetTemperature(temp);
-
     delete (*elemVec)[0];
-    (*elemVec)[0]=elem;
+    elem->SetTemperature(-1);
 
-    ((*elemVec)[0]->GetElementTable())->back()=elem;
+    if(elem->Exists(temp,index))
+    {
+        (*elemVec)[0]=((*((*elemVec)[0]->GetElementTable()))[index]);
+        (*elemVec)[0]->GetElementTable()->pop_back();
+        delete elem;
+    }
+    else
+    {
+        elem->SetTemperature(temp);
+        std::stringstream ss;
+        ss.str("");
+        ss<<'T'<<elem->GetTemperature()<<'k';
+        G4String elemName = name+ss.str();
+        elem->SetName(elemName);
+        ((*elemVec)[0]->GetElementTable())->back()=elem;
+    }
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -83,7 +97,11 @@ void StorkMaterial::AddElement(StorkElement* element, G4int nAtoms)
 
     if(element->GetTemperature()<0.)
     {
+        std::stringstream ss;
+        ss.str("");
+        ss<<'T'<<GetTemperature()<<'k';
         element->SetTemperature(GetTemperature());
+        element->SetName(element->GetName()+ss.str());
         mat->AddElement(dynamic_cast<G4Element*>(element), nAtoms);
     }
     else if(element->Exists(GetTemperature(),index))
@@ -95,11 +113,11 @@ void StorkMaterial::AddElement(StorkElement* element, G4int nAtoms)
         std::stringstream ss;
         ss.str("");
         ss<<'T'<<element->GetTemperature()<<'k';
-        G4String name = element->GetName(), check;
-        int pos=name.find_last_of('T'), pos2=name.find_last_of('k');
+        G4String elemName = element->GetName(), check;
+        int pos=elemName.find_last_of('T'), pos2=elemName.find_last_of('k');
 
         if((pos>0)&&(pos2>0)&&(pos2>pos))
-            check= name.substr(pos, pos2-pos+1);
+            check= elemName.substr(pos, pos2-pos+1);
 
         StorkElement *newElem = new StorkElement(*element);
 
@@ -108,7 +126,7 @@ void StorkMaterial::AddElement(StorkElement* element, G4int nAtoms)
             ss.str("");
             ss.clear();
             ss<<'T'<<GetTemperature()<<'k';
-            newElem->SetName(name.substr(0, name.find_last_of('T'))+ss.str());
+            newElem->SetName(elemName.substr(0, elemName.find_last_of('T'))+ss.str());
         }
         else
         {
@@ -149,11 +167,11 @@ void StorkMaterial::AddElement(StorkElement* element, G4double fraction)
         std::stringstream ss;
         ss.str("");
         ss<<'T'<<element->GetTemperature()<<'k';
-        G4String name = element->GetName(), check;
-        int pos=name.find_last_of('T'), pos2=name.find_last_of('k');
+        G4String elemName = element->GetName(), check;
+        int pos=elemName.find_last_of('T'), pos2=elemName.find_last_of('k');
 
         if((pos>0)&&(pos2>0)&&(pos2>pos))
-            check= name.substr(pos, pos2-pos+1);
+            check= elemName.substr(pos, pos2-pos+1);
 
         StorkElement *newElem = new StorkElement(*element);
 
@@ -162,7 +180,7 @@ void StorkMaterial::AddElement(StorkElement* element, G4double fraction)
             ss.str("");
             ss.clear();
             ss<<'T'<<GetTemperature()<<'k';
-            newElem->SetName(name.substr(0, name.find_last_of('T'))+ss.str());
+            newElem->SetName(elemName.substr(0, elemName.find_last_of('T'))+ss.str());
         }
         else
         {

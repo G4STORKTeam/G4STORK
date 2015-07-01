@@ -157,6 +157,13 @@ void StorkNeutronHPCSData::BuildPhysicsTable(const G4ParticleDefinition& aP, G4S
     theCrossSections->push_back(physVec);
   }
 
+    for(G4int i=0; i<theElementTable->size(); i++)
+    {
+        StorkElement *elem = dynamic_cast <StorkElement*> ((*theElementTable)[i]);
+        G4cout << "Element " << elem->GetName() << " has temperature " << elem->GetTemperature() << " and cross-section temperature " << elem->GetCSDataTemp() << G4endl;
+
+    }
+
   elemNames.ClearStore();
 }
 

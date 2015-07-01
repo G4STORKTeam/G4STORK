@@ -113,16 +113,45 @@ StorkElement::~StorkElement()
 
 bool StorkElement::Exists(G4double temp, G4int &index)
 {
+    std::stringstream ss;
+    ss.str("");
+    ss<<'T'<<GetTemperature()<<'k';
+    G4String elemName = GetName(), check;
+    int pos=elemName.find_last_of('T'), pos2=elemName.find_last_of('k');
+
+    if((pos>0)&&(pos2>0)&&(pos2>pos))
+        check= elemName.substr(pos, pos2-pos+1);
+
+    if(check==G4String(ss.str()))
+    {
+        elemName=elemName.substr(0, elemName.find_last_of('T'));
+    }
     G4ElementTable *elemTable = (dynamic_cast<G4Element*>(const_cast<StorkElement*>(this)))->GetElementTable();
     for(G4int i=0; i<elemTable->size(); i++)
     {
         StorkElement *elem = dynamic_cast <StorkElement*> ((*elemTable)[i]);
-        if(((elem->GetName()).substr(0,GetName().size())==GetName())&&(elem->GetTemperature()==temp))
+        if(elem)
         {
-            index=i;
-            return true;
-        }
+            ss.str("");
+            ss.clear();
+            ss<<'T'<<elem->GetTemperature()<<'k';
+            G4String elemName2 = elem->GetName(); check="";
+            pos=elemName2.find_last_of('T'); pos2=elemName2.find_last_of('k');
 
+            if((pos>0)&&(pos2>0)&&(pos2>pos))
+                check= elemName2.substr(pos, pos2-pos+1);
+
+            if(check==G4String(ss.str()))
+            {
+                elemName2=elemName2.substr(0, elemName2.find_last_of('T'));
+            }
+
+            if((elemName2==elemName)&&(elem->GetTemperature()==temp))
+            {
+                index=i;
+                return true;
+            }
+        }
     }
 
     return false;

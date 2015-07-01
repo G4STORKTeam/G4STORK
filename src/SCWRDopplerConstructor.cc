@@ -675,12 +675,12 @@ void SCWRDopplerConstructor::ConstructMaterials()
 						   2.73*kelvin, 3.e-18*pascal);
 
     // Create H20 material
-    H2O = new StorkMaterial("LightWater", 1.*g/cm3, 2, kStateLiquid);
+    H2O = new StorkMaterial("LightWater", 1.*g/cm3, 2, kStateLiquid, coolantTemp);
     H2O->AddElement(H,2);
     H2O->AddElement(Oxygen,1);
 
     // Create D20 material
-    D2O = new StorkMaterial("HeavyWater", 1.1*g/cm3, 2, kStateLiquid);
+    D2O = new StorkMaterial("HeavyWater", 1.1*g/cm3, 2, kStateLiquid, coolantTemp);
     D2O->AddElement(D,2);
     D2O->AddElement(Oxygen,1);
 
@@ -697,15 +697,13 @@ void SCWRDopplerConstructor::ConstructMaterials()
     Moderator->AddMaterial(H2O,0.167*perCent);
 
     //Create Moderator
-    ExelLiner = new StorkMaterial("ExelLiner", 1, 4, kStateSolid,
-							   1);
+    ExelLiner = new StorkMaterial("ExelLiner", 1, 4, kStateSolid, pressTubeTemp);
     ExelLiner->AddElement(Sn,3.5*perCent);
     ExelLiner->AddElement(Mo,0.8*perCent);
     ExelLiner->AddElement(Nb,0.8*perCent);
     ExelLiner->AddElement(Zr,94.9*perCent);
 
-    ZircSteel = new StorkMaterial("ZircSteel", 1, 10, kStateSolid,
-							   1);
+    ZircSteel = new StorkMaterial("ZircSteel", 1, 10, kStateSolid, outSheatheTemp);
     ZircSteel->AddElement(C,0.034*perCent);
     ZircSteel->AddElement(Si,0.51*perCent);
     ZircSteel->AddElement(Mn,0.74*perCent);
@@ -717,9 +715,9 @@ void SCWRDopplerConstructor::ConstructMaterials()
     ZircSteel->AddElement(Mo,0.51*perCent);
     ZircSteel->AddElement(Zr,0.59*perCent);
 
-    ZircHydrid = new StorkMaterial("ZircHydrid", 1, 2, kStateSolid, 1);
+    /*ZircHydrid = new StorkMaterial("ZircHydrid", 1, 2, kStateSolid, 1);
     ZircHydrid->AddElement(Zr,98.26*perCent);
-    ZircHydrid->AddElement(H,1.74*perCent);
+    ZircHydrid->AddElement(H,1.74*perCent);*/
 
     Insulator = new StorkMaterial("Insulator", insulatorDensity, 3, kStateSolid, insulatorTemp);
     Insulator->AddElement(Zr,66.63*perCent);
@@ -757,7 +755,6 @@ void SCWRDopplerConstructor::ConstructMaterials()
 
     CentralCoolant = new StorkMaterial("CentralCoolant", centralCoolantDensity, 1, kStateLiquid, centralCoolantTemp);
     CentralCoolant->AddMaterial(Coolant,  100*perCent);
-
 
     // Add materials to the map indexed by either ZA (format ZZAAA or ZZ)
     // For composite materials:  world is 0, heavy water is 1, UHW is 2
