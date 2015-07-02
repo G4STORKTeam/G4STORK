@@ -153,8 +153,7 @@ bool ElementNames::CheckName(string name, int Z)
     {
         if(name.substr((name.length()-2),2)==".z")
         {
-            name.pop_back();
-            name.pop_back();
+            name.erase((name.length()-2),2);
         }
 
         if(Z==0)
@@ -185,8 +184,7 @@ bool ElementNames::CheckName(string name)
     {
         if(name.substr((name.length()-2),2)==".z")
         {
-            name.pop_back();
-            name.pop_back();
+            name.erase((name.length()-2),2);
         }
 
         for(int i=0; i<119; i++)
@@ -195,7 +193,7 @@ bool ElementNames::CheckName(string name)
                 return true;
             else
             {
-                name[0] = name[0]*('A'-'a');
+                name[0] = name[0]+('A'-'a');
                 if(name == elementName[i])
                     return true;
             }
