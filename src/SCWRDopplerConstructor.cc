@@ -669,7 +669,23 @@ void SCWRDopplerConstructor::ConstructMaterials()
     Pu->AddIsotope(Pu240, 22.93*perCent);
     Pu->AddIsotope(Pu241, 15.15*perCent);
     Pu->AddIsotope(Pu242, 7.03*perCent);
+/*
+    G4ElementTable *tempTab = Pu->GetElementTable();
+    G4IsotopeVector *tempVec;
+    G4double *tempVecAbun;
+    for(int i=0; i<tempTab->size(); i++)
+    {
+        G4cout << "Element :" << ((*tempTab)[i])->GetName() << " contains " << ((*tempTab)[i])->GetNumberOfIsotopes() << " isotopes" << G4endl;
+        tempVec = ((*tempTab)[i])->GetIsotopeVector();
+        tempVecAbun = ((*tempTab)[i])->GetRelativeAbundanceVector();
+        for(int j=0; j<((*tempTab)[i])->GetNumberOfIsotopes(); j++)
+        {
+            G4cout << "Isotope :" << ((*tempVec)[j])->GetName() << " has abundance" << tempVecAbun[j] << G4endl;
+        }
+    }
 
+    G4cout << "\n### Element properties after they have been added to the materials ###\n" << G4endl;
+    */
     // Create the world material
     World = new StorkMaterial("Galactic", 1, 1, 1.e-25*g/cm3, kStateGas,
 						   2.73*kelvin, 3.e-18*pascal);
@@ -772,6 +788,41 @@ void SCWRDopplerConstructor::ConstructMaterials()
     matMap["FlowTube"] = FlowTube;
     matMap["CentralCoolant"] = CentralCoolant;
 
+/*
+    G4ElementVector *elemVec;
+    G4double *fracVec;
+
+    for(std::map<G4String,G4Material*>::iterator it=matMap.begin(); it!=matMap.end(); ++it)
+    {
+        G4cout << "\nMaterial :" << (it->second)->GetName() << " contains " << (it->second)->GetNumberOfElements() << " elements" << " and has a temperature " << (it->second)->GetTemperature() << G4endl;
+        elemVec=(it->second)->GetElementVector();
+        fracVec=(it->second)->GetFractionVector();
+        for(int j=0; j<(it->second)->GetNumberOfElements(); j++)
+        {
+            G4cout << "Element :" << ((*elemVec)[j])->GetName() << " has wt%" << fracVec[j] << G4endl;
+            G4cout << "Element :" << ((*elemVec)[j])->GetName() << " contains " << ((*elemVec)[j])->GetNumberOfIsotopes() << " isotopes" << " and has a temperature " << (dynamic_cast<StorkElement*>((*elemVec)[j]))->GetTemperature() << G4endl;
+            tempVec = ((*elemVec)[j])->GetIsotopeVector();
+            tempVecAbun = ((*elemVec)[j])->GetRelativeAbundanceVector();
+            for(int k=0; k<((*elemVec)[j])->GetNumberOfIsotopes(); k++)
+            {
+                G4cout << "Isotope :" << ((*tempVec)[k])->GetName() << " has abundance " << tempVecAbun[k] << G4endl;
+            }
+        }
+    }
+
+    G4cout << "\n### Element properties for the entire table ###\n" << G4endl;
+
+    for(int i=0; i<tempTab->size(); i++)
+    {
+        G4cout << "Element :" << ((*tempTab)[i])->GetName() << " contains " << ((*tempTab)[i])->GetNumberOfIsotopes() << " isotopes" << G4endl;
+        tempVec = ((*tempTab)[i])->GetIsotopeVector();
+        tempVecAbun = ((*tempTab)[i])->GetRelativeAbundanceVector();
+        for(int j=0; j<((*tempTab)[i])->GetNumberOfIsotopes(); j++)
+        {
+            G4cout << "Isotope :" << ((*tempVec)[j])->GetName() << " has abundance" << tempVecAbun[j] << G4endl;
+        }
+    }
+*/
     matChanged = false;
 
     return;

@@ -25,13 +25,15 @@ StorkMaterial::StorkMaterial(const G4String& name, G4double z,
 
     StorkElement* elem = new StorkElement(*((*elemVec)[0]));
     delete (*elemVec)[0];
+    //When a G4Element object is deleted it sets the pointer in the G4ElementTable in the index that the element was added to when it was created to zero, so we must reAdd the new StorkElement here
+    elem->GetElementTable()->back()=elem;
     elem->SetTemperature(-1);
 
     if(elem->Exists(temp,index))
     {
-        (*elemVec)[0]=((*((*elemVec)[0]->GetElementTable()))[index]);
-        (*elemVec)[0]->GetElementTable()->pop_back();
+        (*elemVec)[0]=(*((*elemVec)[0]->GetElementTable()))[index];
         delete elem;
+        (*elemVec)[0]->GetElementTable()->pop_back();
     }
     else
     {
@@ -41,7 +43,7 @@ StorkMaterial::StorkMaterial(const G4String& name, G4double z,
         ss<<'T'<<elem->GetTemperature()<<'k';
         G4String elemName = name+ss.str();
         elem->SetName(elemName);
-        ((*elemVec)[0]->GetElementTable())->back()=elem;
+        (*elemVec)[0]=elem;
     }
 }
 
