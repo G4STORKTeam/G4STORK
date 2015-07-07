@@ -326,20 +326,15 @@ G4bool StorkParseInput::ReadInputFile(G4String filename)
     //Goes through input file and extracts parameters need to initialize the simualtion
     while(infile.good())
     {
+
+        // Get keyword
+		infile >> std::ws >> keyWord;
+
     	// Skip empty or comment lines
-        while(infile.peek()=='#' || infile.peek()=='\n')
+        if((keyWord[0]=='#')||(keyWord==""))
         {
             infile.getline(line,256);
         }
-
-		// Get keyword
-		infile >> std::ws >> keyWord;
-
-		// Check if keyword is empty (if so skip line)
-		if(keyWord=="")
-		{
-			infile.getline(line,256);
-		}
 
 		// World selection
 		else if(keyWord=="WORLD")

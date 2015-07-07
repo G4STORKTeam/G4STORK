@@ -105,8 +105,8 @@ class SCWRDopplerConstructor: public StorkVWorldConstructor
         G4double linerDensity=7.9*g/cm3;
 
         G4double coolantTemp=681.79*kelvin;
-        G4double coolantDensity=0.14933*g/cm3;
-        //G4double coolantDensity=0.001*g/cm3;
+        //G4double coolantDensity=0.14933*g/cm3;
+        G4double coolantDensity=0.001*g/cm3;
 
         G4double inSheatheTemp=756.30*kelvin;
         G4double inSheatheDensity=7.9*g/cm3;
@@ -135,7 +135,8 @@ class SCWRDopplerConstructor: public StorkVWorldConstructor
         G4double flowTubeDensity=7.9*g/cm3;
 
         G4double centralCoolantTemp=633.79*kelvin;
-        G4double centralCoolantDensity=0.58756*g/cm3;
+        //G4double centralCoolantDensity=0.58756*g/cm3;
+        G4double centralCoolantDensity=0.001*g/cm3;
 };
 
 #endif // SCWRDopplerConstructor_H
