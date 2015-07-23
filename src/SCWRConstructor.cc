@@ -32,6 +32,72 @@ SCWRConstructor::SCWRConstructor()
     variablePropMap[MatPropPair(moderator,density)] = &moderatorDensity;
     variablePropMap[MatPropPair(all,dimension)] = &latticePitch;
     */
+    cellVisAtt=NULL;
+    pressTubeVisAtt=NULL;
+    outLinerVisAtt=NULL;
+    insulatorVisAtt=NULL;
+    linerVisAtt=NULL;
+    coolantVisAtt=NULL;
+    outSheatheVisAtt=NULL;
+    inSheatheVisAtt=NULL;
+    outFuelVisAtt=NULL;
+    inFuelVisAtt=NULL;
+    flowTubeVisAtt=NULL;
+    centralCoolantVisAtt=NULL;
+
+    // Stored variables from infile
+    latticePitch= 25.*cm;
+
+    moderatorTemp=342.8200*kelvin;
+    moderatorDensity=1.0851*g/cm3;
+
+    pressTubeTemp[0]=459.8850*kelvin;
+    pressTubeTemp[1]=441.8700*kelvin;
+    pressTubeTemp[2]=424.2300*kelvin;
+    pressTubeTemp[3]=406.9300*kelvin;
+
+    pressTubeDensity=6.52*g/cm3;
+
+    outLinerTemp=470.5200*kelvin;
+    outLinerDensity=6.52*g/cm3;
+
+    insulatorTemp[0]=643.2050*kelvin;
+    insulatorTemp[1]=592.4750*kelvin;
+    insulatorTemp[2]=543.2950*kelvin;
+    insulatorTemp[3]=495.5700*kelvin;
+    insulatorDensity=5.83*g/cm3;
+
+    linerTemp=670.2600*kelvin;
+    linerDensity=7.9*g/cm3;
+
+    coolantTemp=680.62*kelvin;
+    //coolantDensity=0.1512*g/cm3;
+    coolantDensity=0.001*g/cm3;
+
+    inSheatheTemp=768.8200*kelvin;
+    inSheatheDensity=7.9*g/cm3;
+
+    outSheatheTemp=780.9300*kelvin;
+    outSheatheDensity=7.9*g/cm3;
+
+    innerFuelTemp[0]=1389.8000*kelvin;
+    innerFuelTemp[1]=1288.6600*kelvin;
+    innerFuelTemp[2]=1118.6700*kelvin;
+    innerFuelTemp[3]=899.625*kelvin;
+    innerFuelDensity=9.91*g/cm3;
+
+    outerFuelTemp[0]=1625.0500*kelvin;
+    outerFuelTemp[1]=1480.2500*kelvin;
+    outerFuelTemp[2]=1241.7850*kelvin;
+    outerFuelTemp[3]=945.8700*kelvin;
+    outerFuelDensity=9.87*g/cm3;
+
+    flowTubeTemp=659.1800*kelvin;
+    flowTubeDensity=7.9*g/cm3;
+
+    centralCoolantTemp=629.0100*kelvin;
+    //centralCoolantDensity=0.6059*g/cm3;
+    centralCoolantDensity=0.001*g/cm3;
 }
 
 
@@ -39,20 +105,34 @@ SCWRConstructor::SCWRConstructor()
 SCWRConstructor::~SCWRConstructor()
 {
 	// Delete visualization attributes
-	delete cellVisAtt;
-    delete pressTubeVisAtt;
-    delete outLinerVisAtt;
-    delete insulatorVisAtt;
-    delete linerVisAtt;
-    delete coolantVisAtt;
-    delete outSheatheVisAtt;
-    delete inSheatheVisAtt;
-    delete outFuelVisAtt;
-    delete inFuelVisAtt;
+	if(cellVisAtt)
+        delete cellVisAtt;
+	if(pressTubeVisAtt)
+        delete pressTubeVisAtt;
+    if(outLinerVisAtt)
+        delete outLinerVisAtt;
+    if(insulatorVisAtt)
+        delete insulatorVisAtt;
+    if(linerVisAtt)
+        delete linerVisAtt;
+    if(coolantVisAtt)
+        delete coolantVisAtt;
+    if(outSheatheVisAtt)
+        delete outSheatheVisAtt;
+    if(inSheatheVisAtt)
+        delete inSheatheVisAtt;
+    if(outFuelVisAtt)
+        delete outFuelVisAtt;
+    if(inFuelVisAtt)
+        delete inFuelVisAtt;
+    //if(outFlowTubeVisAtt)
 //    delete outFlowTubeVisAtt;
-    delete flowTubeVisAtt;
+    if(flowTubeVisAtt)
+        delete flowTubeVisAtt;
+    //if(inFlowTubeVisAtt)
 //    delete inFlowTubeVisAtt;
-    delete centralCoolantVisAtt;
+    if(centralCoolantVisAtt)
+        delete centralCoolantVisAtt;
 }
 
 
@@ -106,9 +186,8 @@ G4VPhysicalVolume* SCWRConstructor::ConstructWorld()
     G4double inSheatheRadmax = 0.475*cm;
     G4double inSheatheLen = reactorDim[2];
 
-    G4int rings = 2;
     G4double ringRad[2] = {6.575*cm,5.4*cm};
-    G4double secondRingOffset = 0.*radian;
+    //G4double secondRingOffset = 0.*radian;
 
     // outer fuel dimensions
     G4double outFuel1Radmax = 0.11*cm;
@@ -514,6 +593,37 @@ G4VPhysicalVolume* SCWRConstructor::ConstructWorld()
 
 
     // Set visualization attributes
+
+    if(worldVisAtt)
+        delete worldVisAtt;
+    if(cellVisAtt)
+        delete cellVisAtt;
+	if(pressTubeVisAtt)
+        delete pressTubeVisAtt;
+    if(outLinerVisAtt)
+        delete outLinerVisAtt;
+    if(insulatorVisAtt)
+        delete insulatorVisAtt;
+    if(linerVisAtt)
+        delete linerVisAtt;
+    if(coolantVisAtt)
+        delete coolantVisAtt;
+    if(outSheatheVisAtt)
+        delete outSheatheVisAtt;
+    if(inSheatheVisAtt)
+        delete inSheatheVisAtt;
+    if(outFuelVisAtt)
+        delete outFuelVisAtt;
+    if(inFuelVisAtt)
+        delete inFuelVisAtt;
+    //if(outFlowTubeVisAtt)
+//    delete outFlowTubeVisAtt;
+    if(flowTubeVisAtt)
+        delete flowTubeVisAtt;
+    //if(inFlowTubeVisAtt)
+//    delete inFlowTubeVisAtt;
+    if(centralCoolantVisAtt)
+        delete centralCoolantVisAtt;
 
     worldVisAtt = new G4VisAttributes(G4Colour(1.,1.,1.));
     worldVisAtt->SetVisibility(false);

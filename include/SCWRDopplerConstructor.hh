@@ -87,56 +87,43 @@ class SCWRDopplerConstructor: public StorkVWorldConstructor
         G4VisAttributes *centralCoolantVisAtt;
 
         // Stored variables from infile
-        G4double latticePitch= 25.*cm;
+        G4double latticePitch;
 
-        G4double moderatorTemp=342.00*kelvin;
-        G4double moderatorDensity=1.0851*g/cm3;
+        G4double moderatorTemp;
+        G4double moderatorDensity;
 
-        G4double pressTubeTemp=416.74;
-        G4double pressTubeDensity=6.52*g/cm3;
+        G4double pressTubeTemp;
+        G4double pressTubeDensity;
 
-        G4double outLinerTemp=470.5200*kelvin;
-        G4double outLinerDensity=6.52*g/cm3;
+        G4double outLinerTemp;
+        G4double outLinerDensity;
 
-        G4double insulatorTemp=557.17*kelvin;
-        G4double insulatorDensity=5.83*g/cm3;
+        G4double insulatorTemp;
+        G4double insulatorDensity;
 
-        G4double linerTemp=671.80*kelvin;
-        G4double linerDensity=7.9*g/cm3;
+        G4double linerTemp;
+        G4double linerDensity;
 
-        G4double coolantTemp=681.79*kelvin;
-        //G4double coolantDensity=0.14933*g/cm3;
-        G4double coolantDensity=0.001*g/cm3;
+        G4double coolantTemp;
+        G4double coolantDensity;
 
-        G4double inSheatheTemp=756.30*kelvin;
-        G4double inSheatheDensity=7.9*g/cm3;
+        G4double inSheatheTemp;
+        G4double inSheatheDensity;
 
-        G4double outSheatheTemp=756.30*kelvin;
-        G4double outSheatheDensity=7.9*g/cm3;
+        G4double outSheatheTemp;
+        G4double outSheatheDensity;
 
-        G4double innerFuelTemp=1420.62;
-        G4double innerFuelDensity=9.91*g/cm3;
+        G4double innerFuelTemp;
+        G4double innerFuelDensity;
 
-        G4double outerFuelTemp=1420.62;
-        G4double outerFuelDensity=9.87*g/cm3;
+        G4double outerFuelTemp;
+        G4double outerFuelDensity;
 
-//        G4double outFlowTubeTemp=420.00+273.15;
-//        G4double outFlowTubeDensity=7.9*g/cm3;
-//
-//        G4double flowTubeTemp[2]={379.00+273.15, 406.42+273.15};
-//        G4double flowTubeDensity=5.64*g/cm3;
-//
-//        G4double inFlowTubeTemp=361.76+273.15;
-//        G4double inFlowTubeDensity=7.9*g/cm3;
+        G4double flowTubeTemp;
+        G4double flowTubeDensity;
 
-// AECL Modification, need a new temperature analysis
-
-        G4double flowTubeTemp=657.79*kelvin;
-        G4double flowTubeDensity=7.9*g/cm3;
-
-        G4double centralCoolantTemp=633.79*kelvin;
-        //G4double centralCoolantDensity=0.58756*g/cm3;
-        G4double centralCoolantDensity=0.001*g/cm3;
+        G4double centralCoolantTemp;
+        G4double centralCoolantDensity;
 };
 
 #endif // SCWRDopplerConstructor_H

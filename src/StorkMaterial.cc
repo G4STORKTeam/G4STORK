@@ -223,11 +223,11 @@ for (size_t elm=0; elm<mat2->GetNumberOfElements(); ++elm)
         std::stringstream ss;
         ss.str("");
         ss<<'T'<<element->GetTemperature()<<'k';
-        G4String name = element->GetName(), check;
-        int pos=name.find_last_of('T'), pos2=name.find_last_of('k');
+        G4String elemName = element->GetName(), check;
+        int pos=elemName.find_last_of('T'), pos2=elemName.find_last_of('k');
 
         if((pos>0)&&(pos2>0)&&(pos2>pos))
-            check= name.substr(pos, pos2-pos+1);
+            check= elemName.substr(pos, pos2-pos+1);
 
         StorkElement *newElem = new StorkElement(*element);
 
@@ -236,7 +236,7 @@ for (size_t elm=0; elm<mat2->GetNumberOfElements(); ++elm)
             ss.str("");
             ss.clear();
             ss<<'T'<<GetTemperature()<<'k';
-            newElem->SetName(name.substr(0, name.find_last_of('T'))+ss.str());
+            newElem->SetName(elemName.substr(0, elemName.find_last_of('T'))+ss.str());
         }
         else
         {
@@ -259,9 +259,9 @@ mat->AddMaterial(temp, fraction);
 StorkMaterial::StorkMaterial(StorkMaterial& right): G4Material(right.GetName(), right.GetDensity(),
                        right.GetNumberOfElements(), right.GetState(), right.GetTemperature(), right.GetPressure())
 {
-    G4ElementVector* elemVec = right.GetElementVector();
-    G4double* fracVec = right.GetFractionVector();
-    for(G4int i=0; i<right.GetNumberOfElements(); i++)
+    G4ElementVector* elemVec = const_cast<G4ElementVector*> (right.GetElementVector());
+    G4double* fracVec = const_cast<G4double*> (right.GetFractionVector());
+    for(G4int i=0; i<int(right.GetNumberOfElements()); i++)
     {
         AddElement(dynamic_cast<StorkElement*>((*elemVec)[i]), fracVec[i]);
     }
@@ -282,9 +282,9 @@ const StorkMaterial& StorkMaterial::operator=(StorkMaterial& right)
         StorkMaterial(right.GetName(), right.GetDensity(), right.GetNumberOfElements(), right.GetState(), right.GetTemperature(), right.GetPressure());
         G4cout << "### The StorkMaterial this pointer points to " << this << " ###" << G4endl;
         G4cout << "### The new material name is " << this->GetName() << " ###" << G4endl;
-        G4ElementVector* elemVec = right.GetElementVector();
-        G4double* fracVec = right.GetFractionVector();
-        for(G4int i=0; i<right.GetNumberOfElements(); i++)
+        G4ElementVector* elemVec = const_cast<G4ElementVector*> (right.GetElementVector());
+        G4double* fracVec = const_cast<G4double*> (right.GetFractionVector());
+        for(G4int i=0; i<int(right.GetNumberOfElements()); i++)
         {
             AddElement(dynamic_cast<StorkElement*>((*elemVec)[i]), fracVec[i]);
         }

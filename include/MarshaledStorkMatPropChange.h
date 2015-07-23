@@ -38,8 +38,8 @@ MarshaledStorkMatPropChange(StorkMatPropChange* objptr) : MarshaledObj() {
     marshal3();
 }
 
-MarshaledStorkMatPropChange(void *buf, char isUnmarshaling = 'u')
-: MarshaledObj(buf, isUnmarshaling) {
+MarshaledStorkMatPropChange(void *buf, char isUnmarshalingCheck = 'u')
+: MarshaledObj(buf, isUnmarshalingCheck) {
     msh_isUnmarshalDone = false;
 }
 

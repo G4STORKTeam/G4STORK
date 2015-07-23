@@ -72,7 +72,8 @@ class StorkNeutronHPCSData : public G4VCrossSectionDataSet
 
         G4double GetCrossSection(const G4DynamicParticle*, const G4Element*,
 								 G4double aT);
-
+        void BuildPhysicsTable(const G4ParticleDefinition&)
+        {};
         void BuildPhysicsTable(const G4ParticleDefinition&, G4String dirName);
         void DumpPhysicsTable(const G4ParticleDefinition&);
 

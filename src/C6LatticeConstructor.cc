@@ -34,6 +34,14 @@ C6LatticeConstructor::C6LatticeConstructor()
     variablePropMap[MatPropPair(moderator,temperature)] = &moderatorTemp;
     variablePropMap[MatPropPair(moderator,density)] = &moderatorDensity;
     variablePropMap[MatPropPair(all,dimension)] = &latticePitch;
+
+    modVisAtt=NULL;
+    fuelVisAtt=NULL;
+    cTubeVisAtt=NULL;
+    pressTubeVisAtt=NULL;
+    gasAnnVisAtt=NULL;
+    coolantVisAtt=NULL;
+    sheatheVisAtt=NULL;
 }
 
 
@@ -41,13 +49,20 @@ C6LatticeConstructor::C6LatticeConstructor()
 C6LatticeConstructor::~C6LatticeConstructor()
 {
 	// Delete visualization attributes
-    delete modVisAtt;
-    delete fuelVisAtt;
-    delete cTubeVisAtt;
-    delete pressTubeVisAtt;
-    delete gasAnnVisAtt;
-    delete coolantVisAtt;
-    delete sheatheVisAtt;
+	if(modVisAtt)
+        delete modVisAtt;
+    if(fuelVisAtt)
+        delete fuelVisAtt;
+    if(cTubeVisAtt)
+        delete cTubeVisAtt;
+    if(pressTubeVisAtt)
+        delete pressTubeVisAtt;
+    if(gasAnnVisAtt)
+        delete gasAnnVisAtt;
+    if(coolantVisAtt)
+        delete coolantVisAtt;
+    if(sheatheVisAtt)
+        delete sheatheVisAtt;
 }
 
 
@@ -252,6 +267,23 @@ G4VPhysicalVolume* C6LatticeConstructor::ConstructWorld()
 
 
     // Set visualization attributes
+
+    if(worldVisAtt)
+        delete worldVisAtt;
+    if(modVisAtt)
+        delete modVisAtt;
+    if(fuelVisAtt)
+        delete fuelVisAtt;
+    if(cTubeVisAtt)
+        delete cTubeVisAtt;
+    if(pressTubeVisAtt)
+        delete pressTubeVisAtt;
+    if(gasAnnVisAtt)
+        delete gasAnnVisAtt;
+    if(coolantVisAtt)
+        delete coolantVisAtt;
+    if(sheatheVisAtt)
+        delete sheatheVisAtt;
 
     worldVisAtt = new G4VisAttributes(G4Colour(1.,1.,1.));
     worldVisAtt->SetVisibility(false);

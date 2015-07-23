@@ -21,33 +21,77 @@ outSmallBeamLogical(0), outLargeBeamLogical(0), alumShellLogical(0), cellLogical
     variablePropMap[MatPropPair(moderator,density)] = &moderatorDensity;
     variablePropMap[MatPropPair(all,dimension)] = &latticePitch;
 
+    cellVisAtt=NULL;
+	alumShellVisAtt=NULL;
+	D2OContainerAtt=NULL;
+	insAlumVisAtt=NULL;
+	insBeamVisAtt=NULL;
+	outSmallAlumVisAtt=NULL;
+	outLargeAlumVisAtt=NULL;
+	cadLinTubeVisAtt=NULL;
+	outSmallBeamVisAtt=NULL;
+	outLargeBeamVisAtt=NULL;
+	ReflectorAtt=NULL;
+	D2OAtt=NULL;
+	LowerPinAtt=NULL;
+	WaterHolesUpperAtt=NULL;
+	WaterHolesLowerAtt=NULL;
+	ZirconiumAtt=NULL;
+	AirGapAtt=NULL;
+	FuelRodAtt=NULL;
+	contRodZirVisAtt=NULL;
+	contRodAlumVisAtt=NULL;
+	contRodCadVisAtt=NULL;
+	contRodCentVisAtt=NULL;
 }
 
 GuillaumeConstructor::~GuillaumeConstructor()
 {
 	// Delete visualization attributes
-	delete ZirconiumAtt;
-	delete WaterHolesLowerAtt;
-	delete WaterHolesUpperAtt;
-	delete AirGapAtt;
-	delete FuelRodAtt;
-	delete LowerPinAtt;
-	delete ReflectorAtt;
-	delete D2OContainerAtt;
-	delete D2OAtt;
-    delete contRodZirVisAtt;
-    delete contRodAlumVisAtt;
-    delete contRodCadVisAtt;
-    delete contRodCentVisAtt;
-    delete insAlumVisAtt;
-    delete insBeamVisAtt;
-    delete outSmallAlumVisAtt;
-    delete outLargeAlumVisAtt;
-    delete cadLinTubeVisAtt;
-    delete outSmallBeamVisAtt;
-    delete outLargeBeamVisAtt;
-    delete alumShellVisAtt;
-    delete cellVisAtt;
+	if(ZirconiumAtt)
+        delete ZirconiumAtt;
+	if(WaterHolesLowerAtt)
+        delete WaterHolesLowerAtt;
+	if(WaterHolesUpperAtt)
+        delete WaterHolesUpperAtt;
+	if(AirGapAtt)
+        delete AirGapAtt;
+	if(FuelRodAtt)
+        delete FuelRodAtt;
+	if(LowerPinAtt)
+        delete LowerPinAtt;
+	if(ReflectorAtt)
+        delete ReflectorAtt;
+	if(D2OContainerAtt)
+        delete D2OContainerAtt;
+	if(D2OAtt)
+        delete D2OAtt;
+	if(contRodZirVisAtt)
+        delete contRodZirVisAtt;
+    if(contRodAlumVisAtt)
+        delete contRodAlumVisAtt;
+    if(contRodCadVisAtt)
+        delete contRodCadVisAtt;
+    if(contRodCentVisAtt)
+        delete contRodCentVisAtt;
+    if(insAlumVisAtt)
+        delete insAlumVisAtt;
+    if(insBeamVisAtt)
+        delete insBeamVisAtt;
+    if(outSmallAlumVisAtt)
+        delete outSmallAlumVisAtt;
+    if(outLargeAlumVisAtt)
+        delete outLargeAlumVisAtt;
+    if(cadLinTubeVisAtt)
+        delete cadLinTubeVisAtt;
+    if(outSmallBeamVisAtt)
+        delete outSmallBeamVisAtt;
+    if(outLargeBeamVisAtt)
+        delete outLargeBeamVisAtt;
+    if(alumShellVisAtt)
+        delete alumShellVisAtt;
+    if(cellVisAtt)
+        delete cellVisAtt;
 }
 
 // ConstructWorld()
@@ -495,6 +539,54 @@ G4VPhysicalVolume* GuillaumeConstructor::ConstructWorld()
 
     /* This is where all the visualizaion attributes are made */
     // World Visualization
+
+    if(worldVisAtt)
+        delete worldVisAtt;
+    if(ZirconiumAtt)
+        delete ZirconiumAtt;
+	if(WaterHolesLowerAtt)
+        delete WaterHolesLowerAtt;
+	if(WaterHolesUpperAtt)
+        delete WaterHolesUpperAtt;
+	if(AirGapAtt)
+        delete AirGapAtt;
+	if(FuelRodAtt)
+        delete FuelRodAtt;
+	if(LowerPinAtt)
+        delete LowerPinAtt;
+	if(ReflectorAtt)
+        delete ReflectorAtt;
+	if(D2OContainerAtt)
+        delete D2OContainerAtt;
+	if(D2OAtt)
+        delete D2OAtt;
+	if(contRodZirVisAtt)
+        delete contRodZirVisAtt;
+    if(contRodAlumVisAtt)
+        delete contRodAlumVisAtt;
+    if(contRodCadVisAtt)
+        delete contRodCadVisAtt;
+    if(contRodCentVisAtt)
+        delete contRodCentVisAtt;
+    if(insAlumVisAtt)
+        delete insAlumVisAtt;
+    if(insBeamVisAtt)
+        delete insBeamVisAtt;
+    if(outSmallAlumVisAtt)
+        delete outSmallAlumVisAtt;
+    if(outLargeAlumVisAtt)
+        delete outLargeAlumVisAtt;
+    if(cadLinTubeVisAtt)
+        delete cadLinTubeVisAtt;
+    if(outSmallBeamVisAtt)
+        delete outSmallBeamVisAtt;
+    if(outLargeBeamVisAtt)
+        delete outLargeBeamVisAtt;
+    if(alumShellVisAtt)
+        delete alumShellVisAtt;
+    if(cellVisAtt)
+        delete cellVisAtt;
+
     worldVisAtt = new G4VisAttributes(G4Colour(0.,0.,210.0/255.0));
     worldVisAtt->SetVisibility(false);
     worldLogical->SetVisAttributes(worldVisAtt);

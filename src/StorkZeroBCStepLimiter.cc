@@ -116,7 +116,7 @@ StorkZeroBCStepLimiter::IsApplicable(const G4ParticleDefinition &particle)
 // ASSUMES A SYMMETRIC VOLUME
 G4VParticleChange*
 StorkZeroBCStepLimiter::PostStepDoIt(const G4Track &aTrack,
-                                         const G4Step &aStep)
+                                         const G4Step& /*aStep*/)
 {
     aParticleChange.Initialize(aTrack);
     //aParticleChange.ProposeTrackStatus(fStopAndKill);

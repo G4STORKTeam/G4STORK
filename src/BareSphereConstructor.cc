@@ -23,6 +23,8 @@ BareSphereConstructor::BareSphereConstructor()
     matDensity[e_UHW] = -1.0*g/cm3;
     matDensity[e_Godiva] = 18.7398*g/cm3;
     matDensity[e_U235] = 18.75*g/cm3;
+
+    reactorVisAtt=NULL;
 }
 
 
@@ -30,7 +32,8 @@ BareSphereConstructor::BareSphereConstructor()
 BareSphereConstructor::~BareSphereConstructor()
 {
     // Delete visualization attributes
-    delete reactorVisAtt;
+    if(reactorVisAtt)
+        delete reactorVisAtt;
 }
 
 
@@ -134,6 +137,11 @@ G4VPhysicalVolume* BareSphereConstructor::ConstructWorld()
 
 
     // Set visualization attributes
+
+    if(worldVisAtt)
+        delete worldVisAtt;
+    if(reactorVisAtt)
+        delete reactorVisAtt;
 
     worldVisAtt = new G4VisAttributes(G4Colour(1.,1.,1.));
     worldVisAtt->SetVisibility(false);

@@ -28,6 +28,7 @@ int main(int argc, char **argv)
 {
 	// Set mode to no tracer messages
 	TOPC_OPT_trace = 0;
+	//TOPC_OPT_safety=19;
 	// added this for SCWR Sim should remove later
 	TOPC_OPT_slave_timeout=104000;
 

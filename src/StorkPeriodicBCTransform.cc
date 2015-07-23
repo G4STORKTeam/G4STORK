@@ -27,13 +27,18 @@ void StorkPeriodicBCTransform::InitializeTransform(G4ThreeVector n1, G4ThreeVect
     // make n2 point inside the world volume;
     n2=-1*n2;
 
-    G4int index;
+    G4int index=-1;
     for(G4int i=0; i<3; i++)
     {
         if(n2[i]!=0)
         {
             index=i;
         }
+    }
+    if(index==-1)
+    {
+        G4cout << "\n Error: Periodic Boundary was given a zero vector for n2" << G4endl;
+        return;
     }
 
     for(G4int i=0; i<3; i++)

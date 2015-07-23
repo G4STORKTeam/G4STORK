@@ -32,9 +32,9 @@ TOPC_BUF StorkParallelRunManager::myDoEvent(void *input)
 }
 
 TOPC_ACTION StorkParallelRunManager::myCheckEventResult(void *input,
-                                                        void *output)
+                                                        void *outputData)
 {
-	return myRunManager->CheckEventResult(input,output);
+	return myRunManager->CheckEventResult(input,outputData);
 }
 
 
@@ -262,6 +262,10 @@ TOPC_BUF StorkParallelRunManager::DoEvent(void *input)
 		RunInitialization();
 	}
 
+	//newly added
+	if(primaryData)
+        delete primaryData;
+
     // Run the current event
     currentEvent = GenerateEvent(eventID);
     eventManager->ProcessOneEvent(currentEvent);
@@ -283,10 +287,10 @@ TOPC_BUF StorkParallelRunManager::DoEvent(void *input)
 // CheckEventResult()
 // Updates the run with the results of the event.
 // Executes on the master.
-TOPC_ACTION StorkParallelRunManager::CheckEventResult(void *input, void *output)
+TOPC_ACTION StorkParallelRunManager::CheckEventResult(void *input, void *outputData)
 {
     if(input == NULL) return NO_ACTION;
-    else if(output == NULL)
+    else if(outputData == NULL)
     {
 	G4cerr << "Master Check: No output for event" << G4endl;
 	return NO_ACTION;
@@ -296,10 +300,14 @@ TOPC_ACTION StorkParallelRunManager::CheckEventResult(void *input, void *output)
 	if(recMED) delete recMED;
 
     // Recreate the marshalled event data
-	recMED = new MarshaledStorkEventData(output);
+	recMED = new MarshaledStorkEventData(outputData);
 
     // Tally the event data in the run action
-    runAction->TallyEvent(recMED->unmarshal());
+    //newly added
+    StorkEventData *eventData = recMED->unmarshal();
+    runAction->TallyEvent(eventData);
+    //newly added
+    delete eventData;
 
     return NO_ACTION;
 }

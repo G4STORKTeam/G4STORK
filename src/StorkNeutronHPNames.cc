@@ -368,7 +368,7 @@ if(getenv("NeutronHPNames"))    G4cout <<"HPWD 4b2c "<<*theName<<G4endl;
              }
              else
              {
-                if ( verboseLevel > 0 ) {
+                if ( verboseLevel > 1 ) {
                    G4cout << "NeutronHP: " << reac << " file for Z = " << Z << ", A = " << A << " is not found and NeutronHP will use " << result.GetName() << G4endl;
                 }
              }

@@ -23,6 +23,8 @@ InfiniteUniformLatticeConstructor::InfiniteUniformLatticeConstructor()
     u235Conc = 0.05*perCent;
     hwConc = 90.0*perCent;
     latticePitch = 100*cm;
+
+    reactorVisAtt=NULL;
 }
 
 
@@ -30,7 +32,8 @@ InfiniteUniformLatticeConstructor::InfiniteUniformLatticeConstructor()
 InfiniteUniformLatticeConstructor::~InfiniteUniformLatticeConstructor()
 {
     // Delete visualization attributes
-    delete reactorVisAtt;
+    if(reactorVisAtt)
+        delete reactorVisAtt;
 }
 
 
@@ -123,6 +126,12 @@ G4VPhysicalVolume* InfiniteUniformLatticeConstructor::ConstructWorld()
 	reactorLogical->SetSensitiveDetector( sDReactor );
 
     // Set visualization attributes
+
+    if(worldVisAtt)
+        delete worldVisAtt;
+    if(reactorVisAtt)
+        delete reactorVisAtt;
+
     worldVisAtt = new G4VisAttributes(G4Colour(1.,1.,1.));
     worldVisAtt->SetVisibility(false);
     worldLogical->SetVisAttributes(worldVisAtt);

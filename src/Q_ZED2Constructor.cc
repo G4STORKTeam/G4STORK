@@ -20,6 +20,20 @@ Q_ZED2Constructor::Q_ZED2Constructor()
 	// Set default values for member variables
    	matTemp = 299.51*kelvin;
 
+    vesselVisAtt=NULL;
+    tank1VisATT=NULL;
+    ModVisAtt=NULL;
+    fuelA1VisATT=NULL;
+    fuelB1VisATT=NULL;
+    sheathA1VisATT=NULL;
+    sheathB1VisATT=NULL;
+    Air1VisAtt=NULL;
+    Coolant1VisAtt=NULL;
+    Pressure1VisAtt=NULL;
+    GasAnn1VisAtt=NULL;
+    Calandria1VisAtt=NULL;
+    EndPlate2VisATT=NULL;
+    airTubeVisAtt=NULL;
 }
 
 
@@ -27,19 +41,33 @@ Q_ZED2Constructor::Q_ZED2Constructor()
 Q_ZED2Constructor::~Q_ZED2Constructor()
 {
     // Delete visualization attributes
+    if(vesselVisAtt)
         delete vesselVisAtt;
+    if(tank1VisATT)
         delete tank1VisATT;
+    if(ModVisAtt)
         delete ModVisAtt;
+    if(fuelA1VisATT)
         delete fuelA1VisATT;
+    if(fuelB1VisATT)
         delete fuelB1VisATT;
+    if(sheathA1VisATT)
         delete sheathA1VisATT;
+    if(sheathB1VisATT)
         delete sheathB1VisATT;
+    if(Air1VisAtt)
         delete Air1VisAtt;
+    if(Coolant1VisAtt)
         delete Coolant1VisAtt;
+    if(Pressure1VisAtt)
         delete Pressure1VisAtt;
+    if(GasAnn1VisAtt)
         delete GasAnn1VisAtt;
+    if(Calandria1VisAtt)
         delete Calandria1VisAtt;
+    if(EndPlate2VisATT)
         delete EndPlate2VisATT;
+    if(airTubeVisAtt)
         delete airTubeVisAtt;
 
 
@@ -465,8 +493,8 @@ G4VPhysicalVolume* Q_ZED2Constructor::ConstructWorld()
                     //G4cout << "Endplate1  "<<(-Coolant1Dim[2]+EndPlate2[2])+l*(49.51*cm)<< G4endl;
                     new G4PVPlacement(0, EP1, logicEndPlate1Mod,"EndPlate1Physical1Mod ",logicCoolant1Mod,0,0);
                     // Make the end plates 2
-                    G4ThreeVector EP2(0,0,(-FuelinModH/2.+EndPlate2[2])+l*(2.*EndPlate2[2])+(l+1)*(2.*SheathADim1[2]+2.*EndPlate2[2]));
-                    new G4PVPlacement(0, EP2, logicEndPlate2Mod,"EndPlate2Physical1Mod ",logicCoolant1Mod,0,0);
+                    G4ThreeVector EPP2(0,0,(-FuelinModH/2.+EndPlate2[2])+l*(2.*EndPlate2[2])+(l+1)*(2.*SheathADim1[2]+2.*EndPlate2[2]));
+                    new G4PVPlacement(0, EPP2, logicEndPlate2Mod,"EndPlate2Physical1Mod ",logicCoolant1Mod,0,0);
                     }
 
 
@@ -564,6 +592,37 @@ G4VPhysicalVolume* Q_ZED2Constructor::ConstructWorld()
 
 
     // Set visualization attributes
+
+    if(worldVisAtt)
+        delete worldVisAtt;
+    if(vesselVisAtt)
+        delete vesselVisAtt;
+    if(tank1VisATT)
+        delete tank1VisATT;
+    if(ModVisAtt)
+        delete ModVisAtt;
+    if(fuelA1VisATT)
+        delete fuelA1VisATT;
+    if(fuelB1VisATT)
+        delete fuelB1VisATT;
+    if(sheathA1VisATT)
+        delete sheathA1VisATT;
+    if(sheathB1VisATT)
+        delete sheathB1VisATT;
+    if(Air1VisAtt)
+        delete Air1VisAtt;
+    if(Coolant1VisAtt)
+        delete Coolant1VisAtt;
+    if(Pressure1VisAtt)
+        delete Pressure1VisAtt;
+    if(GasAnn1VisAtt)
+        delete GasAnn1VisAtt;
+    if(Calandria1VisAtt)
+        delete Calandria1VisAtt;
+    if(EndPlate2VisATT)
+        delete EndPlate2VisATT;
+    if(airTubeVisAtt)
+        delete airTubeVisAtt;
 
     worldVisAtt = new G4VisAttributes(G4Colour(0.5, 1., 0.5));
     worldVisAtt->SetVisibility(true);

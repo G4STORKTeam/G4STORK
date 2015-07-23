@@ -47,12 +47,14 @@ StorkNeutronProcessBuilder::~StorkNeutronProcessBuilder()
         delete TheUserBoundaryCond;
     if(TheZeroBoundaryCond)
         delete TheZeroBoundaryCond;
+    /*
     if(theHighElasticModel)
         delete theHighElasticModel;
     if(theHighFissionModel)
         delete theHighFissionModel;
     if(theHighCaptureModel)
         delete theHighCaptureModel;
+        */
 
 }
 

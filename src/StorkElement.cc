@@ -65,7 +65,7 @@
 #include "G4PhysicalConstants.hh"
 #include "G4SystemOfUnits.hh"
 
-G4ElementTable StorkElement::theElementTable;
+//G4ElementTable StorkElement::theElementTable;
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -127,7 +127,7 @@ bool StorkElement::Exists(G4double temp, G4int &index)
         elemName=elemName.substr(0, elemName.find_last_of('T'));
     }
     G4ElementTable *elemTable = (dynamic_cast<G4Element*>(const_cast<StorkElement*>(this)))->GetElementTable();
-    for(G4int i=0; i<elemTable->size(); i++)
+    for(G4int i=0; i<int(elemTable->size()); i++)
     {
         StorkElement *elem = dynamic_cast <StorkElement*> ((*elemTable)[i]);
         if(elem)
@@ -166,7 +166,7 @@ StorkElement::StorkElement(StorkElement& right): G4Element(right.GetName(),
   G4IsotopeVector* isoVec = right.GetIsotopeVector();
   G4double* relVec = right.GetRelativeAbundanceVector();
 
-  for(G4int i=0; i<right.GetIsotopeVector()->size(); i++)
+  for(G4int i=0; i<int(right.GetIsotopeVector()->size()); i++)
   {
     AddIsotope((*isoVec)[i], relVec[i]);
   }
@@ -180,7 +180,7 @@ StorkElement::StorkElement(G4Element& right): G4Element(right.GetName(),
   G4IsotopeVector* isoVec = right.GetIsotopeVector();
   G4double* relVec = right.GetRelativeAbundanceVector();
 
-  for(G4int i=0; i<right.GetIsotopeVector()->size(); i++)
+  for(G4int i=0; i<int(right.GetIsotopeVector()->size()); i++)
   {
     AddIsotope((*isoVec)[i], relVec[i]);
   }
@@ -203,7 +203,7 @@ const StorkElement& StorkElement::operator=( StorkElement& right)
         G4IsotopeVector* isoVec = right.GetIsotopeVector();
         G4double* relVec = right.GetRelativeAbundanceVector();
 
-        for(G4int i=0; i<right.GetIsotopeVector()->size(); i++)
+        for(G4int i=0; i<int(right.GetIsotopeVector()->size()); i++)
         {
             AddIsotope((*isoVec)[i], relVec[i]);
         }

@@ -56,9 +56,9 @@ class StorkUserBCStepLimiter : public G4StepLimiter
             {
                 for(G4int i=0; i<6; i++)
                 {
-                    delete BCTransform[i];
+                    if(BCTransform[i])
+                        delete BCTransform[i];
                 }
-                delete [] BCTransform;
             }
         }
 
@@ -82,7 +82,7 @@ class StorkUserBCStepLimiter : public G4StepLimiter
             StorkProcessManager *nsProcMan;     // Pointer to process manager
             StorkPrimaryNeutronInfo *pnInfo;
             StorkTrackInfo *trackInfo;
-            StorkBCTransform **BCTransform;
+            StorkBCTransform* BCTransform[6];
             std::vector<G4int> zeroSides;
 };
 

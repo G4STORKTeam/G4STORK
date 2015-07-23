@@ -42,8 +42,8 @@ MarshaledStorkPrimaryData(StorkPrimaryData* objptr) : MarshaledObj() {
     marshal4();
 }
 
-MarshaledStorkPrimaryData(void *buf, char isUnmarshaling = 'u')
-: MarshaledObj(buf, isUnmarshaling) {
+MarshaledStorkPrimaryData(void *buf, char isUnmarshalingCheck = 'u')
+: MarshaledObj(buf, isUnmarshalingCheck) {
     msh_isUnmarshalDone = false;
 }
 
@@ -53,16 +53,20 @@ MarshaledStorkPrimaryData(void *buf, char isUnmarshaling = 'u')
     //}
 }
 
-StorkPrimaryData* unmarshal() {
+StorkPrimaryData* unmarshal()
+{
     //We don't want to unmarshal the buffer is empty.
-    if(msh_size <= MSH_HEADER_SIZE) {
+    if(msh_size <= MSH_HEADER_SIZE)
+    {
         //This is buggy, we can't always assume that
         //obj == NULL <==> List is empty.
         return NULL;
-    } else {
+    }
+    else
+    {
         {
-	param = new StorkPrimaryData();
-	}
+            param = new StorkPrimaryData();
+        }
         this->Shadowed_param = (ShadowedMarshaledStorkPrimaryData*)this->param;
         this->msh_isUnmarshalDone = true;
         unmarshal1();
@@ -113,12 +117,12 @@ void marshal1() {
     {
 	int copy_off = 0;
 	int elementNum;
-	 elementNum = param->primaries->size(); 
+	 elementNum = param->primaries->size();
 	memcpy( msh_cursor+copy_off, &elementNum,sizeof(int));
 	copy_off += sizeof(int);
 	for(int index=0;index<elementNum;index++){
 			StorkNeutronData anElement;
-			 anElement = (*(param->primaries))[index]; 
+			 anElement = (*(param->primaries))[index];
 			MarshaledStorkNeutronData marEle(&anElement);
 			EXTEND_BUFFER(marEle.getBufferSize());
 			memcpy(msh_cursor+copy_off, marEle.getBuffer(), marEle.getBufferSize());
@@ -155,7 +159,10 @@ void unmarshal1() {
 			MarshaledStorkNeutronData marEle(msh_cursor+copy_off);
 			StorkNeutronData *anElement = (StorkNeutronData *)marEle.unmarshal();
 			copy_off += marEle.getBufferSize();
-			 param->primaries->push_back(*anElement); 
+			 param->primaries->push_back(*anElement);
+			 //this is new, test it
+			 if(anElement)
+                delete anElement;
 		}
 
     }
@@ -285,12 +292,12 @@ void marshal4() {
     {
 	int copy_off = 0;
 	int elementNum;
-	 elementNum = param->propChanges->size(); 
+	 elementNum = param->propChanges->size();
 	memcpy( msh_cursor+copy_off, &elementNum,sizeof(int));
 	copy_off += sizeof(int);
 	for(int index=0;index<elementNum;index++){
 			StorkMatPropChange anElement;
-			 anElement = (*(param->propChanges))[index]; 
+			 anElement = (*(param->propChanges))[index];
 			MarshaledStorkMatPropChange marEle(&anElement);
 			EXTEND_BUFFER(marEle.getBufferSize());
 			memcpy(msh_cursor+copy_off, marEle.getBuffer(), marEle.getBufferSize());
@@ -327,7 +334,10 @@ void unmarshal4() {
 			MarshaledStorkMatPropChange marEle(msh_cursor+copy_off);
 			StorkMatPropChange *anElement = (StorkMatPropChange *)marEle.unmarshal();
 			copy_off += marEle.getBufferSize();
-			 param->propChanges->push_back(*anElement); 
+			 param->propChanges->push_back(*anElement);
+			 //this is new, test it
+			 if(anElement)
+                delete anElement;
 		}
 
     }

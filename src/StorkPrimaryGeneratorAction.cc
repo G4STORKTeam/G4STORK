@@ -95,10 +95,10 @@ void StorkPrimaryGeneratorAction::GeneratePrimaries(G4Event *anEvent)
 
 // SetPrimaries()
 // Set the primaries for the current event (i.e. set on slaves by master)
-void StorkPrimaryGeneratorAction::SetPrimaries(StorkPrimaryData *primaryData)
+void StorkPrimaryGeneratorAction::SetPrimaries(StorkPrimaryData *primaryContainer)
 {
     // Assign the primaries to the current primaries vector
-    currPrimaries = *(primaryData->primaries);
+    currPrimaries = *(primaryContainer->primaries);
 }
 
 

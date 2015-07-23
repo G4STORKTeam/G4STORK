@@ -5,15 +5,17 @@
 TestConstructor::TestConstructor()
 : StorkVWorldConstructor(), cellLogical(0), zircGridLogical(0)
 {
-
+    cellVisAtt=NULL;
+    zircGridVisAtt=NULL;
 }
 
 TestConstructor::~TestConstructor()
 {
 	// Delete visualization attributes
-    delete cellVisAtt;
-
-    delete zircGridVisAtt;
+	if(cellVisAtt)
+        delete cellVisAtt;
+    if(zircGridVisAtt)
+        delete zircGridVisAtt;
 
 
 }
@@ -63,8 +65,8 @@ G4VPhysicalVolume* TestConstructor::ConstructWorld()
         // hole pattern format radius, angle of increment and the offset angle, check radius
         G4double sheatheDim[3] = {0., 0.262*cm , 1*cm};
         G4double gridPlateDim[3] = {1.331*cm, 11.049*cm, 0.279*cm};
-        G4double unitRegionDim[6]={0, (gridPlateDim[1]-gridPlateDim[0])/10, 0., CLHEP::pi/(3*10), 0., 0.3*cm};
-        G4double regionDim[6]={gridPlateDim[0], gridPlateDim[1], CLHEP::pi/3, 2*CLHEP::pi/3, -gridPlateDim[2]/2, gridPlateDim[2]/2};
+        //G4double unitRegionDim[6]={0, (gridPlateDim[1]-gridPlateDim[0])/10, 0., CLHEP::pi/(3*10), 0., 0.3*cm};
+        //G4double regionDim[6]={gridPlateDim[0], gridPlateDim[1], CLHEP::pi/3, 2*CLHEP::pi/3, -gridPlateDim[2]/2, gridPlateDim[2]/2};
 
 
 		//Geometry positioning data
@@ -165,7 +167,7 @@ G4VPhysicalVolume* TestConstructor::ConstructWorld()
 
 		geomChanged = false;
 		std::vector<G4VSolid*> *Check = dynamic_cast<std::vector<G4VSolid*>*>(theSolids);
-		for(G4int i=0; i<Check->size(); i++)
+		for(G4int i=0; i<int(Check->size()); i++)
 		{
             G4cout << "\n ###" << ((*Check)[i])->GetName() << " " << ((*Check)[i])->GetEntityType() <<" ### \n";
 		}
@@ -202,6 +204,14 @@ G4VPhysicalVolume* TestConstructor::ConstructWorld()
 	zircGridLogical->SetSensitiveDetector( sDReactor );
 
     // Set visualization attributes
+
+    if(worldVisAtt)
+        delete worldVisAtt;
+    if(cellVisAtt)
+        delete cellVisAtt;
+    if(zircGridVisAtt)
+        delete zircGridVisAtt;
+
     worldVisAtt = new G4VisAttributes(G4Colour(1.,1.,1.));
     worldVisAtt->SetVisibility(false);
     worldLogical->SetVisAttributes(worldVisAtt);
