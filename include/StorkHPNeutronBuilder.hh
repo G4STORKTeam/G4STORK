@@ -70,6 +70,8 @@ class StorkHPNeutronBuilder : public G4VNeutronBuilder
         void SetMinInelasticEnergy(G4double aM) { theIMin = aM; }
         void SetMaxInelasticEnergy(G4double aM) { theIMax = aM; }
 
+        void SetFSTemperature(G4double FSTemp) { fsTemp = FSTemp; }
+
     private:
 
         // Applicability limits
@@ -80,6 +82,7 @@ class StorkHPNeutronBuilder : public G4VNeutronBuilder
 
         // User input and limits
         G4String dirName;
+        G4double fsTemp;
 
         // Models
         G4NeutronHPElastic *nElasticModel;

@@ -159,9 +159,6 @@ inline const
   G4ElementVector* GetElementVector() {return (dynamic_cast<G4Material*>(this))->GetElementVector();}
 */
 
-  G4int GetMaxNbComponents(){return maxNbComponents;}
-
-
   ~StorkMaterial();
   //
   //printing methods
@@ -177,19 +174,16 @@ public:  // without description
   G4int operator==(const StorkMaterial&) const;
   G4int operator!=(const StorkMaterial&) const;
   StorkMaterial(__void__&);
-    // Fake default constructor for usage restricted to direct object
+  // Fake default constructor for usage restricted to direct object
     // persistency for clients requiring preallocation of memory for
     // persistifiable objects.
 
-private:
 
+  void SetTemperature(G4double matTemp);
   StorkMaterial(StorkMaterial&);
   const StorkMaterial& operator=(StorkMaterial&);
 
 private:
-
-    G4int maxNbComponents;
-    size_t fNumberOfComponents, fNumberOfElements;
 
 };
 

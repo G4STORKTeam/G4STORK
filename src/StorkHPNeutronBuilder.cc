@@ -19,6 +19,9 @@ StorkHPNeutronBuilder::StorkHPNeutronBuilder(G4String dir)
     // Set temperature for cross sections
 	dirName = dir;
 
+	// Set default FS temperature
+	fsTemp=0.;
+
 	// Initialize the applicability limits
 	theMin = theIMin = 0.*MeV;
 	theMax = theIMax = 20.*MeV;
@@ -82,7 +85,7 @@ void StorkHPNeutronBuilder::Build(G4HadronElasticProcess *aP)
         if(dirName == "DEFAULT")
             theHPElasticData = new G4NeutronHPElasticData();
         else
-            HPElasticData = new StorkNeutronHPCSData('E', dirName);
+            HPElasticData = new StorkNeutronHPCSData('E', dirName, fsTemp);
     }
 
 
@@ -111,7 +114,7 @@ void StorkHPNeutronBuilder::Build(G4NeutronInelasticProcess *aP)
         if(dirName == "DEFAULT")
             theHPInelasticData = new G4NeutronHPInelasticData();
         else
-            HPInelasticData = new StorkNeutronHPCSData('I', dirName);
+            HPInelasticData = new StorkNeutronHPCSData('I', dirName, fsTemp);
     }
     // Set the limits of the model
     nInelasticModel->SetMinEnergy(theIMin);
@@ -138,7 +141,7 @@ void StorkHPNeutronBuilder::Build(G4HadronFissionProcess *aP)
         if(dirName == "DEFAULT")
             theHPFissionData = new G4NeutronHPFissionData();
         else
-            HPFissionData = new StorkNeutronHPCSData('F', dirName);
+            HPFissionData = new StorkNeutronHPCSData('F', dirName, fsTemp);
     }
     // Set the limits of the model
     nFissionModel->SetMinEnergy(theMin);
@@ -165,7 +168,7 @@ void StorkHPNeutronBuilder::Build(G4HadronCaptureProcess *aP)
         if(dirName == "DEFAULT")
             theHPCaptureData = new G4NeutronHPCaptureData();
         else
-            HPCaptureData = new StorkNeutronHPCSData('C', dirName);
+            HPCaptureData = new StorkNeutronHPCSData('C', dirName, fsTemp);
     }
     // Set the limits of the model
     nCaptureModel->SetMinEnergy(theMin);

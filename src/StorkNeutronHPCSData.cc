@@ -25,13 +25,14 @@ G4bool StorkNeutronHPCSData::IsApplicable(const G4DynamicParticle*aP,
 }
 
 
-StorkNeutronHPCSData::StorkNeutronHPCSData(char aType, G4String dirName)
+StorkNeutronHPCSData::StorkNeutronHPCSData(char aType, G4String dirName, G4double FSTemp)
 {
     // TKDB
     theCrossSections = 0;
 //    numMaxOL = OL;
 	numMaxOL = INT_MAX;
     reactionType = aType;
+    fsTemp = FSTemp;
 
     BuildPhysicsTable(*G4Neutron::Neutron(), dirName);
 }
@@ -252,9 +253,14 @@ GetCrossSection(const G4DynamicParticle* aP, const G4Element* elem, G4double aT)
     if(anE->GetCSDataTemp()==-1)
         return 0.;
 
+    if(anE->GetTemperature()!=aT)
+    {
+        G4cout << "Error: mismatch between the material and element temperature" << G4endl;
+    }
+
 	// Find the temperature difference between the temperature the cross
 	// section was evaluated at versus the temperature of the material
-	G4double tempDiff = aT - anE->GetCSDataTemp();
+	G4double tempDiff = anE->GetTemperature() - anE->GetCSDataTemp();
 
 	// If there is no temperature difference, return the cross section directly
 	if(std::abs(tempDiff) <= 0.1)

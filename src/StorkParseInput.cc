@@ -21,6 +21,7 @@ StorkParseInput::StorkParseInput(G4bool master)
 	worldName = "Unknown";
 	reactorMat = 0;
 	csDirName = "DEFAULT";
+	fsDirName = "DEFAULT";
 
 	numSteps[0]=20;
 	numSteps[1]=20;
@@ -153,37 +154,6 @@ G4bool StorkParseInput::FinalizeInputs()
 	{
 	    G4cerr << "Environment variable for Neutron HP data not set." << G4endl;
 	    return false;
-	}
-
-	datapath = getenv("G4NEUTRONHPDATA");
-
-	// Find the folder name for the cross sections from the data path
-    pos = datapath.find_last_of("/");
-
-	// Check to make sure "/" is not the last character. If it is, erase it and
-    // find the second to last slash
-    while(pos == (G4int)(datapath.length()) - 1)
-    {
-        datapath.erase(pos,1);
-        pos = datapath.find_last_of("/");
-    }
-
-	// Check where the dataPath points to a G4NDL library (0 K by default)
-	if(datapath.find("G4NDL") != G4String::npos)
-	{
-	    xsTemp = 0.0*kelvin;
-	}
-	else
-	{
-	    // Find the start of the temperature
-	    pos = datapath.find("_T");
-
-	    // Determine xsTemp from datapath
-	    xsTemp = atof((datapath.substr(pos+2)).c_str());
-
-	    // Correct for the decimal in room temperature
-	    if(xsTemp == 293.*kelvin)
-            xsTemp = 293.6*kelvin;
 	}
 
     // Set the units of input data
@@ -433,6 +403,11 @@ G4bool StorkParseInput::ReadInputFile(G4String filename)
 		else if(keyWord=="CS_DATA_DIR")
 		{
 			infile >> csDirName;
+		}
+		//Final State Data Location
+		else if(keyWord=="FS_DATA_DIR")
+		{
+			infile >> fsDirName;
 		}
 
 		// Shannon Entropy
@@ -687,37 +662,6 @@ G4bool StorkParseInput::ReadInputFile(G4String filename)
 	    return false;
 	}
 
-	datapath = getenv("G4NEUTRONHPDATA");
-
-	// Find the folder name for the cross sections from the data path
-    pos = datapath.find_last_of("/");
-
-	// Check to make sure "/" is not the last character. If it is, erase it and
-    // find the second to last slash
-    while(pos == (G4int)(datapath.length()) - 1)
-    {
-        datapath.erase(pos,1);
-        pos = datapath.find_last_of("/");
-    }
-
-	// Check where the dataPath points to a G4NDL library (0 K by default)
-	if(datapath.find("G4NDL") != G4String::npos)
-	{
-	    xsTemp = 0.0*kelvin;
-	}
-	else
-	{
-	    // Find the start of the temperature
-	    pos = datapath.find("_T");
-
-	    // Determine xsTemp from datapath
-	    xsTemp = atof((datapath.substr(pos+2)).c_str());
-
-	    // Correct for the decimal in room temperature
-	    if(xsTemp == 293.*kelvin)
-            xsTemp = 293.6*kelvin;
-	}
-
     // Set the units of input data
 	runDuration *= ns;
 	initEnergy *= MeV;
@@ -827,7 +771,6 @@ void StorkParseInput::PrintInput(std::ostream *output) const
     *output << G4endl << "#" << G4endl
             << "## Nuclear Data Options:" << G4endl
             << std::setw(37) << "# Data Library: " << datapath << G4endl
-			<< std::setw(37) << "# Cross section temperature (K): " << xsTemp << G4endl
 			<< "#" << G4endl;
 
 	// Outputs warning if renormalization is turned off

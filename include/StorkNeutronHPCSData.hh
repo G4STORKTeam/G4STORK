@@ -46,7 +46,7 @@ class StorkNeutronHPCSData : public G4VCrossSectionDataSet
 {
     public:
 
-        StorkNeutronHPCSData(char aType, G4String dirName);
+        StorkNeutronHPCSData(char aType, G4String dirName, G4double FSTemp);
         ~StorkNeutronHPCSData();
 
         G4bool IsApplicable(const G4DynamicParticle*, const G4Element*);
@@ -88,6 +88,8 @@ class StorkNeutronHPCSData : public G4VCrossSectionDataSet
 
         G4double ke_cache;
         G4double xs_cache;
+        G4double fsTemp;
+
         const G4Element* element_cache;
         const G4Material* material_cache;
 };

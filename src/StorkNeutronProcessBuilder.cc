@@ -15,7 +15,7 @@ Source code for StorkNeutronProcessBuilder class.
 
 
 // Constructor
-StorkNeutronProcessBuilder::StorkNeutronProcessBuilder(std::vector<G4int>* pBCVec, std::vector<G4int>* rBCVec)
+StorkNeutronProcessBuilder::StorkNeutronProcessBuilder(std::vector<G4int>* pBCVec, std::vector<G4int>* rBCVec, G4String FSDirName)
 :wasActivated(false)
 {
     // Create the physics processes
@@ -26,6 +26,8 @@ StorkNeutronProcessBuilder::StorkNeutronProcessBuilder(std::vector<G4int>* pBCVe
     theStepLimiter = new StorkTimeStepLimiter;
     TheUserBoundaryCond = new StorkUserBCStepLimiter(pBCVec,rBCVec);
     TheZeroBoundaryCond = new StorkZeroBCStepLimiter(pBCVec,rBCVec);
+
+    fsDirName=FSDirName;
 }
 
 
@@ -63,8 +65,45 @@ StorkNeutronProcessBuilder::~StorkNeutronProcessBuilder()
 // Build the data and models for the neutron processes
 void StorkNeutronProcessBuilder::Build()
 {
+    G4double fsTemp=0.;
     wasActivated = true;
     StorkHPNeutronBuilder *aHPBuilder;
+
+    if(fsDirName!="DEFAULT")
+    {
+        StorkMaterial *aStorkMat;
+
+        if(fsDirName.back()=='/')
+            fsDirName.push_back('/');
+        ExtractTemp(fsDirName, fsTemp);
+        setenv("G4NEUTRONHPDATA",fsDirName,1);
+
+        std::vector<G4VNeutronBuilder *>::iterator i;
+        for(i=theModelCollections.begin(); i!=theModelCollections.end(); i++)
+        {
+            aHPBuilder = dynamic_cast<StorkHPNeutronBuilder*>(*i);
+            if(aHPBuilder)
+                aHPBuilder->SetFSTemperature(fsTemp);
+        }
+
+        G4MaterialTable *matTable = (G4MaterialTable*)G4Material::GetMaterialTable();
+        for(int j=0; j<int(matTable->size()); j++)
+        {
+            if((*matTable)[j])
+            {
+                aStorkMat = dynamic_cast<StorkMaterial*>((*matTable)[j]);
+
+                if(aStorkMat)
+                {
+                    aStorkMat->SetTemperature(fsTemp);
+                }
+                else
+                {
+                    G4cerr << "Error: Only StorkMaterials can be implemented in the geometry when using an outside final state library" << G4endl;
+                }
+            }
+        }
+    }
 
     // Build the models and data for the neutron processes (all energies)
     std::vector<G4VNeutronBuilder *>::iterator i;
@@ -128,5 +167,46 @@ void StorkNeutronProcessBuilder::Build()
     theProcMan->AddDiscreteProcess(TheZeroBoundaryCond);
 }
 
+bool StorkNeutronProcessBuilder::ExtractTemp(G4String name, G4double &temp)
+{
+    bool check = false;
+    std::stringstream ss;
+    G4int index = name.size()-1, startPos=1, endPos=0;
+    while(index>=0)
+    {
+        if(check)
+        {
+            if(((name[index]>='0')&&(name[index]<='9'))||(name[index]>='.'))
+            {
+                startPos--;
+            }
+            else
+            {
+                break;
+            }
+        }
+        else
+        {
+            if((name[index]>='0')&&(name[index]<='9'))
+            {
+                if((index+1==int(name.size()))||!((name[index+1]=='k')||(name[index+1]=='K')))
+                {
+                    return false;
+                }
+                check = true;
+                startPos=endPos=index;
+            }
+        }
+        index--;
+    }
 
+    if(endPos>=startPos)
+    {
+        G4String temperature = name.substr(startPos, endPos-startPos+1);
+        ss.str(temperature);
+        ss >> temp;
+    }
+
+    return check;
+}
 

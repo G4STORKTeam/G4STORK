@@ -67,7 +67,7 @@ StorkMaterial::StorkMaterial(const G4String& name, G4double density,
 StorkMaterial::StorkMaterial(const G4String& name, G4double density,
                        StorkMaterial* bmat,
                        G4State state, G4double temp, G4double pressure)
-  : G4Material(name, density, bmat->GetMaxNbComponents(), state, temp, pressure)
+  : G4Material(name, density, bmat->GetNumberOfElements(), state, temp, pressure)
 {
     AddMaterial(bmat, 1.);
 }
@@ -256,6 +256,26 @@ mat->AddMaterial(temp, fraction);
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
+void StorkMaterial::SetTemperature(G4double matTemp)
+{
+    //this may leak memory
+    StorkMaterial tempMat(*this);
+    this->~StorkMaterial();
+    G4cout << "### The StorkMaterial this pointer points to " << this << " ###" << G4endl;
+    StorkMaterial(tempMat.GetName(), tempMat.GetDensity(), tempMat.GetNumberOfElements(), tempMat.GetState(), matTemp, tempMat.GetPressure());
+    SetName(tempMat.GetName());
+    G4cout << "### The StorkMaterial this pointer points to " << this << " ###" << G4endl;
+    G4cout << "### The new material name is " << this->GetName() << " ###" << G4endl;
+    G4ElementVector* elemVec = const_cast<G4ElementVector*> (tempMat.GetElementVector());
+    G4double* fracVec = const_cast<G4double*> (tempMat.GetFractionVector());
+    for(G4int i=0; i<int(tempMat.GetNumberOfElements()); i++)
+    {
+        AddElement(dynamic_cast<StorkElement*>((*elemVec)[i]), fracVec[i]);
+    }
+}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
 StorkMaterial::StorkMaterial(StorkMaterial& right): G4Material(right.GetName(), right.GetDensity(),
                        right.GetNumberOfElements(), right.GetState(), right.GetTemperature(), right.GetPressure())
 {
@@ -267,8 +287,6 @@ StorkMaterial::StorkMaterial(StorkMaterial& right): G4Material(right.GetName(), 
     }
 
 }
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -305,75 +323,4 @@ G4int StorkMaterial::operator!=(const StorkMaterial& right) const
 {
   return (this != (StorkMaterial *) &right);
 }
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-/*
-
-std::ostream& operator<<(std::ostream& flux, StorkMaterial* material)
-{
-  std::ios::fmtflags mode = flux.flags();
-  flux.setf(std::ios::fixed,std::ios::floatfield);
-  G4long prec = flux.precision(3);
-
-  flux
-    << " Material: "         << std::setw(8) <<  material->fName
-    << " " << material->fChemicalFormula << " "
-    << "  density: "         << std::setw(6) << std::setprecision(3)
-    << G4BestUnit(material->fDensity,"Volumic Mass")
-    << "  RadL: "            << std::setw(7)  << std::setprecision(3)
-    << G4BestUnit(material->fRadlen,"Length")
-    << "  Nucl.Int.Length: " << std::setw(7)  << std::setprecision(3)
-    << G4BestUnit(material->fNuclInterLen,"Length") <<"\n" << std::setw(30)
-    << "  Imean: "           << std::setw(7)  << std::setprecision(3)
-    << G4BestUnit(material->GetIonisation()->GetMeanExcitationEnergy(),"Energy");
-
-  if(material->fState == kStateGas) {
-    flux
-      << "  temperature: " << std::setw(6) << std::setprecision(2)
-      << (material->GetTemperature())/kelvin << " K"
-      << "  pressure: "    << std::setw(6) << std::setprecision(2)
-      << (material->fPressure)/atmosphere << " atm";
-  }
-  flux << "\n";
-
-  for (size_t i=0; i<material->fNumberOfElements; i++) {
-    flux
-      << "\n   ---> " << (*(material->theElementVector))[i]
-      << "\n          ElmMassFraction: "
-      << std::setw(6)<< std::setprecision(2)
-      << (material->fMassFractionVector[i])/perCent << " %"
-      << "  ElmAbundance "     << std::setw(6)<< std::setprecision(2)
-      << 100*(material->VecNbOfAtomsPerVolume[i])
-      /(material->TotNbOfAtomsPerVolume)
-      << " % \n";
-  }
-  flux.precision(prec);
-  flux.setf(mode,std::ios::floatfield);
-
-  return flux;
-}
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
-std::ostream& operator<<(std::ostream& flux, StorkMaterial& material)
-{
-  flux << &material;
-  return flux;
-}
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
-std::ostream& operator<<(std::ostream& flux, G4MaterialTable MaterialTable)
-{
-  //Dump info for all known materials
-  flux << "\n***** Table : Nb of materials = " << MaterialTable.size()
-       << " *****\n" << G4endl;
-
-  for (size_t i=0; i<MaterialTable.size(); ++i) {
-    flux << MaterialTable[i] << G4endl << G4endl;
-  }
-
-  return flux;
-}
-*/
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

@@ -39,6 +39,7 @@ processes and models (fission, capture, elastic, inelastic, and step limiters).
 #include "G4ProcessManager.hh"
 #include "globals.hh"
 
+#include "StorkMaterial.hh"
 // Include other headers
 #include <vector>
 #include <typeinfo>
@@ -49,7 +50,7 @@ class StorkNeutronProcessBuilder
     public:
         // Public member functions
 
-        StorkNeutronProcessBuilder(std::vector<G4int>* pBCVec, std::vector<G4int>* rBCVec);
+        StorkNeutronProcessBuilder(std::vector<G4int>* pBCVec, std::vector<G4int>* rBCVec, G4String FSDirName);
         ~StorkNeutronProcessBuilder();
 
         // Build and register the models
@@ -58,6 +59,8 @@ class StorkNeutronProcessBuilder
         {
             theModelCollections.push_back(aB);
         }
+
+        bool ExtractTemp(G4String name, G4double &temp);
 
 
     private:
@@ -79,6 +82,7 @@ class StorkNeutronProcessBuilder
 
         std::vector<G4VNeutronBuilder *> theModelCollections;
 
+        G4String fsDirName;
         G4bool wasActivated;
 };
 

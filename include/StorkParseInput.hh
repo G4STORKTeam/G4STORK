@@ -68,11 +68,11 @@ class StorkParseInput
 		G4ThreeVector GetWorldDimensions() const;
 		void SetWorldDimensions(G4double dim) { theWorldProps[MatPropPair(all,dimension)]=dim; }
 
-		G4double GetCSTemperature() const { return xsTemp; }
-		void SetCSTemperature(G4double csTemp) { xsTemp=csTemp; }
-
 		G4String GetCSDirName() const { return csDirName; }
 		void SetCSDirName(G4String CSDirName) { csDirName=CSDirName; }
+
+		G4String GetFSDirName() const { return fsDirName; }
+		void SetFSDirName(G4String FSDirName) { fsDirName=FSDirName; }
 
 		G4double GetInitialEnergy() const { return initEnergy; }
 		void SetInitialEnergy(G4double initialEnergy) { initEnergy=initialEnergy; }
@@ -213,6 +213,7 @@ class StorkParseInput
 		G4String worldName;
 		G4int reactorMat;
 		G4String csDirName;
+		G4String fsDirName;
 		G4long randomSeed;
 		G4bool overrideInitRandomSeed;
 
@@ -237,9 +238,6 @@ class StorkParseInput
 		G4double initEnergy;
 		// Initial neutron start position
 		G4ThreeVector initialSourcePos;
-
-		// Cross section temperature in kelvin
-		G4double xsTemp;
 
 		// Shannon entropy mesh and convergence limits
 		G4int numSteps[3];
