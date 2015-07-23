@@ -30,7 +30,7 @@ solidPos UnionBinaryTree::GetUnionSolid(G4String name, G4int equalP, ShapeEnum r
     numSolids = Temp1.size();
     priority = new G4double[numSolids];
     G4int n=0;
-    G4bool check;
+    G4bool check=false;
 
     if(equalP==0)
     {
@@ -154,7 +154,7 @@ solidPos UnionBinaryTree::GetUnionSolid(G4String name, G4int equalP, ShapeEnum r
                 check=false;
             }
         }
-        for(G4int i=0; i<(Temp1.size())/2; i++)
+        for(G4int i=0; i<G4int((Temp1.size())/2); i++)
         {
             unionName.str("");
             unionName << n;
@@ -493,7 +493,7 @@ intVec UnionBinaryTree::createRegions(solidList* Temp1, ShapeEnum RegShape, G4do
                     volume = new G4UnionSolid("volume"+unionName.str(), Temp3[1].first, Temp3[0].first, 0, Temp3[0].second-Temp3[1].second);
 
                     G4int i=2;
-                    for( i; i<G4int(Temp3.size()-1); i++)
+                    for(; i<G4int(Temp3.size()-1); i++)
                     {
                         unionName.str("");
                         unionName << count;
@@ -570,7 +570,7 @@ intVec UnionBinaryTree::createRegions(solidList* Temp1, ShapeEnum RegShape, G4do
             }
             Temp3.clear();
         }
-        for(G4int d=0; d<volCopy.size(); d++)
+        for(G4int d=0; d<int(volCopy.size()); d++)
         {
             if(volCopy[d]==0)
             {

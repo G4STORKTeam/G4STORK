@@ -36,8 +36,12 @@ StorkParseInput::StorkParseInput(G4bool master)
 	limitSE = 2.0;
 	convRuns = 25;
 
+	reflectBC = new std::vector<int>;
+    periodicBC = new std::vector<int>;
+
 	// Set default flags
 	loadSources=false;
+	loadDelayed=false;
 	logData=false;
 	instantDelayed=false;
 	normalize = true;
@@ -68,6 +72,12 @@ StorkParseInput::~StorkParseInput()
 		delete logStream;
 		logStream = NULL;
 	}
+
+	if(reflectBC)
+        delete reflectBC;
+    if(periodicBC)
+        delete periodicBC;
+
 	if(theMPMan)
         delete theMPMan;
 }
@@ -207,7 +217,7 @@ void StorkParseInput::SetWorld(G4String worldNam)
             reactorMat=6;
             for(int i=0; i<6; i++)
             {
-                periodicBC.push_back(i);
+                periodicBC->push_back(i);
             }
             theWorldProps[MatPropPair(all,dimension)] = 28.575*cm;
         }
@@ -216,7 +226,7 @@ void StorkParseInput::SetWorld(G4String worldNam)
             reactorMat=8;
             for(int i=0; i<6; i++)
             {
-                periodicBC.push_back(i);
+                periodicBC->push_back(i);
             }
             uniformDis = true;
 
@@ -354,7 +364,7 @@ G4bool StorkParseInput::ReadInputFile(G4String filename)
 
 				for(int i=0; i<6; i++)
                 {
-                    periodicBC.push_back(i);
+                    periodicBC->push_back(i);
                 }
 
 				theWorldProps[MatPropPair(all,dimension)] = 28.575*cm;
@@ -364,7 +374,7 @@ G4bool StorkParseInput::ReadInputFile(G4String filename)
 				reactorMat=8;
 				for(int i=0; i<6; i++)
                 {
-                    periodicBC.push_back(i);
+                    periodicBC->push_back(i);
                 }
 				uniformDis = true;
 
@@ -490,7 +500,7 @@ G4bool StorkParseInput::ReadInputFile(G4String filename)
 			for(int i=0; i<nPBCSides; i++)
 			{
                 infile >> side;
-                periodicBC.push_back(ConvertSide(side));
+                periodicBC->push_back(ConvertSide(side));
 			}
 		}
 		else if(keyWord=="REFLECT_BC")
@@ -501,7 +511,7 @@ G4bool StorkParseInput::ReadInputFile(G4String filename)
 			for(int i=0; i<nRBCSides; i++)
 			{
                 infile >> side;
-                reflectBC.push_back(ConvertSide(side));
+                reflectBC->push_back(ConvertSide(side));
 			}
 		}
 		else if(keyWord=="RENORMALIZE")

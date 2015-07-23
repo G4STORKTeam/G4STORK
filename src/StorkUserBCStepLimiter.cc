@@ -29,9 +29,10 @@ StorkUserBCStepLimiter::StorkUserBCStepLimiter(std::vector<G4int>* PeriodicBC, s
 	for(G4int i=0; i<6; i++)
 	{
         zeroSides.push_back(i);
+        BCTransform[i] = NULL;
 	}
 
-	BCTransform = new StorkBCTransform *[6];
+	//BCTransform = new StorkBCTransform *[6];
 
 	for(G4int i=0; i<G4int((*ReflectBC).size()); i++)
 	{

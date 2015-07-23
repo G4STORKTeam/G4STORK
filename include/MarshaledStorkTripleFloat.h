@@ -36,8 +36,8 @@ MarshaledStorkTripleFloat(StorkTripleFloat* objptr) : MarshaledObj() {
     marshal1();
 }
 
-MarshaledStorkTripleFloat(void *buf, char isUnmarshaling = 'u')
-: MarshaledObj(buf, isUnmarshaling) {
+MarshaledStorkTripleFloat(void *buf, char isUnmarshalingCheck = 'u')
+: MarshaledObj(buf, isUnmarshalingCheck) {
     msh_isUnmarshalDone = false;
 }
 

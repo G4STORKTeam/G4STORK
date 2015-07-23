@@ -87,7 +87,7 @@ StorkNeutronData StorkHadronFissionProcess::GetADelayedNeutron(
 	// Local Variables
 	G4Nucleus theTarget;
 	G4HadFinalState* theResult = NULL;
-	StorkHadProjectile thePro(*aNeutron, theMat);
+	StorkHadProjectile theProjectile(*aNeutron, theMat);
 	G4HadronicInteraction *theFissionModel = NULL;
 	G4HadSecondary *aSec = NULL;
 	G4DynamicParticle *aDelayedN = NULL;
@@ -130,7 +130,7 @@ StorkNeutronData StorkHadronFissionProcess::GetADelayedNeutron(
 		// Simulate a fission
 		try
 		{
-			G4HadProjectile* Temp = reinterpret_cast<G4HadProjectile*>(&thePro);
+			G4HadProjectile* Temp = reinterpret_cast<G4HadProjectile*>(&theProjectile);
 			theResult = theFissionModel->ApplyYourself((*Temp), theTarget);
 		}
 		catch(G4HadronicException aR)

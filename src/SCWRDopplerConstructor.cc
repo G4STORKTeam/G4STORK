@@ -32,6 +32,58 @@ SCWRDopplerConstructor::SCWRDopplerConstructor()
     variablePropMap[MatPropPair(moderator,density)] = &moderatorDensity;
     variablePropMap[MatPropPair(all,dimension)] = &latticePitch;
     */
+    cellVisAtt=NULL;
+    pressTubeVisAtt=NULL;
+    outLinerVisAtt=NULL;
+    insulatorVisAtt=NULL;
+    linerVisAtt=NULL;
+    coolantVisAtt=NULL;
+    outSheatheVisAtt=NULL;
+    inSheatheVisAtt=NULL;
+    outFuelVisAtt=NULL;
+    inFuelVisAtt=NULL;
+    flowTubeVisAtt=NULL;
+    centralCoolantVisAtt=NULL;
+
+    latticePitch= 25.*cm;
+
+    moderatorTemp=342.00*kelvin;
+    moderatorDensity=1.0851*g/cm3;
+
+    pressTubeTemp=416.74*kelvin;
+    pressTubeDensity=6.52*g/cm3;
+
+    outLinerTemp=470.5200*kelvin;
+    outLinerDensity=6.52*g/cm3;
+
+    insulatorTemp=557.17*kelvin;
+    insulatorDensity=5.83*g/cm3;
+
+    linerTemp=671.8*kelvin;
+    linerDensity=7.9*g/cm3;
+
+    coolantTemp=681.79*kelvin;
+    //coolantDensity=0.14933*g/cm3;
+    coolantDensity=0.001*g/cm3;
+
+    inSheatheTemp=756.30*kelvin;
+    inSheatheDensity=7.9*g/cm3;
+
+    outSheatheTemp=756.30*kelvin;
+    outSheatheDensity=7.9*g/cm3;
+
+    innerFuelTemp=1420.62*kelvin;
+    innerFuelDensity=9.91*g/cm3;
+
+    outerFuelTemp=1420.62*kelvin;
+    outerFuelDensity=9.87*g/cm3;
+
+    flowTubeTemp=657.79*kelvin;
+    flowTubeDensity=7.9*g/cm3;
+
+    centralCoolantTemp=633.79*kelvin;
+    //centralCoolantDensity=0.58756*g/cm3;
+    centralCoolantDensity=0.001*g/cm3;
 }
 
 
@@ -39,20 +91,32 @@ SCWRDopplerConstructor::SCWRDopplerConstructor()
 SCWRDopplerConstructor::~SCWRDopplerConstructor()
 {
 	// Delete visualization attributes
-	delete cellVisAtt;
-    delete pressTubeVisAtt;
-    delete outLinerVisAtt;
-    delete insulatorVisAtt;
-    delete linerVisAtt;
-    delete coolantVisAtt;
-    delete outSheatheVisAtt;
-    delete inSheatheVisAtt;
-    delete outFuelVisAtt;
-    delete inFuelVisAtt;
+	if(cellVisAtt)
+        delete cellVisAtt;
+    if(pressTubeVisAtt)
+        delete pressTubeVisAtt;
+    if(outLinerVisAtt)
+        delete outLinerVisAtt;
+    if(insulatorVisAtt)
+        delete insulatorVisAtt;
+    if(linerVisAtt)
+        delete linerVisAtt;
+    if(coolantVisAtt)
+        delete coolantVisAtt;
+    if(outSheatheVisAtt)
+        delete outSheatheVisAtt;
+    if(inSheatheVisAtt)
+        delete inSheatheVisAtt;
+    if(outFuelVisAtt)
+        delete outFuelVisAtt;
+    if(inFuelVisAtt)
+        delete inFuelVisAtt;
 //    delete outFlowTubeVisAtt;
-    delete flowTubeVisAtt;
+    if(flowTubeVisAtt)
+        delete flowTubeVisAtt;
 //    delete inFlowTubeVisAtt;
-    delete centralCoolantVisAtt;
+    if(centralCoolantVisAtt)
+        delete centralCoolantVisAtt;
 }
 
 
@@ -102,9 +166,8 @@ G4VPhysicalVolume* SCWRDopplerConstructor::ConstructWorld()
     G4double inSheatheRadmax = 0.475*cm;
     G4double inSheatheLen = reactorDim[2];
 
-    G4int rings = 2;
     G4double ringRad[2] = {6.575*cm,5.4*cm};
-    G4double secondRingOffset = 0.*radian;
+    //G4double secondRingOffset = 0.*radian;
 
     // outer fuel dimensions
     G4double outFuelRadmax = 0.44*cm;
@@ -402,6 +465,35 @@ G4VPhysicalVolume* SCWRDopplerConstructor::ConstructWorld()
 
     // Set visualization attributes
 
+    if(worldVisAtt)
+        delete worldVisAtt;
+    if(cellVisAtt)
+        delete cellVisAtt;
+    if(pressTubeVisAtt)
+        delete pressTubeVisAtt;
+    if(outLinerVisAtt)
+        delete outLinerVisAtt;
+    if(insulatorVisAtt)
+        delete insulatorVisAtt;
+    if(linerVisAtt)
+        delete linerVisAtt;
+    if(coolantVisAtt)
+        delete coolantVisAtt;
+    if(outSheatheVisAtt)
+        delete outSheatheVisAtt;
+    if(inSheatheVisAtt)
+        delete inSheatheVisAtt;
+    if(outFuelVisAtt)
+        delete outFuelVisAtt;
+    if(inFuelVisAtt)
+        delete inFuelVisAtt;
+//    delete outFlowTubeVisAtt;
+    if(flowTubeVisAtt)
+        delete flowTubeVisAtt;
+//    delete inFlowTubeVisAtt;
+    if(centralCoolantVisAtt)
+        delete centralCoolantVisAtt;
+
     worldVisAtt = new G4VisAttributes(G4Colour(1.,1.,1.));
     worldVisAtt->SetVisibility(false);
     worldLogical->SetVisAttributes(worldVisAtt);
@@ -473,7 +565,7 @@ G4VPhysicalVolume* SCWRDopplerConstructor::ConstructWorld()
 void SCWRDopplerConstructor::ConstructMaterials()
 {
     // Elements, isotopes and materials
-    G4Isotope *H1, *H2, *C12, *C13, *O16, *Si28, *Si29, *Si30, *P31, *S32, *S33, *S34, *S36,
+    G4Isotope *H1, *H2, *C12, *C13, *O16, *Si28, *Si29, *Si30, *P31, *S32, /*S33, *S34, *S36,*/
               *Cr50, *Cr52, *Cr53, *Cr54, *Mn55, *Fe54, *Fe56, *Fe57, *Fe58, *Ni58, *Ni60, *Ni61,
               *Ni62, *Ni64, *Nb93, *Y89, *Mo92, *Mo94, *Mo95, *Mo96, *Mo97, *Mo98, *Mo100,
               *Sn112, *Sn114, *Sn115, *Sn116, *Sn117, *Sn118, *Sn119, *Sn120, *Sn122, *Sn124,
@@ -483,7 +575,7 @@ void SCWRDopplerConstructor::ConstructMaterials()
 
     StorkMaterial *World, *Moderator, *PressTube, *OutLiner, *Insulator, *Liner, *OutSheathe, *InSheathe,
     *OuterFuel, *InnerFuel, *FlowTube, *CentralCoolant ,*ExelLiner,
-    *ZircSteel, *ZircHydrid, *H2O, *D2O, *Coolant;
+    *ZircSteel, /*ZircHydrid,*/ *H2O, *D2O, *Coolant;
 
     // check material compositions against jasons files for inconsistancies
     // Checked, inner fuel and outer fuel
@@ -528,15 +620,15 @@ void SCWRDopplerConstructor::ConstructMaterials()
     P->AddIsotope(P31, 100.*perCent);
 
     S32 = new G4Isotope("S32", 16, 32, 31.9721*g/mole);
-    S33 = new G4Isotope("S33", 16, 33, 32.9715*g/mole);
+    /*S33 = new G4Isotope("S33", 16, 33, 32.9715*g/mole);
     S34 = new G4Isotope("S34", 16, 34, 33.9679*g/mole);
-    S36 = new G4Isotope("S36", 16, 36, 35.9679*g/mole);
+    S36 = new G4Isotope("S36", 16, 36, 35.9679*g/mole);*/
 
-    S = new StorkElement("Sulphur", "S", 4);
+    S = new StorkElement("Sulphur", "S", 1);
     S->AddIsotope(S32, 94.93*perCent);
-    S->AddIsotope(S33,  0.76*perCent);
+    /*S->AddIsotope(S33,  0.76*perCent);
     S->AddIsotope(S34,  4.29*perCent);
-    S->AddIsotope(S36,  0.02*perCent);
+    S->AddIsotope(S36,  0.02*perCent);*/
 
     //make chromium isotopes and element
     Cr50 = new G4Isotope("Cr50", 24, 50, 49.9460422*g/mole);
@@ -683,7 +775,7 @@ void SCWRDopplerConstructor::ConstructMaterials()
     }
 
     G4cout << "\n### Element properties after they have been added to the materials ###\n" << G4endl;
-    */
+*/
     // Create the world material
     World = new StorkMaterial("Galactic", 1, 1, 1.e-25*g/cm3, kStateGas,
 						   2.73*kelvin, 3.e-18*pascal);
@@ -694,7 +786,7 @@ void SCWRDopplerConstructor::ConstructMaterials()
     H2O->AddElement(Oxygen,1);
 
     // Create D20 material
-    D2O = new StorkMaterial("HeavyWater", 1.1*g/cm3, 2, kStateLiquid, coolantTemp);
+    D2O = new StorkMaterial("HeavyWater", 1.1*g/cm3, 2, kStateLiquid, moderatorTemp);
     D2O->AddElement(D,2);
     D2O->AddElement(Oxygen,1);
 

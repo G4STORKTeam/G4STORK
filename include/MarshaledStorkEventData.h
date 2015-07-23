@@ -26,7 +26,6 @@ public:
     ShadowedMarshaledStorkEventData* Shadowed_param;
 public:
 
-
 // Function implementations
 
 MarshaledStorkEventData(StorkEventData* objptr) : MarshaledObj() {
@@ -47,8 +46,8 @@ MarshaledStorkEventData(StorkEventData* objptr) : MarshaledObj() {
     marshal9();
 }
 
-MarshaledStorkEventData(void *buf, char isUnmarshaling = 'u')
-: MarshaledObj(buf, isUnmarshaling) {
+MarshaledStorkEventData(void *buf, char isUnmarshalingCheck = 'u')
+: MarshaledObj(buf, isUnmarshalingCheck) {
     msh_isUnmarshalDone = false;
 }
 
@@ -128,12 +127,12 @@ void marshal1() {
     {
 	int copy_off = 0;
 	int elementNum;
-	 elementNum = param->survivors->size(); 
+	 elementNum = param->survivors->size();
 	memcpy( msh_cursor+copy_off, &elementNum,sizeof(int));
 	copy_off += sizeof(int);
 	for(int index=0;index<elementNum;index++){
 			StorkNeutronData anElement;
-			 anElement = param->survivors->at(index); 
+			 anElement = param->survivors->at(index);
 			MarshaledStorkNeutronData marEle(&anElement);
 			EXTEND_BUFFER(marEle.getBufferSize());
 			memcpy(msh_cursor+copy_off, marEle.getBuffer(), marEle.getBufferSize());
@@ -170,7 +169,10 @@ void unmarshal1() {
 			MarshaledStorkNeutronData marEle(msh_cursor+copy_off);
 			StorkNeutronData *anElement = (StorkNeutronData *)marEle.unmarshal();
 			copy_off += marEle.getBufferSize();
-			 param->survivors->push_back(*anElement); 
+			 param->survivors->push_back(*anElement);
+			 //this is new, test it
+			 if(anElement)
+                delete anElement;
 		}
 
     }
@@ -200,12 +202,12 @@ void marshal2() {
     {
 	int copy_off = 0;
 	int elementNum;
-	 elementNum = param->delayed->size(); 
+	 elementNum = param->delayed->size();
 	memcpy( msh_cursor+copy_off, &elementNum,sizeof(int));
 	copy_off += sizeof(int);
 	for(int index=0;index<elementNum;index++){
 			StorkNeutronData anElement;
-			 anElement = param->delayed->at(index); 
+			 anElement = param->delayed->at(index);
 			MarshaledStorkNeutronData marEle(&anElement);
 			EXTEND_BUFFER(marEle.getBufferSize());
 			memcpy(msh_cursor+copy_off, marEle.getBuffer(), marEle.getBufferSize());
@@ -242,7 +244,10 @@ void unmarshal2() {
 			MarshaledStorkNeutronData marEle(msh_cursor+copy_off);
 			StorkNeutronData *anElement = (StorkNeutronData *)marEle.unmarshal();
 			copy_off += marEle.getBufferSize();
-			 param->delayed->push_back(*anElement); 
+			 param->delayed->push_back(*anElement);
+			 //this is new, test it
+			 if(anElement)
+                delete anElement;
 		}
 
     }
@@ -272,12 +277,12 @@ void marshal3() {
     {
 	int copy_off = 0;
 	int elementNum;
-	 elementNum = param->fSites->size(); 
+	 elementNum = param->fSites->size();
 	memcpy( msh_cursor+copy_off, &elementNum,sizeof(int));
 	copy_off += sizeof(int);
 	for(int index=0;index<elementNum;index++){
 			StorkTripleFloat anElement;
-			 anElement = param->fSites->at(index); 
+			 anElement = param->fSites->at(index);
 			MarshaledStorkTripleFloat marEle(&anElement);
 			EXTEND_BUFFER(marEle.getBufferSize());
 			memcpy(msh_cursor+copy_off, marEle.getBuffer(), marEle.getBufferSize());
@@ -314,7 +319,10 @@ void unmarshal3() {
 			MarshaledStorkTripleFloat marEle(msh_cursor+copy_off);
 			StorkTripleFloat *anElement = (StorkTripleFloat *)marEle.unmarshal();
 			copy_off += marEle.getBufferSize();
-			 param->fSites->push_back(*anElement); 
+			 param->fSites->push_back(*anElement);
+			 //this is new, test it
+			 if(anElement)
+                delete anElement;
 		}
 
     }
@@ -344,12 +352,12 @@ void marshal4() {
     {
 	int copy_off = 0;
 	int elementNum;
-	 elementNum = param->fnEnergy->size(); 
+	 elementNum = param->fnEnergy->size();
 	memcpy( msh_cursor+copy_off, &elementNum,sizeof(int));
 	copy_off += sizeof(int);
 	for(int index=0;index<elementNum;index++){
 			double anElement;
-			 anElement = param->fnEnergy->at(index); 
+			 anElement = param->fnEnergy->at(index);
 			EXTEND_BUFFER(sizeof(double));
 			memcpy(msh_cursor+copy_off, &anElement, sizeof(double));
 			copy_off += sizeof(double);
@@ -385,7 +393,7 @@ void unmarshal4() {
 			double anElement;
 			memcpy(&anElement,msh_cursor+copy_off, sizeof(double));
 			copy_off += sizeof(double);
-			 param->fnEnergy->push_back(anElement); 
+			 param->fnEnergy->push_back(anElement);
 		}
 
     }

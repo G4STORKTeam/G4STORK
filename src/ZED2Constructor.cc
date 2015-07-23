@@ -17,6 +17,23 @@ Source code for the ZED2 geometry and materials
 ZED2Constructor::ZED2Constructor()
 : StorkVWorldConstructor()
 {
+    vesselVisAtt=NULL;
+    tank1VisATT=NULL;
+    ModVisAtt=NULL;
+    fuelA1VisATT=NULL;
+    fuelB1VisATT=NULL;
+    sheathA1VisATT=NULL;
+    sheathB1VisATT=NULL;
+    Air1VisAtt=NULL;
+    Coolant1VisAtt=NULL;
+    Pressure1VisAtt=NULL;
+    GasAnn1VisAtt=NULL;
+    Calandria1VisAtt=NULL;
+    EndPlate2VisATT=NULL;
+    airTubeVisAtt=NULL;
+    DumplineAlVisAtt=NULL;
+    DumplineHWVisAtt=NULL;
+
 	// Set default values for member variables
    	matTemp = 299.51/*293.6*/*kelvin;
 
@@ -27,21 +44,37 @@ ZED2Constructor::ZED2Constructor()
 ZED2Constructor::~ZED2Constructor()
 {
     // Delete visualization attributes
+    if(vesselVisAtt)
         delete vesselVisAtt;
+    if(tank1VisATT)
         delete tank1VisATT;
+    if(ModVisAtt)
         delete ModVisAtt;
+    if(fuelA1VisATT)
         delete fuelA1VisATT;
+    if(fuelB1VisATT)
         delete fuelB1VisATT;
+    if(sheathA1VisATT)
         delete sheathA1VisATT;
+    if(sheathB1VisATT)
         delete sheathB1VisATT;
+    if(Air1VisAtt)
         delete Air1VisAtt;
+    if(Coolant1VisAtt)
         delete Coolant1VisAtt;
+    if(Pressure1VisAtt)
         delete Pressure1VisAtt;
+    if(GasAnn1VisAtt)
         delete GasAnn1VisAtt;
+    if(Calandria1VisAtt)
         delete Calandria1VisAtt;
+    if(EndPlate2VisATT)
         delete EndPlate2VisATT;
+    if(airTubeVisAtt)
         delete airTubeVisAtt;
+    if(DumplineAlVisAtt)
         delete DumplineAlVisAtt;
+    if(DumplineHWVisAtt)
         delete DumplineHWVisAtt;
 
 }
@@ -109,12 +142,12 @@ G4VPhysicalVolume* ZED2Constructor::ConstructWorld()
     G4double secondRingOffset = 0.261799*radian;
 
 	// Create Dimensions of dump lines in graphite
-    G4double DumpLineAlDim[3] = {0.0*cm, 22.86*cm, 90.*cm/2.};
-    G4double DumplineHWDim[3] = {0.0*cm, 22.066*cm, 90.*cm/2.};
+    //G4double DumpLineAlDim[3] = {0.0*cm, 22.86*cm, 90.*cm/2.};
+    //G4double DumplineHWDim[3] = {0.0*cm, 22.066*cm, 90.*cm/2.};
 
 	// Create Dimensions of dump lines in Al calandria
-    G4double DumpLineAlDimC[3] = {0.0*cm, 22.86*cm, 2.69*cm/2.};
-    G4double DumplineHWDimC[3] = {0.0*cm, 22.066*cm, 2.69*cm/2.};
+    //G4double DumpLineAlDimC[3] = {0.0*cm, 22.86*cm, 2.69*cm/2.};
+    //G4double DumplineHWDimC[3] = {0.0*cm, 22.066*cm, 2.69*cm/2.};
 
     G4double topCalandriatoModH = 2.*CalandriaDim1[2]-ModHeight;
     G4double AirinCT = RodHeight-Coolant1Dim[2];
@@ -492,7 +525,7 @@ G4VPhysicalVolume* ZED2Constructor::ConstructWorld()
                     //G4cout << "Endplate1  "<<(-Coolant1Dim[2]+EndPlate2[2])+l*(49.51*cm)<< G4endl;
                     new G4PVPlacement(0, EP1, logicEndPlate1Mod,"EndPlate1Physical1Mod ",logicCoolant1Mod,0,0);
                     // Make the end plates 2
-                    G4ThreeVector EP2(0,0,(-FuelinModH/2.+EndPlate2[2])+l*(2.*EndPlate2[2])+(l+1)*(2.*SheathADim1[2]+2.*EndPlate2[2]));
+                    G4ThreeVector EPP2(0,0,(-FuelinModH/2.+EndPlate2[2])+l*(2.*EndPlate2[2])+(l+1)*(2.*SheathADim1[2]+2.*EndPlate2[2]));
                     new G4PVPlacement(0, EP2, logicEndPlate2Mod,"EndPlate2Physical1Mod ",logicCoolant1Mod,0,0);
                     }
 
@@ -592,6 +625,41 @@ G4VPhysicalVolume* ZED2Constructor::ConstructWorld()
 
 
     // Set visualization attributes
+
+    if(worldVisAtt)
+        delete worldVisAtt;
+    if(vesselVisAtt)
+        delete vesselVisAtt;
+    if(tank1VisATT)
+        delete tank1VisATT;
+    if(ModVisAtt)
+        delete ModVisAtt;
+    if(fuelA1VisATT)
+        delete fuelA1VisATT;
+    if(fuelB1VisATT)
+        delete fuelB1VisATT;
+    if(sheathA1VisATT)
+        delete sheathA1VisATT;
+    if(sheathB1VisATT)
+        delete sheathB1VisATT;
+    if(Air1VisAtt)
+        delete Air1VisAtt;
+    if(Coolant1VisAtt)
+        delete Coolant1VisAtt;
+    if(Pressure1VisAtt)
+        delete Pressure1VisAtt;
+    if(GasAnn1VisAtt)
+        delete GasAnn1VisAtt;
+    if(Calandria1VisAtt)
+        delete Calandria1VisAtt;
+    if(EndPlate2VisATT)
+        delete EndPlate2VisATT;
+    if(airTubeVisAtt)
+        delete airTubeVisAtt;
+    if(DumplineAlVisAtt)
+        delete DumplineAlVisAtt;
+    if(DumplineHWVisAtt)
+        delete DumplineHWVisAtt;
 
     worldVisAtt = new G4VisAttributes(G4Colour(0.5, 1., 0.5));
     worldVisAtt->SetVisibility(true);
@@ -716,13 +784,13 @@ void ZED2Constructor::ConstructMaterials()
               *Gd158, *Gd160,*V50, *V51;
     G4Element *Oxygen, *Deuterium, *LEU,
               *Cr, *Fe, *Si, *Cu, *Mn, *Mg, *Zn, *Al,
-              *Ti, *Na, *Ga, *Hydrogen, *C, *Zr, *Sn, *Ca, *RU,
-              *B, *Li, *Gd, *V, *OxygenMod, *HydrogenMod, *OxygenRU,
+              *Ti, *Na, *Ga, *Hydrogen, *C, *Zr, *Sn, *Ca, /*RU,*/
+              *B, *Li, *Gd, *V, /*OxygenMod, *HydrogenMod, *OxygenRU,*/
               *FeAl, *CuAl,*FeZr, *CrZr, *OxygenZr,
-              *OxygenLEU, *HydrogenLW, *OxygenLW;
-    G4Material *World, *LEUMat, *HeavyWater,
+              *OxygenLEU, /*HydrogenLW,*/ *OxygenLW;
+    G4Material *World, *LEUMat, /*HeavyWater,*/
 	           *Aluminum57S, *AlPresT, *AlCalT, *H2O, *D2O,
-	           *Coolant, *AnnulusGas, *Zr4, *Air, *RUMat, *Moderator, *Graphite;
+	           /*Coolant,*/ *AnnulusGas, *Zr4, *Air, /*RUMat,*/ *Moderator, *Graphite;
 
     // Create the world environment
     World = new G4Material("Galactic", 1, 1, 1.e-25*g/cm3, kStateGas,2.73*kelvin, 3.e-18*pascal);
@@ -1152,7 +1220,7 @@ void ZED2Constructor::ConstructMaterials()
     matMap["AlCalT"] = AlCalT;
     matMap["Zr4"] = Zr4;
     matMap["Air"] = Air;
-    matMap["RUMat"] = RUMat;
+    //matMap["RUMat"] = RUMat;
     matMap["Moderator"] = Moderator;
     matMap["Coolant"] = H2O;
   /*  G4Isotope *U234, *U235, *U238, *U236, *D2,   *O16, *O17,

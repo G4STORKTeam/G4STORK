@@ -44,8 +44,8 @@ MarshaledStorkNeutronData(StorkNeutronData* objptr) : MarshaledObj() {
     marshal9();
 }
 
-MarshaledStorkNeutronData(void *buf, char isUnmarshaling = 'u')
-: MarshaledObj(buf, isUnmarshaling) {
+MarshaledStorkNeutronData(void *buf, char isUnmarshalingCheck = 'u')
+: MarshaledObj(buf, isUnmarshalingCheck) {
     msh_isUnmarshalDone = false;
 }
 

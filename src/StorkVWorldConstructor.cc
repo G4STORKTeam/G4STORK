@@ -30,8 +30,8 @@ StorkVWorldConstructor::~StorkVWorldConstructor()
 {
 	// Destroy all materials, elements and isotopes
     DestroyMaterials();
-
-    delete worldVisAtt;
+    if(worldVisAtt)
+        delete worldVisAtt;
 }
 
 
@@ -44,17 +44,26 @@ void StorkVWorldConstructor::DestroyMaterials()
 
     G4MaterialTable *matTable = (G4MaterialTable*)G4Material::GetMaterialTable();
     for(i=0; i<matTable->size(); i++)
-    { delete (*(matTable))[i]; }
+    {
+        if((*(matTable))[i])
+            delete (*(matTable))[i];
+    }
     matTable->clear();
 
     G4ElementTable *elemTable = (G4ElementTable*)G4Element::GetElementTable();
     for(i=0; i<elemTable->size(); i++)
-    { delete (*(elemTable))[i]; }
+    {
+        if((*(elemTable))[i])
+            delete (*(elemTable))[i];
+    }
     elemTable->clear();
 
     G4IsotopeTable *isoTable = (G4IsotopeTable*)G4Isotope::GetIsotopeTable();
     for(i=0; i<isoTable->size(); i++)
-    { delete (*(isoTable))[i]; }
+    {
+        if((*(isoTable))[i])
+            delete (*(isoTable))[i];
+    }
     isoTable->clear();
 
     return;

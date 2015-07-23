@@ -20,8 +20,8 @@ StorkNeutronPhysicsList::StorkNeutronPhysicsList(const StorkParseInput* infile)
     SetVerboseLevel(0);
 
     csDirName = infile->GetCSDirName();
-    periodicBCVec = infile->GetPeriodicBCVector();
-    reflectBCVec = infile->GetReflectBCVector();
+    infile->GetPeriodicBCVector(periodicBCVec);
+    infile->GetReflectBCVector(reflectBCVec);
 
     // Insure that the slave processes do not output the physics process table
 #ifdef G4USE_TOPC

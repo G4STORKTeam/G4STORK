@@ -51,7 +51,7 @@ class MarshaledObj {
 	}
 
   public:
-	// Constructs an empty MarshaledObj, 
+	// Constructs an empty MarshaledObj,
 	MarshaledObj(){
 		msh_extent = 128;
 		msh_size = MSH_HEADER_SIZE;
@@ -76,17 +76,17 @@ class MarshaledObj {
 	// The first field of buf must be an int that contains the size of the buf
 	// NOT including itself.
 	// isUnmarshaling must be 'u' (for unmarshaling) .
-    MarshaledObj(void *buf, char isUnmarshaling) {
+    MarshaledObj(void *buf, char isUnmarshalingCheck) {
 		msh_isUnmarshalDone = false;
 
-		if(isUnmarshaling != 'u') {
+		if(isUnmarshalingCheck != 'u') {
 			printf("MarshaledObj(void*, char): wrong argument\n");
 			return;
 		}
 
 		//msh_extent = ROUND_UP(*(int *)buf + sizeof(int));
 		MSH_GET_TYPECHOICE(msh_typechoice,buf);
-					
+
 		MSH_GET_TOTALSIZE(msh_size,buf);
 		msh_extent = ROUND_UP(msh_size);
 
@@ -117,7 +117,7 @@ class MarshaledObj {
   protected:
     int msh_typechoice;  // alias of $TYPE_CHOICE
 
-    // points to the buffer (header+body)				
+    // points to the buffer (header+body)
     char *msh_buffer;
 
     // msh_field_begin points to the size of the current field being marshaled
@@ -197,7 +197,7 @@ class MarshaledObj {
     }
 };
 
-/* Used for distinguish the class types of the template parameter 
+/* Used for distinguish the class types of the template parameter
    vietha 2003.05.01 */
 template <class T,class>
 class MSH_IsSameClass

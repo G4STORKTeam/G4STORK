@@ -90,56 +90,43 @@ class SCWRConstructor: public StorkVWorldConstructor
         G4VisAttributes *centralCoolantVisAtt;
 
         // Stored variables from infile
-        G4double latticePitch= 25.*cm;
+        G4double latticePitch;
 
-        G4double moderatorTemp=342.8200*kelvin;
-        G4double moderatorDensity=1.0851*g/cm3;
+        G4double moderatorTemp;
+        G4double moderatorDensity;
 
-        G4double pressTubeTemp[4]={459.8850*kelvin, 441.8700*kelvin, 424.2300*kelvin, 406.9300*kelvin};
-        G4double pressTubeDensity=6.52*g/cm3;
+        G4double pressTubeTemp[4];
+        G4double pressTubeDensity;
 
-        G4double outLinerTemp=470.5200*kelvin;
-        G4double outLinerDensity=6.52*g/cm3;
+        G4double outLinerTemp;
+        G4double outLinerDensity;
 
-        G4double insulatorTemp[4]={643.2050*kelvin, 592.4750*kelvin, 543.2950*kelvin, 495.5700*kelvin};
-        G4double insulatorDensity=5.83*g/cm3;
+        G4double insulatorTemp[4];
+        G4double insulatorDensity;
 
-        G4double linerTemp=670.2600*kelvin;
-        G4double linerDensity=7.9*g/cm3;
+        G4double linerTemp;
+        G4double linerDensity;
 
-        G4double coolantTemp=680.62*kelvin;
-        //G4double coolantDensity=0.1512*g/cm3;
-        G4double coolantDensity=0.001*g/cm3;
+        G4double coolantTemp;
+        G4double coolantDensity;
 
-        G4double inSheatheTemp=768.8200*kelvin;
-        G4double inSheatheDensity=7.9*g/cm3;
+        G4double inSheatheTemp;
+        G4double inSheatheDensity;
 
-        G4double outSheatheTemp=780.9300*kelvin;
-        G4double outSheatheDensity=7.9*g/cm3;
+        G4double outSheatheTemp;
+        G4double outSheatheDensity;
 
-        G4double innerFuelTemp[4]={1389.8000*kelvin, 1288.6600*kelvin, 1118.6700*kelvin, 899.625*kelvin};
-        G4double innerFuelDensity=9.91*g/cm3;
+        G4double innerFuelTemp[4];
+        G4double innerFuelDensity;
 
-        G4double outerFuelTemp[4]={1625.0500*kelvin, 1480.2500*kelvin, 1241.7850*kelvin, 945.8700*kelvin};
-        G4double outerFuelDensity=9.87*g/cm3;
+        G4double outerFuelTemp[4];
+        G4double outerFuelDensity;
 
-//        G4double outFlowTubeTemp=420.00+273.15;
-//        G4double outFlowTubeDensity=7.9*g/cm3;
-//
-//        G4double flowTubeTemp[2]={379.00+273.15, 406.42+273.15};
-//        G4double flowTubeDensity=5.64*g/cm3;
-//
-//        G4double inFlowTubeTemp=361.76+273.15;
-//        G4double inFlowTubeDensity=7.9*g/cm3;
+        G4double flowTubeTemp;
+        G4double flowTubeDensity;
 
-// AECL Modification, need a new temperature analysis
-
-        G4double flowTubeTemp=659.1800*kelvin;
-        G4double flowTubeDensity=7.9*g/cm3;
-
-        G4double centralCoolantTemp=629.0100*kelvin;
-        //G4double centralCoolantDensity=0.6059*g/cm3;
-        G4double centralCoolantDensity=0.001*g/cm3;
+        G4double centralCoolantTemp;
+        G4double centralCoolantDensity;
 };
 
 #endif // SCWRCONSTRUCTOR_H

@@ -39,7 +39,7 @@
      theCaptureData = new G4NeutronHPVector;
      theElasticData = new G4NeutronHPVector;
      theInelasticData = new G4NeutronHPVector;
-    theIsotopeWiseData = 0;
+    theIsotopeWiseData = NULL;
      theBuffer = NULL;
      if(DirName[G4int(DirName.size()-1)]!='/')
         DirName.push_back('/');
@@ -54,7 +54,7 @@
      theCaptureData = new G4NeutronHPVector;
      theElasticData = new G4NeutronHPVector;
      theInelasticData = new G4NeutronHPVector;
-    theIsotopeWiseData = 0;
+    theIsotopeWiseData = NULL;
      theBuffer = NULL;
 
   }
@@ -79,6 +79,9 @@
     G4int count = theElement->GetNumberOfIsotopes();
     if(count == 0)
         count += theStableOnes.GetNumberOfIsotopes(static_cast<G4int>(theElement->GetZ()));
+
+    if(theIsotopeWiseData)
+        delete theIsotopeWiseData;
 
     theIsotopeWiseData = new StorkNeutronHPIsoData[count];
     std::vector<G4double> csDataTempVec;
@@ -206,6 +209,7 @@
                     csDataTempVec.push_back(tempData);
                 }
             }
+            closedir(dir);
         }
         else
         {
@@ -217,7 +221,7 @@
         }
         for(G4int i=0; i<G4int(csDataTempVec.size()); i++)
         {
-            if(csDataTempVec[i]>temp)
+            if(csDataTempVec[i]>(temp+0.1))
             {
                 csDataTempVec.erase (csDataTempVec.begin()+i);
                 csDataNameVec.erase (csDataNameVec.begin()+i);
@@ -228,7 +232,7 @@
         {
             for(G4int j=i+1; j<G4int(csDataTempVec.size()); j++)
             {
-                if((temp-csDataTempVec[i])>(temp-csDataTempVec[j]))
+                if(abs(temp-csDataTempVec[i])>abs(temp-csDataTempVec[j]))
                 {
                     tempData=csDataTempVec[i];
                     nameData=csDataNameVec[i];

@@ -12,34 +12,80 @@ DebugConstructor::DebugConstructor()
 	// Set up variable property map
 	variablePropMap[MatPropPair(controlrod,position)] = &contRodH;
 
+	cellVisAtt=NULL;
+	alumShellVisAtt=NULL;
+	alumContVisAtt=NULL;
+	D2OContVisAtt=NULL;
+	reflectorVisAtt=NULL;
+	insAlumVisAtt=NULL;
+	insBeamVisAtt=NULL;
+	outSmallAlumVisAtt=NULL;
+	outLargeAlumVisAtt=NULL;
+	cadLinTubeVisAtt=NULL;
+	outSmallBeamVisAtt=NULL;
+	outLargeBeamVisAtt=NULL;
+	coreWaterVisAtt=NULL;
+	coreWaterSliceVisAtt=NULL;
+	airGapsLatVisAtt=NULL;
+	airGapsLatHVisAtt=NULL;
+	fuelLatVisAtt=NULL;
+	fuelLatHVisAtt=NULL;
+	contRodZirVisAtt=NULL;
+	contRodAlumVisAtt=NULL;
+	contRodCadVisAtt=NULL;
+	contRodCentVisAtt=NULL;
+
 }
 
 DebugConstructor::~DebugConstructor()
 {
 	// Delete visualization attributes
-    delete cellVisAtt;
-    delete alumShellVisAtt;
-    delete alumContVisAtt;
-    delete D2OContVisAtt;
-    delete reflectorVisAtt;
-    delete insAlumVisAtt;
-    delete insBeamVisAtt;
-    delete outSmallAlumVisAtt;
-    delete outLargeAlumVisAtt;
-    delete cadLinTubeVisAtt;
-    delete outSmallBeamVisAtt;
-    delete outLargeBeamVisAtt;
-    delete zircGridVisAtt;
-    delete coreWaterVisAtt;
-    delete coreWaterSliceVisAtt;
-    delete airGapsLatVisAtt;
-    delete airGapsLatHVisAtt;
-    delete fuelLatVisAtt;
-    delete fuelLatHVisAtt;
-    delete contRodZirVisAtt;
-    delete contRodAlumVisAtt;
-    delete contRodCadVisAtt;
-    delete contRodCentVisAtt;
+	if(cellVisAtt)
+        delete cellVisAtt;
+    if(alumShellVisAtt)
+        delete alumShellVisAtt;
+    if(alumContVisAtt)
+        delete alumContVisAtt;
+    if(D2OContVisAtt)
+        delete D2OContVisAtt;
+    if(reflectorVisAtt)
+        delete reflectorVisAtt;
+    if(insAlumVisAtt)
+        delete insAlumVisAtt;
+    if(insBeamVisAtt)
+        delete insBeamVisAtt;
+    if(outSmallAlumVisAtt)
+        delete outSmallAlumVisAtt;
+    if(outLargeAlumVisAtt)
+        delete outLargeAlumVisAtt;
+    if(cadLinTubeVisAtt)
+        delete cadLinTubeVisAtt;
+    if(outSmallBeamVisAtt)
+        delete outSmallBeamVisAtt;
+    if(outLargeBeamVisAtt)
+        delete outLargeBeamVisAtt;
+    if(zircGridVisAtt)
+        delete zircGridVisAtt;
+    if(coreWaterVisAtt)
+        delete coreWaterVisAtt;
+    if(coreWaterSliceVisAtt)
+        delete coreWaterSliceVisAtt;
+    if(airGapsLatVisAtt)
+        delete airGapsLatVisAtt;
+    if(airGapsLatHVisAtt)
+        delete airGapsLatHVisAtt;
+    if(fuelLatVisAtt)
+        delete fuelLatVisAtt;
+    if(fuelLatHVisAtt)
+        delete fuelLatHVisAtt;
+    if(contRodZirVisAtt)
+        delete contRodZirVisAtt;
+    if(contRodAlumVisAtt)
+        delete contRodAlumVisAtt;
+    if(contRodCadVisAtt)
+        delete contRodCadVisAtt;
+    if(contRodCentVisAtt)
+        delete contRodCentVisAtt;
 
 }
 
@@ -306,8 +352,8 @@ G4VPhysicalVolume* DebugConstructor::ConstructWorld()
 		}
 
 		UnionBinaryTree* upGridHolesLat = new UnionBinaryTree(&upperGridHoles);
-		UnionBinaryTree* lowGridHolesLat = new UnionBinaryTree(&lowerGridHoles);
-		UnionBinaryTree* sheatheTubeLat = new UnionBinaryTree(&sheatheTubes);
+		//UnionBinaryTree* lowGridHolesLat = new UnionBinaryTree(&lowerGridHoles);
+		//UnionBinaryTree* sheatheTubeLat = new UnionBinaryTree(&sheatheTubes);
 
 		solidPos upGridHolesLatPair = upGridHolesLat->GetUnionSolid("upGridHolesLat", 0, cylUnit, unitRegDim, regDim, 0.0, radCyl, 1.0, NULL, true);
 //		solidPos lowGridHolesLatPair = lowGridHolesLat->GetUnionSolid("lowGridHolesLat", 0, cylUnit, unitRegDim, regDim, 0.0, radCyl, 1.0, NULL, true);
@@ -611,6 +657,56 @@ G4VPhysicalVolume* DebugConstructor::ConstructWorld()
 
 
     // Set visualization attributes
+
+    if(worldVisAtt)
+        delete worldVisAtt;
+    if(cellVisAtt)
+        delete cellVisAtt;
+    if(alumShellVisAtt)
+        delete alumShellVisAtt;
+    if(alumContVisAtt)
+        delete alumContVisAtt;
+    if(D2OContVisAtt)
+        delete D2OContVisAtt;
+    if(reflectorVisAtt)
+        delete reflectorVisAtt;
+    if(insAlumVisAtt)
+        delete insAlumVisAtt;
+    if(insBeamVisAtt)
+        delete insBeamVisAtt;
+    if(outSmallAlumVisAtt)
+        delete outSmallAlumVisAtt;
+    if(outLargeAlumVisAtt)
+        delete outLargeAlumVisAtt;
+    if(cadLinTubeVisAtt)
+        delete cadLinTubeVisAtt;
+    if(outSmallBeamVisAtt)
+        delete outSmallBeamVisAtt;
+    if(outLargeBeamVisAtt)
+        delete outLargeBeamVisAtt;
+    if(zircGridVisAtt)
+        delete zircGridVisAtt;
+    if(coreWaterVisAtt)
+        delete coreWaterVisAtt;
+    if(coreWaterSliceVisAtt)
+        delete coreWaterSliceVisAtt;
+    if(airGapsLatVisAtt)
+        delete airGapsLatVisAtt;
+    if(airGapsLatHVisAtt)
+        delete airGapsLatHVisAtt;
+    if(fuelLatVisAtt)
+        delete fuelLatVisAtt;
+    if(fuelLatHVisAtt)
+        delete fuelLatHVisAtt;
+    if(contRodZirVisAtt)
+        delete contRodZirVisAtt;
+    if(contRodAlumVisAtt)
+        delete contRodAlumVisAtt;
+    if(contRodCadVisAtt)
+        delete contRodCadVisAtt;
+    if(contRodCentVisAtt)
+        delete contRodCentVisAtt;
+
     worldVisAtt = new G4VisAttributes(G4Colour(1.,1.,1.));
     worldVisAtt->SetVisibility(false);
     worldLogical->SetVisAttributes(worldVisAtt);

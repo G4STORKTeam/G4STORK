@@ -12,33 +12,78 @@ SLOWPOKEConstructor::SLOWPOKEConstructor()
 	// Set up variable property map
 	variablePropMap[MatPropPair(controlrod,position)] = &contRodH;
 
+	cellVisAtt=NULL;
+	alumShellVisAtt=NULL;
+	alumContVisAtt=NULL;
+	D2OContVisAtt=NULL;
+	reflectorVisAtt=NULL;
+	insAlumVisAtt=NULL;
+	insBeamVisAtt=NULL;
+	outSmallAlumVisAtt=NULL;
+	outLargeAlumVisAtt=NULL;
+	cadLinTubeVisAtt=NULL;
+	outSmallBeamVisAtt=NULL;
+	outLargeBeamVisAtt=NULL;
+	coreWaterVisAtt=NULL;
+	coreWaterSliceVisAtt=NULL;
+	airGapsLatVisAtt=NULL;
+	airGapsLatHVisAtt=NULL;
+	fuelLatVisAtt=NULL;
+	fuelLatHVisAtt=NULL;
+	contRodZirVisAtt=NULL;
+	contRodAlumVisAtt=NULL;
+	contRodCadVisAtt=NULL;
+	contRodCentVisAtt=NULL;
+
 }
 
 SLOWPOKEConstructor::~SLOWPOKEConstructor()
 {
 	// Delete visualization attributes
-    delete cellVisAtt;
-    delete alumShellVisAtt;
-    delete alumContVisAtt;
-    delete D2OContVisAtt;
-    delete reflectorVisAtt;
-    delete insAlumVisAtt;
-    delete insBeamVisAtt;
-    delete outSmallAlumVisAtt;
-    delete outLargeAlumVisAtt;
-    delete cadLinTubeVisAtt;
-    delete outSmallBeamVisAtt;
-    delete outLargeBeamVisAtt;
-    delete coreWaterVisAtt;
-    delete coreWaterSliceVisAtt;
-    delete airGapsLatVisAtt;
-    delete airGapsLatHVisAtt;
-    delete fuelLatVisAtt;
-    delete fuelLatHVisAtt;
-    delete contRodZirVisAtt;
-    delete contRodAlumVisAtt;
-    delete contRodCadVisAtt;
-    delete contRodCentVisAtt;
+	if(cellVisAtt)
+        delete cellVisAtt;
+    if(alumShellVisAtt)
+        delete alumShellVisAtt;
+    if(alumContVisAtt)
+        delete alumContVisAtt;
+    if(D2OContVisAtt)
+        delete D2OContVisAtt;
+    if(reflectorVisAtt)
+        delete reflectorVisAtt;
+    if(insAlumVisAtt)
+        delete insAlumVisAtt;
+    if(insBeamVisAtt)
+        delete insBeamVisAtt;
+    if(outSmallAlumVisAtt)
+        delete outSmallAlumVisAtt;
+    if(outLargeAlumVisAtt)
+        delete outLargeAlumVisAtt;
+    if(cadLinTubeVisAtt)
+        delete cadLinTubeVisAtt;
+    if(outSmallBeamVisAtt)
+        delete outSmallBeamVisAtt;
+    if(outLargeBeamVisAtt)
+        delete outLargeBeamVisAtt;
+    if(coreWaterVisAtt)
+        delete coreWaterVisAtt;
+    if(coreWaterSliceVisAtt)
+        delete coreWaterSliceVisAtt;
+    if(airGapsLatVisAtt)
+        delete airGapsLatVisAtt;
+    if(airGapsLatHVisAtt)
+        delete airGapsLatHVisAtt;
+    if(fuelLatVisAtt)
+        delete fuelLatVisAtt;
+    if(fuelLatHVisAtt)
+        delete fuelLatHVisAtt;
+    if(contRodZirVisAtt)
+        delete contRodZirVisAtt;
+    if(contRodAlumVisAtt)
+        delete contRodAlumVisAtt;
+    if(contRodCadVisAtt)
+        delete contRodCadVisAtt;
+    if(contRodCentVisAtt)
+        delete contRodCentVisAtt;
 
 }
 
@@ -341,7 +386,7 @@ G4VPhysicalVolume* SLOWPOKEConstructor::ConstructWorld()
          */
 
         //creates the data variables to be used in the while loops below
-        G4int g=1;
+        G4int index=1;
         G4int k=5;
         G4int i=3;
         G4int j=3;
@@ -356,9 +401,9 @@ G4VPhysicalVolume* SLOWPOKEConstructor::ConstructWorld()
             {
                 if(latticeMat[i][j]!=7)
                 {
-                    if(g==9||(g==8&&k==0))
+                    if(index==9||(index==8&&k==0))
                     {
-                        g=1;
+                        index=1;
 
                         i=holeSecEndCoor[k][0];
                         j=holeSecEndCoor[k][1];
@@ -438,7 +483,7 @@ G4VPhysicalVolume* SLOWPOKEConstructor::ConstructWorld()
                     }
 
                     beside=true;
-                    g++;
+                    index++;
                     rot=false;
                 }
                 j++;
@@ -486,7 +531,7 @@ G4VPhysicalVolume* SLOWPOKEConstructor::ConstructWorld()
          */
 
         //creates the data variables to be used in the while loops below
-		g=1;
+		index=1;
         k=5;
         i=3;
         j=3;
@@ -498,9 +543,9 @@ G4VPhysicalVolume* SLOWPOKEConstructor::ConstructWorld()
             {
                 if(latticeMat[i][j]==8)
                 {
-                    if((g==5&&k!=5)||g==6)
+                    if((index==5&&k!=5)||index==6)
                     {
-                        g=1;
+                        index=1;
 
                         i=tubeSecEndCoor[k][0];
                         j=tubeSecEndCoor[k][1];
@@ -533,7 +578,7 @@ G4VPhysicalVolume* SLOWPOKEConstructor::ConstructWorld()
                     }
 
 
-                    g++;
+                    index++;
                 }
                 j++;
 
@@ -560,7 +605,7 @@ G4VPhysicalVolume* SLOWPOKEConstructor::ConstructWorld()
         G4UnionSolid* lowGridHolesLat = new G4UnionSolid("lowGridHolesLat", lowGridHolesSec[0], lowGridHolesSec[5], 0, bottomHole+originHoleSec[5]);
         G4UnionSolid* sheatheLat = new G4UnionSolid("sheatheLat", sheatheLatSec[0], sheatheLatSec[5], 0, originTubeSec[5]-originTubeSec[0]);
 
-		for(G4int i=1; i<5; i++)
+		for(i=1; i<5; i++)
 		{
             upGridHolesLat = new G4UnionSolid("upGridHolesLat", upGridHolesLat, upGridHolesSec[i], 0, firstHole+originHoleSec[i]);
             lowGridHolesLat = new G4UnionSolid("lowGridHolesLat", lowGridHolesLat, lowGridHolesSec[i], 0, firstHole+originHoleSec[i]);
@@ -743,18 +788,18 @@ G4VPhysicalVolume* SLOWPOKEConstructor::ConstructWorld()
     G4int k=0;
     G4int i=3;
     G4int j=1;
-    G4int g=13;
+    G4int index=13;
     G4bool check=false;
 
     while (i<22)
     {
         if(i>12)
         {
-            g=g-1;
+            index=index-1;
             check=true;
         }
 
-        while (j<g)
+        while (j<index)
         {
             if(latticeMat[i][j]==8)
             {
@@ -763,7 +808,7 @@ G4VPhysicalVolume* SLOWPOKEConstructor::ConstructWorld()
 
                 volPos.set(((12-i)*(-latticeCellDim[0]*0.5)+(j-12)*latticeCellDim[0]), ((12-i)*(latticeCellDim[1])), disUpGridToSheathe[2]+disSheatheToAirGaps[2]);
 
-                if (!((j==12)||(j==g&&check)))
+                if (!((j==12)||(j==index&&check)))
                     new G4PVPlacement(0, volPos, airGapsLatLogical,"airGapsLatPhysical"+volName.str(),
                                                                        zircGridLogical,0,0,0);
                 else if (j==12)
@@ -856,6 +901,54 @@ G4VPhysicalVolume* SLOWPOKEConstructor::ConstructWorld()
 
 
     // Set visualization attributes
+
+    if(worldVisAtt)
+        delete worldVisAtt;
+    if(cellVisAtt)
+        delete cellVisAtt;
+    if(alumShellVisAtt)
+        delete alumShellVisAtt;
+    if(alumContVisAtt)
+        delete alumContVisAtt;
+    if(D2OContVisAtt)
+        delete D2OContVisAtt;
+    if(reflectorVisAtt)
+        delete reflectorVisAtt;
+    if(insAlumVisAtt)
+        delete insAlumVisAtt;
+    if(insBeamVisAtt)
+        delete insBeamVisAtt;
+    if(outSmallAlumVisAtt)
+        delete outSmallAlumVisAtt;
+    if(outLargeAlumVisAtt)
+        delete outLargeAlumVisAtt;
+    if(cadLinTubeVisAtt)
+        delete cadLinTubeVisAtt;
+    if(outSmallBeamVisAtt)
+        delete outSmallBeamVisAtt;
+    if(outLargeBeamVisAtt)
+        delete outLargeBeamVisAtt;
+    if(coreWaterVisAtt)
+        delete coreWaterVisAtt;
+    if(coreWaterSliceVisAtt)
+        delete coreWaterSliceVisAtt;
+    if(airGapsLatVisAtt)
+        delete airGapsLatVisAtt;
+    if(airGapsLatHVisAtt)
+        delete airGapsLatHVisAtt;
+    if(fuelLatVisAtt)
+        delete fuelLatVisAtt;
+    if(fuelLatHVisAtt)
+        delete fuelLatHVisAtt;
+    if(contRodZirVisAtt)
+        delete contRodZirVisAtt;
+    if(contRodAlumVisAtt)
+        delete contRodAlumVisAtt;
+    if(contRodCadVisAtt)
+        delete contRodCadVisAtt;
+    if(contRodCentVisAtt)
+        delete contRodCentVisAtt;
+
     worldVisAtt = new G4VisAttributes(G4Colour(1.,1.,1.));
     worldVisAtt->SetVisibility(false);
     worldLogical->SetVisAttributes(worldVisAtt);
