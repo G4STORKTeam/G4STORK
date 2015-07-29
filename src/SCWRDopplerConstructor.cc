@@ -861,7 +861,220 @@ void SCWRDopplerConstructor::ConstructMaterials()
 
     CentralCoolant = new StorkMaterial("CentralCoolant", centralCoolantDensity, 1, kStateLiquid, centralCoolantTemp);
     CentralCoolant->AddMaterial(Coolant,  100*perCent);
+/*
+    G4cout << "\n### Element properties for the entire table ###\n" << G4endl;
 
+    for(int i=0; i<tempTab->size(); i++)
+    {
+        G4cout << "Element :" << ((*tempTab)[i])->GetName() << " contains " << ((*tempTab)[i])->GetNumberOfIsotopes() << " isotopes" << " and has a temperature of " << dynamic_cast<StorkElement*>((*tempTab)[i])->GetTemperature() << G4endl;
+
+        tempVec = ((*tempTab)[i])->GetIsotopeVector();
+        tempVecAbun = ((*tempTab)[i])->GetRelativeAbundanceVector();
+        for(int j=0; j<((*tempTab)[i])->GetNumberOfIsotopes(); j++)
+        {
+            G4cout << "Isotope :" << ((*tempVec)[j])->GetName() << " has abundance" << tempVecAbun[j] << G4endl;
+        }
+    }
+    */
+  /*
+  //pointer to ionisation parameters:
+  //
+  inline G4IonisParamElm* GetIonisation() const {return fIonisation;}*/
+
+/*
+    G4MaterialTable *matTable = (G4MaterialTable*)G4Material::GetMaterialTable();
+
+    int j = World->GetIndex();
+    World->~StorkMaterial();
+    matTable->erase(matTable->begin()+j);
+    new (World) StorkMaterial("Galactic", 1, 1, 1.e-25*g/cm3, kStateGas,
+						   2.73*kelvin, 3.e-18*pascal);
+
+    j = H2O->GetIndex();
+    H2O->~StorkMaterial();
+    matTable->erase(matTable->begin()+j);
+    // Create H20 material
+    new (H2O) StorkMaterial("LightWater", 1.*g/cm3, 2, kStateLiquid, coolantTemp);
+    H2O->AddElement(H,2);
+    H2O->AddElement(Oxygen,1);
+
+    j = D2O->GetIndex();
+    D2O->~StorkMaterial();
+    matTable->erase(matTable->begin()+j);
+    // Create D20 material
+    new (D2O) StorkMaterial("HeavyWater", 1.1*g/cm3, 2, kStateLiquid, moderatorTemp);
+    D2O->AddElement(D,2);
+    D2O->AddElement(Oxygen,1);
+
+    j = Coolant->GetIndex();
+    Coolant->~StorkMaterial();
+    matTable->erase(matTable->begin()+j);
+    // Create Coolant
+	new (Coolant) StorkMaterial("Coolant", coolantDensity, 1, kStateLiquid,
+							 coolantTemp);
+    Coolant->AddMaterial(H2O,  100*perCent);
+
+    j = Moderator->GetIndex();
+    Moderator->~StorkMaterial();
+    matTable->erase(matTable->begin()+j);
+    //Create Moderator
+    new (Moderator) StorkMaterial("Moderator", moderatorDensity, 2, kStateLiquid,
+							   moderatorTemp);
+    Moderator->AddMaterial(D2O,99.833*perCent);
+    Moderator->AddMaterial(H2O,0.167*perCent);
+
+    j = ExelLiner->GetIndex();
+    ExelLiner->~StorkMaterial();
+    matTable->erase(matTable->begin()+j);
+    //Create Moderator
+    new (ExelLiner) StorkMaterial("ExelLiner", 1, 4, kStateSolid, pressTubeTemp);
+    ExelLiner->AddElement(Sn,3.5*perCent);
+    ExelLiner->AddElement(Mo,0.8*perCent);
+    ExelLiner->AddElement(Nb,0.8*perCent);
+    ExelLiner->AddElement(Zr,94.9*perCent);
+
+    j = ZircSteel->GetIndex();
+    ZircSteel->~StorkMaterial();
+    matTable->erase(matTable->begin()+j);
+    new (ZircSteel) StorkMaterial("ZircSteel", 1, 10, kStateSolid, outSheatheTemp);
+    ZircSteel->AddElement(C,0.034*perCent);
+    ZircSteel->AddElement(Si,0.51*perCent);
+    ZircSteel->AddElement(Mn,0.74*perCent);
+    ZircSteel->AddElement(P,0.016*perCent);
+    ZircSteel->AddElement(S,0.002*perCent);
+    ZircSteel->AddElement(Ni,20.82*perCent);
+    ZircSteel->AddElement(Cr,25.04*perCent);
+    ZircSteel->AddElement(Fe,51.738*perCent);
+    ZircSteel->AddElement(Mo,0.51*perCent);
+    ZircSteel->AddElement(Zr,0.59*perCent);
+
+    j = Insulator->GetIndex();
+    Insulator->~StorkMaterial();
+    matTable->erase(matTable->begin()+j);
+    new (Insulator) StorkMaterial("Insulator", insulatorDensity, 3, kStateSolid, insulatorTemp);
+    Insulator->AddElement(Zr,66.63*perCent);
+    Insulator->AddElement(Y,7.87*perCent);
+    Insulator->AddElement(Oxygen,25.5*perCent);
+
+    j = OuterFuel->GetIndex();
+    OuterFuel->~StorkMaterial();
+    matTable->erase(matTable->begin()+j);
+    //Create Fuel
+    new (OuterFuel) StorkMaterial("OuterFuel", outerFuelDensity, 3, kStateSolid, outerFuelTemp);
+    OuterFuel->AddElement(Oxygen,12.08*perCent);
+    OuterFuel->AddElement(Pu,10.59*perCent);
+    OuterFuel->AddElement(Th,77.34*perCent);
+
+    j = InnerFuel->GetIndex();
+    InnerFuel->~StorkMaterial();
+    matTable->erase(matTable->begin()+j);
+    new (InnerFuel) StorkMaterial("InnerFuel", innerFuelDensity, 3, kStateSolid, innerFuelTemp);
+    InnerFuel->AddElement(Oxygen,12.07*perCent);
+    InnerFuel->AddElement(Pu,13.23*perCent);
+    InnerFuel->AddElement(Th,74.7*perCent);
+
+    j = OutSheathe->GetIndex();
+    OutSheathe->~StorkMaterial();
+    matTable->erase(matTable->begin()+j);
+    new (OutSheathe) StorkMaterial("OutSheathe", outSheatheDensity, 1, kStateSolid, outSheatheTemp);
+    OutSheathe->AddMaterial(ZircSteel,100*perCent);
+
+    j = InSheathe->GetIndex();
+    InSheathe->~StorkMaterial();
+    matTable->erase(matTable->begin()+j);
+    new (InSheathe) StorkMaterial("InSheathe", inSheatheDensity, 1, kStateSolid, inSheatheTemp);
+    InSheathe->AddMaterial(ZircSteel,100*perCent);
+
+    j = Liner->GetIndex();
+    Liner->~StorkMaterial();
+    matTable->erase(matTable->begin()+j);
+    new (Liner) StorkMaterial("Liner", linerDensity, 1, kStateSolid, linerTemp);
+    Liner->AddMaterial(ZircSteel,100*perCent);
+
+    j = FlowTube->GetIndex();
+    FlowTube->~StorkMaterial();
+    matTable->erase(matTable->begin()+j);
+    new (FlowTube) StorkMaterial("FlowTube", flowTubeDensity, 1, kStateSolid, flowTubeTemp);
+    FlowTube->AddMaterial(ZircSteel,100*perCent);
+
+    j = PressTube->GetIndex();
+    PressTube->~StorkMaterial();
+    matTable->erase(matTable->begin()+j);
+    new (PressTube) StorkMaterial("PressTube", pressTubeDensity, 1, kStateSolid, pressTubeTemp);
+    PressTube->AddMaterial(ExelLiner,100*perCent);
+
+    j = OutLiner->GetIndex();
+    OutLiner->~StorkMaterial();
+    matTable->erase(matTable->begin()+j);
+    new (OutLiner) StorkMaterial("OutLiner", outLinerDensity, 1, kStateSolid, outLinerTemp);
+    OutLiner->AddMaterial(ExelLiner,100*perCent);
+
+    j = CentralCoolant->GetIndex();
+    CentralCoolant->~StorkMaterial();
+    matTable->erase(matTable->begin()+j);
+    new (CentralCoolant) StorkMaterial("CentralCoolant", centralCoolantDensity, 1, kStateLiquid, centralCoolantTemp);
+    CentralCoolant->AddMaterial(Coolant,  100*perCent);
+
+*/
+/*
+    // Create the world material
+    World = new StorkMaterial("Galactic1", 1.e-25*g/cm3, World, kStateGas,
+						   2.73*kelvin, 3.e-18*pascal);
+
+    // Create H20 material
+    H2O = new StorkMaterial("LightWater1", 1.*g/cm3, H2O, kStateLiquid, coolantTemp);
+
+    // Create D20 material
+    D2O = new StorkMaterial("HeavyWater1", 1.1*g/cm3, D2O, kStateLiquid, moderatorTemp);
+
+
+    // Create Coolant
+	Coolant = new StorkMaterial("Coolant1", coolantDensity, Coolant, kStateLiquid,
+							 coolantTemp);
+    //Create Moderator
+    Moderator = new StorkMaterial("Moderator1", moderatorDensity, Moderator, kStateLiquid,
+							   moderatorTemp);
+
+    //Create Moderator
+    ExelLiner = new StorkMaterial("ExelLiner1", 1, ExelLiner, kStateSolid, pressTubeTemp);
+
+    ZircSteel = new StorkMaterial("ZircSteel1", 1, ZircSteel, kStateSolid, outSheatheTemp);
+
+    Insulator = new StorkMaterial("Insulator1", insulatorDensity, Insulator, kStateSolid, insulatorTemp);
+
+    //Create Fuel
+    OuterFuel = new StorkMaterial("OuterFuel1", outerFuelDensity, OuterFuel, kStateSolid, outerFuelTemp);
+
+    InnerFuel = new StorkMaterial("InnerFuel1", innerFuelDensity, InnerFuel, kStateSolid, innerFuelTemp);
+
+    OutSheathe = new StorkMaterial("OutSheathe1", outSheatheDensity, OutSheathe, kStateSolid, outSheatheTemp);
+
+    InSheathe = new StorkMaterial("InSheathe1", inSheatheDensity, InSheathe, kStateSolid, inSheatheTemp);
+
+    Liner = new StorkMaterial("Liner1", linerDensity, Liner, kStateSolid, linerTemp);
+
+    FlowTube = new StorkMaterial("FlowTube1", flowTubeDensity, FlowTube, kStateSolid, flowTubeTemp);
+
+    PressTube = new StorkMaterial("PressTube1", pressTubeDensity, PressTube, kStateSolid, pressTubeTemp);
+
+    OutLiner = new StorkMaterial("OutLiner1", outLinerDensity, OutLiner, kStateSolid, outLinerTemp);
+
+    CentralCoolant = new StorkMaterial("CentralCoolant1", centralCoolantDensity, CentralCoolant, kStateLiquid, centralCoolantTemp);
+
+    G4cout << "\n### Element properties after conversion ###\n" << G4endl;
+
+    for(int i=0; i<tempTab->size(); i++)
+    {
+        G4cout << "Element :" << ((*tempTab)[i])->GetName() << " contains " << ((*tempTab)[i])->GetNumberOfIsotopes() << " isotopes" << " and has a temperature of " << dynamic_cast<StorkElement*>((*tempTab)[i])->GetTemperature() << G4endl;
+
+        tempVec = ((*tempTab)[i])->GetIsotopeVector();
+        tempVecAbun = ((*tempTab)[i])->GetRelativeAbundanceVector();
+        for(int j=0; j<((*tempTab)[i])->GetNumberOfIsotopes(); j++)
+        {
+            G4cout << "Isotope :" << ((*tempVec)[j])->GetName() << " has abundance" << tempVecAbun[j] << G4endl;
+        }
+    }
+*/
     // Add materials to the map indexed by either ZA (format ZZAAA or ZZ)
     // For composite materials:  world is 0, heavy water is 1, UHW is 2
     matMap["Galactic"] = World;

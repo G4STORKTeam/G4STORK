@@ -154,10 +154,6 @@ public:  // with description
 
   void AddMaterial(StorkMaterial* material,			//the material
                    G4double   fraction);			//fractionOfMass
-/*
-inline const
-  G4ElementVector* GetElementVector() {return (dynamic_cast<G4Material*>(this))->GetElementVector();}
-*/
 
   ~StorkMaterial();
   //
@@ -179,7 +175,7 @@ public:  // without description
     // persistifiable objects.
 
 
-  void SetTemperature(G4double matTemp);
+  void SetTemperature(G4double matTemp, G4bool UpdateElemTemp);
   StorkMaterial(StorkMaterial&);
   const StorkMaterial& operator=(StorkMaterial&);
 

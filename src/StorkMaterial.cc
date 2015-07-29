@@ -67,9 +67,9 @@ StorkMaterial::StorkMaterial(const G4String& name, G4double density,
 StorkMaterial::StorkMaterial(const G4String& name, G4double density,
                        StorkMaterial* bmat,
                        G4State state, G4double temp, G4double pressure)
-  : G4Material(name, density, bmat->GetNumberOfElements(), state, temp, pressure)
+  : G4Material(name, density, 1, state, temp, pressure)
 {
-    AddMaterial(bmat, 1.);
+    this->AddMaterial(bmat, 1.);
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -104,11 +104,11 @@ void StorkMaterial::AddElement(StorkElement* element, G4int nAtoms)
         ss<<'T'<<GetTemperature()<<'k';
         element->SetTemperature(GetTemperature());
         element->SetName(element->GetName()+ss.str());
-        mat->AddElement(dynamic_cast<G4Element*>(element), nAtoms);
+        mat->AddElement((element), nAtoms);
     }
     else if(element->Exists(GetTemperature(),index))
     {
-        mat->AddElement(((*(element->GetElementTable()))[index]), nAtoms);
+        mat->AddElement(dynamic_cast<StorkElement*>((*(element->GetElementTable()))[index]), nAtoms);
     }
     else
     {
@@ -138,7 +138,7 @@ void StorkMaterial::AddElement(StorkElement* element, G4int nAtoms)
             newElem->SetName(element->GetName()+ss.str());
         }
         newElem->SetTemperature(GetTemperature());
-        mat->AddElement(dynamic_cast<G4Element*>(newElem), nAtoms);
+        mat->AddElement((newElem), nAtoms);
     }
 
 }
@@ -158,11 +158,11 @@ void StorkMaterial::AddElement(StorkElement* element, G4double fraction)
         std::stringstream elemName;
         elemName << element->GetName() << 'T' << element->GetTemperature() << 'k';
         element->SetName(elemName.str());
-        mat->AddElement(dynamic_cast<G4Element*>(element), fraction);
+        mat->AddElement((element), fraction);
     }
     else if(element->Exists(GetTemperature(),index))
     {
-        mat->AddElement(((*(element->GetElementTable()))[index]), fraction);
+        mat->AddElement(dynamic_cast<StorkElement*>((*(element->GetElementTable()))[index]), fraction);
     }
     else
     {
@@ -192,7 +192,7 @@ void StorkMaterial::AddElement(StorkElement* element, G4double fraction)
             newElem->SetName(element->GetName()+ss.str());
         }
         newElem->SetTemperature(GetTemperature());
-        mat->AddElement(dynamic_cast<G4Element*>(newElem), fraction);
+        mat->AddElement((newElem), fraction);
     }
 }
 
@@ -214,16 +214,16 @@ const G4double* fracVec = mat2->GetFractionVector();
 for (size_t elm=0; elm<mat2->GetNumberOfElements(); ++elm)
 {
     StorkElement* element = static_cast<StorkElement*>((*(mat2->GetElementVector()))[elm]);
-    if(element->Exists(GetTemperature(), index))
+    if(element->Exists(this->GetTemperature(), index))
     {
-        temp->AddElement(((*(element->GetElementTable()))[index]), fracVec[elm]);
+        temp->AddElement(dynamic_cast<StorkElement*>((*(element->GetElementTable()))[index]), fracVec[elm]);
     }
     else
     {
         std::stringstream ss;
         ss.str("");
         ss<<'T'<<element->GetTemperature()<<'k';
-        G4String elemName = element->GetName(), check;
+        G4String elemName = element->GetName(), check="";
         int pos=elemName.find_last_of('T'), pos2=elemName.find_last_of('k');
 
         if((pos>0)&&(pos2>0)&&(pos2>pos))
@@ -235,43 +235,72 @@ for (size_t elm=0; elm<mat2->GetNumberOfElements(); ++elm)
         {
             ss.str("");
             ss.clear();
-            ss<<'T'<<GetTemperature()<<'k';
+            ss<<'T'<<this->GetTemperature()<<'k';
             newElem->SetName(elemName.substr(0, elemName.find_last_of('T'))+ss.str());
         }
         else
         {
             ss.str("");
             ss.clear();
-            ss<<'T'<<GetTemperature()<<'k';
+            ss<<'T'<<this->GetTemperature()<<'k';
             newElem->SetName(element->GetName()+ss.str());
         }
-        newElem->SetTemperature(GetTemperature());
-        temp->AddElement(dynamic_cast<G4Element*>(newElem), fracVec[elm]);
+        newElem->SetTemperature(this->GetTemperature());
+        temp->AddElement((newElem), fracVec[elm]);
     }
 }
 
 mat->AddMaterial(temp, fraction);
-
+delete temp;
+(G4Material::GetMaterialTable())->pop_back();
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void StorkMaterial::SetTemperature(G4double matTemp)
+void StorkMaterial::SetTemperature(G4double matTemp, G4bool UpdateElemTemp)
 {
-    //this may leak memory
-    StorkMaterial tempMat(*this);
-    this->~StorkMaterial();
-    G4cout << "### The StorkMaterial this pointer points to " << this << " ###" << G4endl;
-    StorkMaterial(tempMat.GetName(), tempMat.GetDensity(), tempMat.GetNumberOfElements(), tempMat.GetState(), matTemp, tempMat.GetPressure());
-    SetName(tempMat.GetName());
-    G4cout << "### The StorkMaterial this pointer points to " << this << " ###" << G4endl;
-    G4cout << "### The new material name is " << this->GetName() << " ###" << G4endl;
-    G4ElementVector* elemVec = const_cast<G4ElementVector*> (tempMat.GetElementVector());
-    G4double* fracVec = const_cast<G4double*> (tempMat.GetFractionVector());
-    for(G4int i=0; i<int(tempMat.GetNumberOfElements()); i++)
+    //this should work but seems to change results, even when we use an alternative method by reassigning the logical volumes to point to new materials with the desired properties
+    // need to fix when UpdateElemTemp=true
+    G4MaterialTable *matTable = (G4MaterialTable*)G4Material::GetMaterialTable();
+    int j = this->GetIndex();
+
+    StorkMaterial *tempMat = new StorkMaterial(this->GetName()+"1", this->GetDensity(), this->GetNumberOfElements(), this->GetState(), this->GetTemperature(), this->GetPressure());
+
+    G4Material* g4Mat2 = dynamic_cast<G4Material*>(tempMat);
+    G4ElementVector* elemVec2 = const_cast<G4ElementVector*> (this->GetElementVector());
+    G4double* fracVec2 = const_cast<G4double*> (this->GetFractionVector());
+    for(G4int k=0; k<int(this->GetNumberOfElements()); k++)
     {
-        AddElement(dynamic_cast<StorkElement*>((*elemVec)[i]), fracVec[i]);
+        g4Mat2->AddElement(dynamic_cast<StorkElement*>((*elemVec2)[k]), fracVec2[k]);
     }
+
+    this->~StorkMaterial();
+    matTable->erase(matTable->begin()+j);
+    G4String realName = (tempMat->GetName()).substr(0, (tempMat->GetName()).size()-1);
+
+    std::vector<G4Material*> tempMatTable(matTable->begin()+j, matTable->end());
+    matTable->erase(matTable->begin()+j, matTable->end());
+
+    if(UpdateElemTemp)
+        new (this) StorkMaterial(realName, tempMat->GetDensity(), tempMat, tempMat->GetState(), matTemp, tempMat->GetPressure());
+    else
+        new (this) StorkMaterial(realName, tempMat->GetDensity(), tempMat->GetNumberOfElements(), tempMat->GetState(), matTemp, tempMat->GetPressure());
+
+    matTable->insert(matTable->end(), tempMatTable.begin(), tempMatTable.end());
+
+    if(!UpdateElemTemp)
+    {
+        G4Material* g4Mat = dynamic_cast<G4Material*>(this);
+        G4ElementVector* elemVec = const_cast<G4ElementVector*> (tempMat->GetElementVector());
+        G4double* fracVec = const_cast<G4double*> (tempMat->GetFractionVector());
+        for(G4int k=0; k<int(tempMat->GetNumberOfElements()); k++)
+        {
+            g4Mat->AddElement(dynamic_cast<StorkElement*>((*elemVec)[k]), fracVec[k]);
+        }
+    }
+
+    delete tempMat;
+    matTable->pop_back();
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -283,7 +312,7 @@ StorkMaterial::StorkMaterial(StorkMaterial& right): G4Material(right.GetName(), 
     G4double* fracVec = const_cast<G4double*> (right.GetFractionVector());
     for(G4int i=0; i<int(right.GetNumberOfElements()); i++)
     {
-        AddElement(dynamic_cast<StorkElement*>((*elemVec)[i]), fracVec[i]);
+        this->AddElement(dynamic_cast<StorkElement*>((*elemVec)[i]), fracVec[i]);
     }
 
 }
@@ -292,22 +321,23 @@ StorkMaterial::StorkMaterial(StorkMaterial& right): G4Material(right.GetName(), 
 
 const StorkMaterial& StorkMaterial::operator=(StorkMaterial& right)
 {
-  if (this != &right)
+    if (this != &right)
     {
-        //this may leak memory
+        G4MaterialTable *matTable = (G4MaterialTable*)G4Material::GetMaterialTable();
+        int j = this->GetIndex();
+        G4String realName = this->GetName();
+
         this->~StorkMaterial();
-        G4cout << "### The StorkMaterial this pointer points to " << this << " ###" << G4endl;
-        StorkMaterial(right.GetName(), right.GetDensity(), right.GetNumberOfElements(), right.GetState(), right.GetTemperature(), right.GetPressure());
-        G4cout << "### The StorkMaterial this pointer points to " << this << " ###" << G4endl;
-        G4cout << "### The new material name is " << this->GetName() << " ###" << G4endl;
-        G4ElementVector* elemVec = const_cast<G4ElementVector*> (right.GetElementVector());
-        G4double* fracVec = const_cast<G4double*> (right.GetFractionVector());
-        for(G4int i=0; i<int(right.GetNumberOfElements()); i++)
-        {
-            AddElement(dynamic_cast<StorkElement*>((*elemVec)[i]), fracVec[i]);
-        }
+        matTable->erase(matTable->begin()+j);
+
+        std::vector<G4Material*> tempMatTable(matTable->begin()+j, matTable->end());
+        matTable->erase(matTable->begin()+j, matTable->end());
+
+        new (this) StorkMaterial(realName, right.GetDensity(), &right, right.GetState(), right.GetTemperature(), right.GetPressure());
+
+        matTable->insert(matTable->end(), tempMatTable.begin(), tempMatTable.end());
     }
-  return *this;
+    return *this;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

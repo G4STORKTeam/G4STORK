@@ -168,7 +168,7 @@ StorkElement::StorkElement(StorkElement& right): G4Element(right.GetName(),
 
   for(G4int i=0; i<int(right.GetIsotopeVector()->size()); i++)
   {
-    AddIsotope((*isoVec)[i], relVec[i]);
+    this->AddIsotope((*isoVec)[i], relVec[i]);
   }
   temperature = right.GetTemperature();
   csDataTemp = right.GetCSDataTemp();
@@ -182,7 +182,7 @@ StorkElement::StorkElement(G4Element& right): G4Element(right.GetName(),
 
   for(G4int i=0; i<int(right.GetIsotopeVector()->size()); i++)
   {
-    AddIsotope((*isoVec)[i], relVec[i]);
+    this->AddIsotope((*isoVec)[i], relVec[i]);
   }
   temperature = -1;
   csDataTemp = -1;
@@ -194,18 +194,25 @@ const StorkElement& StorkElement::operator=( StorkElement& right)
 {
   if (this != &right)
     {
-        //this may leak memory
+        G4ElementTable *elemTable = (G4ElementTable*)G4Element::GetElementTable();
+        int j = this->GetIndex();
+        G4String realName = this->GetName();
+
         this->~StorkElement();
-        G4cout << "### The StorkElement this pointer points to " << this << " ###" << G4endl;
-        StorkElement(right.GetName(), right.GetSymbol(), right.GetIsotopeVector()->size());
-        G4cout << "### The StorkElement this pointer points to " << this << " ###" << G4endl;
-        G4cout << "### The new element name is " << this->GetName() << " ###" << G4endl;
+        elemTable->erase(elemTable->begin()+j);
+
+        std::vector<G4Element*> tempElemTable(elemTable->begin()+j, elemTable->end());
+        elemTable->erase(elemTable->begin()+j, elemTable->end());
+
+        new (this) StorkElement(realName, right.GetSymbol(), right.GetIsotopeVector()->size());
+
+        elemTable->insert(elemTable->end(), tempElemTable.begin(), tempElemTable.end());
         G4IsotopeVector* isoVec = right.GetIsotopeVector();
         G4double* relVec = right.GetRelativeAbundanceVector();
 
         for(G4int i=0; i<int(right.GetIsotopeVector()->size()); i++)
         {
-            AddIsotope((*isoVec)[i], relVec[i]);
+            this->AddIsotope((*isoVec)[i], relVec[i]);
         }
         temperature = right.GetTemperature();
         csDataTemp = right.GetCSDataTemp();

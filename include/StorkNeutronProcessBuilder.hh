@@ -40,6 +40,7 @@ processes and models (fission, capture, elastic, inelastic, and step limiters).
 #include "globals.hh"
 
 #include "StorkMaterial.hh"
+#include "G4LogicalVolumeStore.hh"
 // Include other headers
 #include <vector>
 #include <typeinfo>

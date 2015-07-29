@@ -73,8 +73,8 @@ void StorkNeutronProcessBuilder::Build()
     {
         StorkMaterial *aStorkMat;
 
-        if(fsDirName.back()=='/')
-            fsDirName.push_back('/');
+        if(fsDirName[fsDirName.size()-1]=='/')
+            fsDirName.erase(fsDirName.size()-1);
         ExtractTemp(fsDirName, fsTemp);
         setenv("G4NEUTRONHPDATA",fsDirName,1);
 
@@ -87,7 +87,15 @@ void StorkNeutronProcessBuilder::Build()
         }
 
         G4MaterialTable *matTable = (G4MaterialTable*)G4Material::GetMaterialTable();
-        for(int j=0; j<int(matTable->size()); j++)
+        G4LogicalVolumeStore* lvStore = G4LogicalVolumeStore::GetInstance();
+        std::vector<G4int> lvIndexVec;
+        G4int matTableSize = matTable->size();
+
+        //G4int matNum=10;
+        /*StorkMaterial *test = new StorkMaterial((*matTable)[matNum]->GetName(), (*matTable)[matNum]->GetDensity(), dynamic_cast<StorkMaterial*>((*matTable)[matNum]),
+                                                (*matTable)[matNum]->GetState(), (*matTable)[matNum]->GetTemperature(), (*matTable)[matNum]->GetPressure());*/
+        //G4Material *testing = dynamic_cast<G4Material*>(test);
+        for(int j=0; j<matTableSize; j++)
         {
             if((*matTable)[j])
             {
@@ -95,14 +103,120 @@ void StorkNeutronProcessBuilder::Build()
 
                 if(aStorkMat)
                 {
-                    aStorkMat->SetTemperature(fsTemp);
+                    aStorkMat->SetTemperature(std::max(0.,aStorkMat->GetTemperature()-fsTemp),false);
                 }
                 else
                 {
-                    G4cerr << "Error: Only StorkMaterials can be implemented in the geometry when using an outside final state library" << G4endl;
+                    for(int k=0; k<int(lvStore->size()); k++)
+                    {
+                        if(lvStore[0][k]->GetMaterial()==(*matTable)[j])
+                        {
+                            lvIndexVec.push_back(k);
+                        }
+                    }
+
+                    G4Material *oldMat=(*matTable)[j];
+                    G4String realName = oldMat->GetName();
+                    oldMat->SetName(oldMat->GetName()+"Old");
+                    G4Material *tempMat = new G4Material(realName, oldMat->GetDensity(), oldMat, oldMat->GetState(), std::max(0.,oldMat->GetTemperature()-fsTemp), oldMat->GetPressure());
+
+                    for(int k=0; k<int(lvIndexVec.size()); k++)
+                    {
+                        lvStore[0][lvIndexVec[k]]->SetMaterial(tempMat);
+                    }
+                    lvIndexVec.clear();
                 }
             }
         }
+        /*
+        G4cout << '\n';
+        G4cout << testing[0] << '\n' << (*matTable)[matNum][0] << G4endl;
+        G4cout << '\n';
+        G4cout << testing->GetName() << '\n' << (*matTable)[matNum][0].GetName() << G4endl;
+        G4cout << '\n';
+        G4cout << testing->GetChemicalFormula() << '\n' << (*matTable)[matNum][0].GetChemicalFormula() << G4endl;
+        G4cout << '\n';
+        G4cout << testing->GetDensity() << '\n' << (*matTable)[matNum][0].GetDensity() << G4endl;
+        G4cout << '\n';
+        G4cout << testing->GetState() << '\n' << (*matTable)[matNum][0].GetState() << G4endl;
+        G4cout << '\n';
+        G4cout << testing->GetTemperature() << '\n' << (*matTable)[matNum][0].GetTemperature() << G4endl;
+        G4cout << '\n';
+        G4cout << testing->GetPressure() << '\n' << (*matTable)[matNum][0].GetPressure() << G4endl;
+        G4cout << '\n';
+        G4cout << testing->GetNumberOfElements() << '\n' << (*matTable)[matNum][0].GetNumberOfElements() << G4endl;
+        if((testing->GetElementVector())->size()!=((*matTable)[matNum][0].GetElementVector())->size())
+        {
+            G4cout << '\n';
+            G4cout << "Error: the element vector sizes are not the same!!!" << G4endl;
+        }
+        for(int j=0; j<(testing->GetElementVector())->size(); j++)
+        {
+            G4cout << '\n';
+            G4cout << const_cast<G4Element*>(testing->GetElement(j)) << '\n' << const_cast<G4Element*>((*matTable)[matNum][0].GetElement(j)) << G4endl;
+            G4cout << '\n';
+            G4cout << testing->GetFractionVector()[j] << '\n' << (*matTable)[matNum][0].GetFractionVector()[j] << G4endl;
+            G4cout << '\n';
+            G4cout << testing->GetAtomsVector()[j] << '\n' << (*matTable)[matNum][0].GetAtomsVector()[j] << G4endl;
+            G4cout << '\n';
+            G4cout << testing->GetVecNbOfAtomsPerVolume()[j] << '\n' << (*matTable)[matNum][0].GetVecNbOfAtomsPerVolume()[j] << G4endl;
+            G4cout << '\n';
+            G4cout << testing->GetAtomicNumDensityVector()[j] << '\n' << (*matTable)[matNum][0].GetAtomicNumDensityVector()[j] << G4endl;
+        }
+        G4cout << '\n';
+        G4cout << testing->GetTotNbOfAtomsPerVolume() << '\n' << (*matTable)[matNum][0].GetTotNbOfAtomsPerVolume() << G4endl;
+        G4cout << '\n';
+        G4cout << testing->GetTotNbOfElectPerVolume() << '\n' << (*matTable)[matNum][0].GetTotNbOfElectPerVolume() << G4endl;
+        G4cout << '\n';
+        G4cout << testing->GetElectronDensity() << '\n' << (*matTable)[matNum][0].GetElectronDensity() << G4endl;
+        G4cout << '\n';
+        G4cout << testing->GetRadlen() << '\n' << (*matTable)[matNum][0].GetRadlen() << G4endl;
+        G4cout << '\n';
+        G4cout << testing->GetNuclearInterLength() << '\n' << (*matTable)[matNum][0].GetNuclearInterLength() << G4endl;
+        G4cout << '\n';
+        G4cout << testing->GetBaseMaterial() << '\n' << (*matTable)[matNum][0].GetBaseMaterial() << G4endl;
+        G4cout << '\n';
+        G4cout << testing->GetMassOfMolecule() << '\n' << (*matTable)[matNum][0].GetMassOfMolecule() << G4endl;
+        G4cout << '\n';
+
+        std::map<G4Material*,G4double> matComponent = testing->GetMatComponents();
+        std::map<G4Material*,G4double>::iterator it = matComponent.begin();
+
+        for( ; it!=matComponent.end() ; it++)
+        {
+            G4cout << it->first << '\n' << it->second << G4endl;
+        }
+
+        matComponent = (*matTable)[matNum]->GetMatComponents();
+        it = matComponent.begin();
+
+        for( ; it!=matComponent.end() ; it++)
+        {
+            G4cout << it->first << '\n' << it->second << G4endl;
+        }
+        */
+
+        //delete testing;
+
+/*
+  // ionisation parameters:
+  inline G4IonisParamMat* GetIonisation() const {return fIonisation;}
+
+  // Sandia table:
+  inline G4SandiaTable*  GetSandiaTable() const {return fSandiaTable;}
+
+  // material components:
+  inline
+  std::map<G4Material*,G4double> GetMatComponents() const
+                                               {return fMatComponents;}
+
+  //meaningful only for single material:
+  G4double GetZ() const;
+  G4double GetA() const;
+
+  inline G4MaterialPropertiesTable* GetMaterialPropertiesTable() const
+  {return fMaterialPropertiesTable;}
+*/
     }
 
     // Build the models and data for the neutron processes (all energies)

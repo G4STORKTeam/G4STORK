@@ -570,7 +570,7 @@ G4VPhysicalVolume* SCWRJasonConstructor::ConstructWorld()
 void SCWRJasonConstructor::ConstructMaterials()
 {
     // Elements, isotopes and materials
-    G4Isotope *H1, *H2, *C12, *C13, *O16, *Si28, *Si29, *Si30, *P31, *S32, *S33, *S34, *S36,
+    G4Isotope *H1, *H2, *C12, *C13, *O16, *Si28, *Si29, *Si30, *P31, *S32, /*S33, *S34, *S36,*/
               *Cr50, *Cr52, *Cr53, *Cr54, *Mn55, *Fe54, *Fe56, *Fe57, *Fe58, *Ni58, *Ni60, *Ni61,
               *Ni62, *Ni64, *Nb93, *Y89, *Mo92, *Mo94, *Mo95, *Mo96, *Mo97, *Mo98, *Mo100,
               *Sn112, *Sn114, *Sn115, *Sn116, *Sn117, *Sn118, *Sn119, *Sn120, *Sn122, *Sn124,
@@ -625,15 +625,15 @@ void SCWRJasonConstructor::ConstructMaterials()
     P->AddIsotope(P31, 100.*perCent);
 
     S32 = new G4Isotope("S32", 16, 32, 31.9721*g/mole);
-    S33 = new G4Isotope("S33", 16, 33, 32.9715*g/mole);
+    /*S33 = new G4Isotope("S33", 16, 33, 32.9715*g/mole);
     S34 = new G4Isotope("S34", 16, 34, 33.9679*g/mole);
-    S36 = new G4Isotope("S36", 16, 36, 35.9679*g/mole);
+    S36 = new G4Isotope("S36", 16, 36, 35.9679*g/mole);*/
 
-    S = new G4Element("Sulphur", "S", 4);
-    S->AddIsotope(S32, 94.93*perCent);
-    S->AddIsotope(S33,  0.76*perCent);
+    S = new G4Element("Sulphur", "S", 1);
+    S->AddIsotope(S32, 100.0*perCent);
+    /*S->AddIsotope(S33,  0.76*perCent);
     S->AddIsotope(S34,  4.29*perCent);
-    S->AddIsotope(S36,  0.02*perCent);
+    S->AddIsotope(S36,  0.02*perCent);*/
 
     //make chromium isotopes and element
     Cr50 = new G4Isotope("Cr50", 24, 50, 49.9460422*g/mole);
