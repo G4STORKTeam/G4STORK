@@ -222,7 +222,7 @@ void StorkNeutronHPCSData::DumpPhysicsTable(const G4ParticleDefinition& aP)
 
 
 G4double StorkNeutronHPCSData::
-GetCrossSection(const G4DynamicParticle* aP, const G4Element* elem, G4double aT)
+GetCrossSection(const G4DynamicParticle* aP, const G4Element* elem, G4double /*aT*/)
 {
     StorkElement *anE = dynamic_cast <StorkElement*> (const_cast<G4Element*>(elem));
 
@@ -252,11 +252,6 @@ GetCrossSection(const G4DynamicParticle* aP, const G4Element* elem, G4double aT)
 
     if(anE->GetCSDataTemp()==-1)
         return 0.;
-
-    if(anE->GetTemperature()!=aT)
-    {
-        G4cout << "Error: mismatch between the material and element temperature" << G4endl;
-    }
 
 	// Find the temperature difference between the temperature the cross
 	// section was evaluated at versus the temperature of the material

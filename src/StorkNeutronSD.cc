@@ -146,7 +146,6 @@ G4bool StorkNeutronSD::ProcessHits(G4Step *aStep, G4TouchableHistory*)
 
     // Find the process used in the hit (if it is defined)    G4String hitProcess = "";    if(postStepPoint->GetProcessDefinedStep() != 0)    {        hitProcess = postStepPoint->GetProcessDefinedStep()->GetProcessName();    }
 
-
 	// If the time is beyond the simulation time, the kill the track and
 	// any secondaries (stops simulation from running forever)
 	// Save the neutron as a survivor

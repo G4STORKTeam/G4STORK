@@ -146,7 +146,6 @@ void StorkHPNeutronBuilder::Build(G4HadronFissionProcess *aP)
     // Set the limits of the model
     nFissionModel->SetMinEnergy(theMin);
     nFissionModel->SetMaxEnergy(theMax);
-
     // Register both
     if(dirName == "DEFAULT")
         aP->AddDataSet(theHPFissionData);

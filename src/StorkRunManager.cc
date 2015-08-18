@@ -189,12 +189,13 @@ void StorkRunManager::InitializeRunData(G4double runDur, G4int numberRuns, G4int
 void StorkRunManager::BeamOn(G4int n_event, const char* macroFile,
                              G4int n_select)
 {
+    //G4cout << " made it to the beginning of the StorkRunManager::BeamOn" << G4endl;
     G4bool cond = ConfirmBeamOnCondition();
     if(cond)
     {
 
         InitializeVar(n_event);
-
+        //G4cout << " made it to the past InitializeVar(n_event) in StorkRunManager::BeamOn" << G4endl;
         // Set the number of events in the primary generator action
         genAction->SetNumEvents(n_event);
 
@@ -204,15 +205,18 @@ void StorkRunManager::BeamOn(G4int n_event, const char* macroFile,
             {
                 // Process the run
                 RunInitialization();
+                //G4cout << " made it to the past RunInitialization() in StorkRunManager::BeamOn" << G4endl;
                 DoEventLoop(n_event,macroFile,n_select);
+                G4cout << " made it to the past DoEventLoop in StorkRunManager::BeamOn" << G4endl;
                 RunTermination();
+                //G4cout << " made it to the past RunTermination() in StorkRunManager::BeamOn" << G4endl;
 
                 // Record the important results of the run
                 TallyRunResults();
                 if (sourceConverged)
-                G4cout << G4endl << "#### Souce Has Converged #####" << G4endl;
+                    G4cout << G4endl << "#### Souce Has Converged #####" << G4endl;
                 else
-                G4cout << G4endl << "#### Souce Has Not Converged #####" << G4endl;
+                    G4cout << G4endl << "#### Souce Has Not Converged #####" << G4endl;
                 // Update the source distributions of the primary generator
                 runAction->UpdateSourceDistributions();
 
@@ -239,6 +243,7 @@ void StorkRunManager::BeamOn(G4int n_event, const char* macroFile,
 void StorkRunManager::DoEventLoop(G4int n_event, const char* macroFile,
                                G4int n_select)
 {
+    //G4cout << " made it to the beginning of the StorkRunManager::DoEventLoop" << G4endl;
     if(verboseLevel>0)
     { timer->Start(); }
 
@@ -254,6 +259,7 @@ void StorkRunManager::DoEventLoop(G4int n_event, const char* macroFile,
 
     // Initialize the current run
     genAction->InitializeRun();
+    //G4cout << " made it to the past InitializeRun() in StorkRunManager::DoEventLoop" << G4endl;
 
     // Event loop
     G4int i_event;
@@ -263,8 +269,11 @@ void StorkRunManager::DoEventLoop(G4int n_event, const char* macroFile,
         genAction->SetPrimaries(genAction->GetPrimaryData(i_event));
 
         currentEvent = GenerateEvent(i_event);
+        //G4cout << " made it to the past GenerateEvent(i_event) in StorkRunManager::DoEventLoop" << G4endl;
         eventManager->ProcessOneEvent(currentEvent);
+        //G4cout << " made it to the past eventManager->ProcessOneEvent(currentEvent) in StorkRunManager::DoEventLoop" << G4endl;
         AnalyzeEvent(currentEvent);
+        //G4cout << " made it to the past AnalyzeEvent(currentEvent) in StorkRunManager::DoEventLoop" << G4endl;
         UpdateScoring();
 
         // Update the run action tallies
