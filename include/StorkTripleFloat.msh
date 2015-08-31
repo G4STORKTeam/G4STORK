@@ -1,0 +1,30 @@
+%{
+#include "StorkTripleFloat.hh"
+
+%}
+
+// This file is generated automatically from StorkTripleFloat.hh .  It is an
+//   intermediate file useful for debugging, but otherwise may be deleted.
+
+ marshaling class MarshaledStorkTripleFloat (StorkTripleFloat* param) {
+
+		G4ThreeVector data;
+    //FIELDMARSHAL:
+    {
+	memcpy($$, &Shadowed_param->data, sizeof(G4ThreeVector));
+    }
+    //FIELDUNMARSHAL:
+    {
+	memcpy(&Shadowed_param->data, $$, sizeof(G4ThreeVector));
+
+    }
+    //FIELDSIZE:
+    {
+	$SIZE = sizeof(G4ThreeVector);
+
+    }
+	unmarshaling constructor {
+	$THIS = new StorkTripleFloat();
+	}
+}
+

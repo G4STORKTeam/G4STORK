@@ -1,0 +1,125 @@
+%{
+#include "StorkPrimaryData.hh"
+//MSH_include_begin
+#include "MarshaledStorkNeutronData.h"
+#include "MarshaledStorkMatPropChange.h"
+//MSH_include_end
+%}
+
+// This file is generated automatically from StorkPrimaryData.hh .  It is an
+//   intermediate file useful for debugging, but otherwise may be deleted.
+
+ marshaling class MarshaledStorkPrimaryData (StorkPrimaryData* param) {
+
+        NeutronSources *primaries;
+    //FIELDMARSHAL:
+    {
+	int copy_off = 0;
+	int $ELE_COUNT;
+	 $ELE_COUNT = $THIS->primaries->size(); 
+	memcpy( $$+copy_off, &$ELE_COUNT,sizeof(int));
+	copy_off += sizeof(int);
+	for(int $ELE_INDEX=0;$ELE_INDEX<$ELE_COUNT;$ELE_INDEX++){
+			StorkNeutronData $ELEMENT;
+			 $ELEMENT = (*($THIS->primaries))[$ELE_INDEX]; 
+			MarshaledStorkNeutronData marEle(&$ELEMENT);
+			EXTEND_BUFFER(marEle.getBufferSize());
+			memcpy($$+copy_off, marEle.getBuffer(), marEle.getBufferSize());
+			copy_off += marEle.getBufferSize();
+		}
+	$SIZE = copy_off;
+
+    }
+    //FIELDUNMARSHAL:
+    {
+		int copy_off = 0;
+		int $ELE_COUNT;
+		memcpy(&$ELE_COUNT, $$+copy_off, sizeof(int));
+		copy_off += sizeof(int);
+		for(int $ELE_INDEX=0;$ELE_INDEX<$ELE_COUNT;$ELE_INDEX++){
+			MarshaledStorkNeutronData marEle($$+copy_off);
+			StorkNeutronData *$ELEMENT = (StorkNeutronData *)marEle.unmarshal();
+			copy_off += marEle.getBufferSize();
+			 $THIS->primaries->push_back(*$ELEMENT); 
+		}
+
+    }
+    //FIELDSIZE:
+    {
+
+    }
+
+        G4long eventSeed;
+    //FIELDMARSHAL:
+    {
+	memcpy($$, &Shadowed_param->eventSeed, sizeof(G4long));
+    }
+    //FIELDUNMARSHAL:
+    {
+	memcpy(&Shadowed_param->eventSeed, $$, sizeof(G4long));
+
+    }
+    //FIELDSIZE:
+    {
+	$SIZE = sizeof(G4long);
+
+    }
+
+        G4int eventNum;
+    //FIELDMARSHAL:
+    {
+	memcpy($$, &Shadowed_param->eventNum, sizeof(G4int));
+    }
+    //FIELDUNMARSHAL:
+    {
+	memcpy(&Shadowed_param->eventNum, $$, sizeof(G4int));
+
+    }
+    //FIELDSIZE:
+    {
+	$SIZE = sizeof(G4int);
+
+    }
+
+        StorkMatPropChangeVector *propChanges;
+    //FIELDMARSHAL:
+    {
+	int copy_off = 0;
+	int $ELE_COUNT;
+	 $ELE_COUNT = $THIS->propChanges->size(); 
+	memcpy( $$+copy_off, &$ELE_COUNT,sizeof(int));
+	copy_off += sizeof(int);
+	for(int $ELE_INDEX=0;$ELE_INDEX<$ELE_COUNT;$ELE_INDEX++){
+			StorkMatPropChange $ELEMENT;
+			 $ELEMENT = (*($THIS->propChanges))[$ELE_INDEX]; 
+			MarshaledStorkMatPropChange marEle(&$ELEMENT);
+			EXTEND_BUFFER(marEle.getBufferSize());
+			memcpy($$+copy_off, marEle.getBuffer(), marEle.getBufferSize());
+			copy_off += marEle.getBufferSize();
+		}
+	$SIZE = copy_off;
+
+    }
+    //FIELDUNMARSHAL:
+    {
+		int copy_off = 0;
+		int $ELE_COUNT;
+		memcpy(&$ELE_COUNT, $$+copy_off, sizeof(int));
+		copy_off += sizeof(int);
+		for(int $ELE_INDEX=0;$ELE_INDEX<$ELE_COUNT;$ELE_INDEX++){
+			MarshaledStorkMatPropChange marEle($$+copy_off);
+			StorkMatPropChange *$ELEMENT = (StorkMatPropChange *)marEle.unmarshal();
+			copy_off += marEle.getBufferSize();
+			 $THIS->propChanges->push_back(*$ELEMENT); 
+		}
+
+    }
+    //FIELDSIZE:
+    {
+
+    }
+	unmarshaling constructor {
+	$THIS = new StorkPrimaryData();
+	}
+}
+

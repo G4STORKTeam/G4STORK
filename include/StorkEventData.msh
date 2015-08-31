@@ -1,0 +1,248 @@
+%{
+#include "StorkEventData.hh"
+//MSH_include_begin
+#include "MarshaledStorkNeutronData.h"
+#include "MarshaledStorkTripleFloat.h"
+//MSH_include_end
+%}
+
+// This file is generated automatically from StorkEventData.hh .  It is an
+//   intermediate file useful for debugging, but otherwise may be deleted.
+
+ marshaling class MarshaledStorkEventData (StorkEventData* param) {
+
+        NeutronSources *survivors;
+    //FIELDMARSHAL:
+    {
+	int copy_off = 0;
+	int $ELE_COUNT;
+	 $ELE_COUNT = $THIS->survivors->size(); 
+	memcpy( $$+copy_off, &$ELE_COUNT,sizeof(int));
+	copy_off += sizeof(int);
+	for(int $ELE_INDEX=0;$ELE_INDEX<$ELE_COUNT;$ELE_INDEX++){
+			StorkNeutronData $ELEMENT;
+			 $ELEMENT = $THIS->survivors->at($ELE_INDEX); 
+			MarshaledStorkNeutronData marEle(&$ELEMENT);
+			EXTEND_BUFFER(marEle.getBufferSize());
+			memcpy($$+copy_off, marEle.getBuffer(), marEle.getBufferSize());
+			copy_off += marEle.getBufferSize();
+		}
+	$SIZE = copy_off;
+
+    }
+    //FIELDUNMARSHAL:
+    {
+		int copy_off = 0;
+		int $ELE_COUNT;
+		memcpy(&$ELE_COUNT, $$+copy_off, sizeof(int));
+		copy_off += sizeof(int);
+		for(int $ELE_INDEX=0;$ELE_INDEX<$ELE_COUNT;$ELE_INDEX++){
+			MarshaledStorkNeutronData marEle($$+copy_off);
+			StorkNeutronData *$ELEMENT = (StorkNeutronData *)marEle.unmarshal();
+			copy_off += marEle.getBufferSize();
+			 $THIS->survivors->push_back(*$ELEMENT); 
+		}
+
+    }
+    //FIELDSIZE:
+    {
+
+    }
+
+        NeutronSources *delayed;
+    //FIELDMARSHAL:
+    {
+	int copy_off = 0;
+	int $ELE_COUNT;
+	 $ELE_COUNT = $THIS->delayed->size(); 
+	memcpy( $$+copy_off, &$ELE_COUNT,sizeof(int));
+	copy_off += sizeof(int);
+	for(int $ELE_INDEX=0;$ELE_INDEX<$ELE_COUNT;$ELE_INDEX++){
+			StorkNeutronData $ELEMENT;
+			 $ELEMENT = $THIS->delayed->at($ELE_INDEX); 
+			MarshaledStorkNeutronData marEle(&$ELEMENT);
+			EXTEND_BUFFER(marEle.getBufferSize());
+			memcpy($$+copy_off, marEle.getBuffer(), marEle.getBufferSize());
+			copy_off += marEle.getBufferSize();
+		}
+	$SIZE = copy_off;
+
+    }
+    //FIELDUNMARSHAL:
+    {
+		int copy_off = 0;
+		int $ELE_COUNT;
+		memcpy(&$ELE_COUNT, $$+copy_off, sizeof(int));
+		copy_off += sizeof(int);
+		for(int $ELE_INDEX=0;$ELE_INDEX<$ELE_COUNT;$ELE_INDEX++){
+			MarshaledStorkNeutronData marEle($$+copy_off);
+			StorkNeutronData *$ELEMENT = (StorkNeutronData *)marEle.unmarshal();
+			copy_off += marEle.getBufferSize();
+			 $THIS->delayed->push_back(*$ELEMENT); 
+		}
+
+    }
+    //FIELDSIZE:
+    {
+
+    }
+
+        MSHSiteVector *fSites;
+    //FIELDMARSHAL:
+    {
+	int copy_off = 0;
+	int $ELE_COUNT;
+	 $ELE_COUNT = $THIS->fSites->size(); 
+	memcpy( $$+copy_off, &$ELE_COUNT,sizeof(int));
+	copy_off += sizeof(int);
+	for(int $ELE_INDEX=0;$ELE_INDEX<$ELE_COUNT;$ELE_INDEX++){
+			StorkTripleFloat $ELEMENT;
+			 $ELEMENT = $THIS->fSites->at($ELE_INDEX); 
+			MarshaledStorkTripleFloat marEle(&$ELEMENT);
+			EXTEND_BUFFER(marEle.getBufferSize());
+			memcpy($$+copy_off, marEle.getBuffer(), marEle.getBufferSize());
+			copy_off += marEle.getBufferSize();
+		}
+	$SIZE = copy_off;
+
+    }
+    //FIELDUNMARSHAL:
+    {
+		int copy_off = 0;
+		int $ELE_COUNT;
+		memcpy(&$ELE_COUNT, $$+copy_off, sizeof(int));
+		copy_off += sizeof(int);
+		for(int $ELE_INDEX=0;$ELE_INDEX<$ELE_COUNT;$ELE_INDEX++){
+			MarshaledStorkTripleFloat marEle($$+copy_off);
+			StorkTripleFloat *$ELEMENT = (StorkTripleFloat *)marEle.unmarshal();
+			copy_off += marEle.getBufferSize();
+			 $THIS->fSites->push_back(*$ELEMENT); 
+		}
+
+    }
+    //FIELDSIZE:
+    {
+
+    }
+
+        DblVector *fnEnergy;
+    //FIELDMARSHAL:
+    {
+	int copy_off = 0;
+	int $ELE_COUNT;
+	 $ELE_COUNT = $THIS->fnEnergy->size(); 
+	memcpy( $$+copy_off, &$ELE_COUNT,sizeof(int));
+	copy_off += sizeof(int);
+	for(int $ELE_INDEX=0;$ELE_INDEX<$ELE_COUNT;$ELE_INDEX++){
+			double $ELEMENT;
+			 $ELEMENT = $THIS->fnEnergy->at($ELE_INDEX); 
+			EXTEND_BUFFER(sizeof(double));
+			memcpy($$+copy_off, &$ELEMENT, sizeof(double));
+			copy_off += sizeof(double);
+		}
+	$SIZE = copy_off;
+
+    }
+    //FIELDUNMARSHAL:
+    {
+		int copy_off = 0;
+		int $ELE_COUNT;
+		memcpy(&$ELE_COUNT, $$+copy_off, sizeof(int));
+		copy_off += sizeof(int);
+		for(int $ELE_INDEX=0;$ELE_INDEX<$ELE_COUNT;$ELE_INDEX++){
+			double $ELEMENT;
+			memcpy(&$ELEMENT,$$+copy_off, sizeof(double));
+			copy_off += sizeof(double);
+			 $THIS->fnEnergy->push_back($ELEMENT); 
+		}
+
+    }
+    //FIELDSIZE:
+    {
+
+    }
+
+        G4double totalLifetime;
+    //FIELDMARSHAL:
+    {
+	memcpy($$, &Shadowed_param->totalLifetime, sizeof(G4double));
+    }
+    //FIELDUNMARSHAL:
+    {
+	memcpy(&Shadowed_param->totalLifetime, $$, sizeof(G4double));
+
+    }
+    //FIELDSIZE:
+    {
+	$SIZE = sizeof(G4double);
+
+    }
+
+        G4int numNProd;
+    //FIELDMARSHAL:
+    {
+	memcpy($$, &Shadowed_param->numNProd, sizeof(G4int));
+    }
+    //FIELDUNMARSHAL:
+    {
+	memcpy(&Shadowed_param->numNProd, $$, sizeof(G4int));
+
+    }
+    //FIELDSIZE:
+    {
+	$SIZE = sizeof(G4int);
+
+    }
+
+        G4int numNLost;
+    //FIELDMARSHAL:
+    {
+	memcpy($$, &Shadowed_param->numNLost, sizeof(G4int));
+    }
+    //FIELDUNMARSHAL:
+    {
+	memcpy(&Shadowed_param->numNLost, $$, sizeof(G4int));
+
+    }
+    //FIELDSIZE:
+    {
+	$SIZE = sizeof(G4int);
+
+    }
+
+        G4int numDProd;
+    //FIELDMARSHAL:
+    {
+	memcpy($$, &Shadowed_param->numDProd, sizeof(G4int));
+    }
+    //FIELDUNMARSHAL:
+    {
+	memcpy(&Shadowed_param->numDProd, $$, sizeof(G4int));
+
+    }
+    //FIELDSIZE:
+    {
+	$SIZE = sizeof(G4int);
+
+    }
+
+        G4int eventNum;
+    //FIELDMARSHAL:
+    {
+	memcpy($$, &Shadowed_param->eventNum, sizeof(G4int));
+    }
+    //FIELDUNMARSHAL:
+    {
+	memcpy(&Shadowed_param->eventNum, $$, sizeof(G4int));
+
+    }
+    //FIELDSIZE:
+    {
+	$SIZE = sizeof(G4int);
+
+    }
+	unmarshaling constructor {
+	$THIS = new StorkEventData();
+	}
+}
+
