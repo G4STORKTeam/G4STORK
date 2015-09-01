@@ -28,7 +28,7 @@ StorkPrimaryGeneratorAction::StorkPrimaryGeneratorAction(
     initEnergy = infile->GetInitialEnergy();
     uniformDis = infile->GetUniformDistribution();
     shape = infile->GetUniformDistributionShape();
-    Origin = infile->GetInitialSourcePos();
+    origin = infile->GetInitialSourcePos();
     initialSource = false;
     primaryData = NULL;
     normalize = infile->GetRenormalizeAfterRun();
@@ -72,6 +72,9 @@ StorkPrimaryGeneratorAction::~StorkPrimaryGeneratorAction()
 	if(primaryData) delete primaryData;
     if(delayedNeutronGenerator) delete delayedNeutronGenerator;
 
+    if (fSites) delete [] fSites;
+
+    if (fnEnergy) delete [] fnEnergy;
 }
 
 
@@ -149,7 +152,6 @@ void StorkPrimaryGeneratorAction::InitializeRun()
             InitialSource();
         else
             LoadSource(sourceFile);
-            
     }
 
     // Get the end time for the run
@@ -169,7 +171,7 @@ void StorkPrimaryGeneratorAction::InitializeRun()
     // Check to see whether the size of the survivor distribution is correct
     G4int missing = numPrimaries*numEvents - G4int(survivors.size());
 
-    if( (normalize && missing != 0) || runMan->GetCurrentRun()->GetRunID() == 0)
+    if(normalize && missing != 0)
     {
         // Renormalize survivors
         RenormalizeSurvivors(missing);
@@ -185,7 +187,6 @@ void StorkPrimaryGeneratorAction::InitializeRun()
     // Calculate the actual number of primaries per event
     realNumPrimaries = G4int(std::ceil(G4double(survivors.size())
                                            /G4double(numEvents)));
-    
 
 #ifdef G4TIMEPG
     genTimer.Stop();
@@ -266,6 +267,7 @@ void StorkPrimaryGeneratorAction::RenormalizeSurvivors(G4int numMissing)
         survivors.insert(survivors.end(),originalSurvivors.end()-numMissing,
                          originalSurvivors.end());
     }
+
 
     return;
 
@@ -353,10 +355,10 @@ void StorkPrimaryGeneratorAction::UpdateSourceDistributions(
 // vector is empty, use the expected number of survivors
 G4int StorkPrimaryGeneratorAction::GetNumPrimaries()
 {
-//    if(survivors.empty() && !runMan->GetCurrentRun()->GetRunID())
+    if(survivors.empty() && !runMan->GetCurrentRun()->GetRunID())
         return numEvents * numPrimaries;
-//    else
-//        return G4int(survivors.size());
+    else
+        return G4int(survivors.size());
 }
 
 
@@ -420,7 +422,6 @@ void StorkPrimaryGeneratorAction::LoadSource(G4String fname)
 
         // Correct for the current time of the records
         input.first -= recordTime;
- 
 
         // Write survivor
         survivors.push_back(input);
@@ -430,22 +431,22 @@ void StorkPrimaryGeneratorAction::LoadSource(G4String fname)
     // Reserve memory for the delayed vector
     infile >> numRecords;
 
-
-    // Read in delayed
-    for(G4int i=0; i<numRecords; i++)
-    {
-        // Extract the data from the file and store it in input
-        infile >> input.first >> input.second
-               >> input.third[0] >> input.third[1] >> input.third[2]
-               >> input.fourth[0] >> input.fourth[1] >> input.fourth[2]
-               >> input.fifth >> input.sixth >> input.seventh >> input.eigth
-               >> input.ninth;
+    if(!initialDelayed){
+        // Read in delayed
+        for(G4int i=0; i<numRecords; i++)
+        {
+            // Extract the data from the file and store it in input
+            infile >> input.first >> input.second
+                   >> input.third[0] >> input.third[1] >> input.third[2]
+                   >> input.fourth[0] >> input.fourth[1] >> input.fourth[2]
+                   >> input.fifth >> input.sixth >> input.seventh >> input.eigth
+                   >> input.ninth;
             // Correct for the current time of the records
-        input.first -= recordTime;
+            input.first -= recordTime;
 
-        dNeutrons.push_back(input);
+            dNeutrons.push_back(input);
+        }
     }
-
     infile.close();
 
     initialSource = true;
@@ -469,7 +470,7 @@ void StorkPrimaryGeneratorAction::InitialSource()
     G4double rMom;
 
     // Build neutron data common values (position,time,lifetime,eta(-1.0))
-    StorkNeutronData input(0.,0.,Origin,G4ThreeVector(0.,0.,0.));
+    StorkNeutronData input(0.,0.,origin,G4ThreeVector(0.,0.,0.));
 
     for(G4int i=0; i<numPrimaries*numEvents; i++)
     {
@@ -548,7 +549,7 @@ void StorkPrimaryGeneratorAction::UniformPosition(StorkNeutronData* input)
         // Set position
         input->third.set(limit[0],limit[2],limit[1]);
     }
-    input->third = input->third + Origin;
+    input->third = input->third + origin;
 }
 
 //Add precursors based on current fissions.

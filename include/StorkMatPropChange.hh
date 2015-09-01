@@ -29,8 +29,8 @@ class StorkMatPropChange
         {}
 
         // Constructors
-        StorkMatPropChange(G4int m_, G4int p, G4double c)
-        :matN(m_), propN(p), change(c)
+        StorkMatPropChange(G4int mat, G4int p, G4double c)
+        :matN(mat), propN(p), change(c)
         {}
 
         StorkMatPropChange(MatPropPair aPair, G4double c)
@@ -41,9 +41,9 @@ class StorkMatPropChange
 		virtual ~StorkMatPropChange() {}
 
 		// Overloaded set functions
-        void Set(G4int m_, G4int p, G4double c)
+        void Set(G4int mat, G4int p, G4double c)
         {
-        	matN = m_;
+        	matN = mat;
         	propN = p;
         	change = c;
 		}

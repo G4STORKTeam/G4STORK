@@ -15,7 +15,6 @@ Source code file for StorkNeutronSD class.
 #include "StorkNeutronSD.hh"
 
 
-
 // Constructor
 StorkNeutronSD::StorkNeutronSD(G4String name, G4bool instD, G4bool pBC, G4bool sourcefileD)
 :G4VSensitiveDetector(name), periodicBC(pBC), instantDelayed(instD), sourcefileDelayed(sourcefileD)
@@ -26,11 +25,9 @@ StorkNeutronSD::StorkNeutronSD(G4String name, G4bool instD, G4bool pBC, G4bool s
 
     // Get a pointer to the run manager and process manager
     runMan = dynamic_cast<StorkRunManager*>(G4RunManager::GetRunManager());
+
     // Set process manager pointer to NULL
     procMan = NULL;
-
-    //Navigator for tracking purposes.
-    theNavigator = G4TransportationManager::GetTransportationManager()->GetNavigatorForTracking();
 }
 
 
@@ -56,7 +53,7 @@ void StorkNeutronSD::Initialize(G4HCofThisEvent *HCE)
     runEnd = runMan->GetRunEnd();
 
     // Initialize and clear the member variables
-    nLoss = nProd = dProd = userCounter = 0;
+    nLoss = nProd = dProd = 0;
     totalLifetime = 0.0;
     fSites.clear();
     fnEnergy.clear();
@@ -75,11 +72,8 @@ void StorkNeutronSD::Initialize(G4HCofThisEvent *HCE)
 #endif
 
 	// Get pointer to StorkProcessManager
-
 	procMan = StorkProcessManager::GetStorkProcessManagerPtr();
-
 }
-
 
 
 // ProcessHits()
@@ -92,7 +86,8 @@ G4bool StorkNeutronSD::ProcessHits(G4Step *aStep, G4TouchableHistory*)
 #ifdef G4TIMESD
     phTimer.Start();
 #endif
-    	// Get the track for the current particle
+
+	// Get the track for the current particle
     G4Track *aTrack = aStep->GetTrack();
 
     // Particle type involved in hit
@@ -123,12 +118,6 @@ G4bool StorkNeutronSD::ProcessHits(G4Step *aStep, G4TouchableHistory*)
     G4double hitTime = postStepPoint->GetGlobalTime();
     // Find the lifetime of the track
     G4double lifetime = postStepPoint->GetLocalTime();
-    
-    /*
-    if(lifetime>100*ms){
-        G4cout << "---------------" << G4endl;
-        G4cout << "ID: " << std::setw(2) << (aTrack->GetParentID()) << " " << std::setw(10) << postStepPoint->GetPhysicalVolume()->GetName() << " " << std::setw(8) << preStepPoint->GetProcessDefinedStep()->GetProcessName()<< " Lifetime: " << std::setw(8) << G4BestUnit(lifetime,"Time") << G4endl;
-    }*/
 
     // Set up other variables to be used later
     G4TrackVector *trackVector;
@@ -193,19 +182,15 @@ G4bool StorkNeutronSD::ProcessHits(G4Step *aStep, G4TouchableHistory*)
 	// neutron daughters.
 	if(hitProcess == "StorkHadronFission")
 	{
-
 		trackVector = const_cast<G4TrackVector*>(aStep->GetSecondary());
-
 		itr = trackVector->begin();
 
 		// Record number of daughter neutrons
 		for( ; itr != trackVector->end(); itr++)
 		{
-
 			// Check if secondary is a neutron
 			if((*itr)->GetDefinition() == G4Neutron::NeutronDefinition())
 			{
-
 				// Check if the neutron is a delayed neutron
 				if((*itr)->GetGlobalTime() > hitTime)
 				{
@@ -234,7 +219,8 @@ G4bool StorkNeutronSD::ProcessHits(G4Step *aStep, G4TouchableHistory*)
                 else
                     nProd++;
 
-
+				// Increment neutron production counter
+				nProd++;
 
 			}
 			// Stop and kill particle if it is not a neutron
@@ -258,7 +244,7 @@ G4bool StorkNeutronSD::ProcessHits(G4Step *aStep, G4TouchableHistory*)
 	// lifetime.
 	else if(hitProcess == "StorkHadronCapture")
 	{
-        nLoss++;
+		nLoss++;
 		totalLifetime += lifetime;
 
 		// Kill any non-neutron (all) secondaries
@@ -344,6 +330,10 @@ G4bool StorkNeutronSD::ProcessHits(G4Step *aStep, G4TouchableHistory*)
 			{
 				(*itr)->SetTrackStatus(fKillTrackAndSecondaries);
 			}
+            else
+            {
+                nProd++;
+            }
 		}
 	}
 	else
@@ -359,6 +349,7 @@ G4bool StorkNeutronSD::ProcessHits(G4Step *aStep, G4TouchableHistory*)
     cycleTime += phTimer.GetRealElapsed();
     cycles++;
 #endif
+
     return true;
 }
 
@@ -408,7 +399,6 @@ void StorkNeutronSD::SaveDelayed(const G4Track *aTrack)
 // Create the tally hit and add it to the collection
 void StorkNeutronSD::EndOfEvent(G4HCofThisEvent*)
 {
-
 #ifdef G4TIMESD
     sdTimer.Start();
 #endif
@@ -419,7 +409,6 @@ void StorkNeutronSD::EndOfEvent(G4HCofThisEvent*)
     tHit->SetNLost(nLoss);
     tHit->SetNProd(nProd);
     tHit->SetDProd(dProd);
-    tHit->SetUserCounter(userCounter);
     tHit->SetFissionSites(fSites);
     tHit->SetFissionEnergies(fnEnergy);
     tHit->SetSurvivors(survivors);
@@ -458,7 +447,5 @@ void StorkNeutronSD::PrintCounterTotals() const
 		   << "Escapes:  " << nEsc << G4endl
 		   << "Fissions:  " << nFiss << G4endl
 		   << "Captures:  " << nCap << G4endl
-		   << "Inelastic Loss:  " << nInel << G4endl
-           << "Delayed Produced: " << dProd << G4endl;
-
+		   << "Inelastic Loss:  " << nInel << G4endl;
 }

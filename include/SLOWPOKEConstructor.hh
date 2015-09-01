@@ -84,6 +84,7 @@ class SLOWPOKEConstructor: public StorkVWorldConstructor
         G4VisAttributes *alumShellVisAtt;
         G4VisAttributes *cellVisAtt;
 
+
         // Stored variables from infile
         G4double ControlRodPosition;
         G4double FuelTemp;

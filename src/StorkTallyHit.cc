@@ -19,7 +19,7 @@ Source code for StorkTallyHit class.
 StorkTallyHit::StorkTallyHit()
 {
     totalLifetime =  0.0;
-    nLoss = nProd = dProd = userCounter = 0;
+    nLoss = nProd = dProd = 0;
 }
 
 
@@ -33,6 +33,5 @@ void StorkTallyHit::Print()
            << "Total lifetime of lost neutrons = " << totalLifetime << G4endl
            << "Number of survivors = " << survivors.size() << G4endl
            << "Number of delayed = " << delayed.size() << G4endl
-           << "Number of fission sites = " << fSites.size() << G4endl
-           << "User counter = " << userCounter << G4endl;
+           << "Number of fission sites = " << fSites.size() << G4endl;
 }

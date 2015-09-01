@@ -27,7 +27,6 @@ the ProcessHits() function of the class.
 #include "StorkContainers.hh"
 #include "StorkTrackInfo.hh"
 #include "StorkProcessManager.hh"
-#include "StorkEventAction.hh"
 
 // Include Geant4 headers
 #include "G4Timer.hh"
@@ -45,9 +44,6 @@ the ProcessHits() function of the class.
 #include "G4ThreeVector.hh"
 #include "G4UnitsTable.hh"
 #include "G4ios.hh"
-#include "G4Navigator.hh"
-#include "G4TransportationManager.hh"
-
 
 // Class forward declarations
 class StorkRunManager;
@@ -80,16 +76,12 @@ class StorkNeutronSD : public G4VSensitiveDetector
 
     private:
         // Private member variables
-    
-        G4Navigator* theNavigator;
 
         // Manager pointers
         StorkRunManager *runMan;
         StorkProcessManager *procMan;
-    
-    
-        //StorkPrimaryGeneratorAction *genAction; //Pointer to generator action.
-        StorkHadronFissionProcess *theFissionProcess; // Pointer to fission process.
+
+
         TallyHC *tallyHitColl;      // Collection of tally hits
         G4int HCID1;                // Index of the hit collection
         G4bool periodicBC;          // Periodic boundary flag
@@ -104,13 +96,11 @@ class StorkNeutronSD : public G4VSensitiveDetector
         G4int nLoss;                // Total number of lost neutrons
         G4int nProd;                // Total number of prompt neutrons produced
         G4int dProd;                // Total number of delayed neutrons produced
-        G4int userCounter;          //User counter for tallying specific events.
 
 		DblVector fnEnergy;         // Energies of incident neutron in fissions
         SiteVector fSites;          // Sites where fission occurs
         NeutronSources survivors;   // Saved survivors
-        NeutronSources delayed; // Saved delayed neutrons
-       
+        NeutronSources delayed;     // Saved delayed neutrons
 
 
 		// DIAGNOSTIC COUNTERS

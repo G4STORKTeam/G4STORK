@@ -17,8 +17,8 @@ Source file for StorkVWorldConstructor class.
 StorkVWorldConstructor::StorkVWorldConstructor()
 : worldLogical(0), worldPhysical(0), worldVisAtt(0)
 {
-	// Initialize member variable
-    geomChanged = true;
+	// Initialize member variables
+	geomChanged = true;
 	matChanged = true;
 	Initiation = true;
 	physChanged = false;
@@ -137,7 +137,6 @@ StorkVWorldConstructor::UpdateWorld(StorkMatPropChangeVector changes)
 		return worldPhysical;
 	}
 }
-
 
 
 // UpdateWorldProperties()

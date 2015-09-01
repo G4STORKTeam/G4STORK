@@ -50,7 +50,6 @@ StorkRunManager::StorkRunManager(const StorkParseInput* infile)
     nConv = 0;
     fissionMap = NULL;
 
-
     // Set default values
     runDuration = infile->GetRunDuration();
     runEnd = runStart + runDuration;
@@ -244,7 +243,6 @@ void StorkRunManager::BeamOn(G4int n_event, const char* macroFile,
 
                 // Record the important results of the run
                 TallyRunResults();
-
                 // Update the source distributions of the primary generator
                 runAction->UpdateSourceDistributions();
 
@@ -315,7 +313,7 @@ void StorkRunManager::DoEventLoop(G4int n_event, const char* macroFile,
         if(runAborted) break;
     }
 
-    if(/*verboseLevel>0*/ true)
+    if(verboseLevel>0)
     {
         timer->Stop();
         G4cout << "Run terminated." << G4endl;
@@ -397,7 +395,7 @@ void StorkRunManager::RunInitialization()
     }
 
     // Start collecting fission data if source has converged
-    if(saveFissionData /*&& sourceConverged && nConv == runIDCounter*/)
+    if(saveFissionData && sourceConverged && nConv == runIDCounter)
     {
     	runAction->SaveFissionData(true);
     }
@@ -406,17 +404,6 @@ void StorkRunManager::RunInitialization()
     G4RunManager::RunInitialization();
 
     return;
-}
-
-// MapFissionSitesToMaterial()
-// Maps run fission to the material in which they occured
-void StorkRunManager::MapFissionSitesToMaterial()
-{
-    if(!RunThermalModel || !heatTransfer)
-        return;
-
-   // runAction->EraseFissionSites();
-    worldPointerCD->SetMatChanged(true);
 }
 
 

@@ -51,7 +51,7 @@ The main purpose of this class is to simplify coding else where in the code
 
 // Include other headers
 #include <map>
-#include <vector>
+
 
 class StorkNeutronSD;
 
@@ -114,7 +114,6 @@ class StorkVWorldConstructor
 		virtual G4VPhysicalVolume* ConstructWorld()=0;
 		virtual void ConstructMaterials() = 0;
 		void DestroyMaterials();
-
 		// Update the variable material-properties
 		G4bool UpdateWorldProperties(StorkMatPropChangeVector changes);
 
@@ -146,7 +145,6 @@ class StorkVWorldConstructor
         // World variables
         G4ThreeVector encWorldDim;
         G4ThreeVector reactorDim;
-        G4ThreeVector thermalGrid[2];
         G4LogicalVolume *worldLogical;
         G4VPhysicalVolume *worldPhysical;
         G4VisAttributes *worldVisAtt;

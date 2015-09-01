@@ -39,9 +39,8 @@ class StorkEventData
             delayed = new NeutronSources();
             fSites = new MSHSiteVector();
             fnEnergy = new DblVector();
-    
             totalLifetime = 0.0;
-            numNLost = numNProd = numDProd = numUserCount = 0;
+            numNLost = numNProd = numDProd = 0;
             eventNum = -1;
         }
         virtual ~StorkEventData()
@@ -50,13 +49,11 @@ class StorkEventData
             if(delayed) delete delayed;
             if(fSites) delete fSites;
             if(fnEnergy) delete fnEnergy;
-        
-            
+
             survivors = NULL;
             delayed = NULL;
             fSites = NULL;
             fnEnergy = NULL;
-        
         }
 
         // Combine two StorkEventData objects from the same event
@@ -74,7 +71,6 @@ class StorkEventData
         	totalLifetime += right.totalLifetime;
         	numNLost += right.numNLost;
         	numNProd += right.numNProd;
-            numUserCount += right.numUserCount;
         	survivors->insert(survivors->end(),right.survivors->begin(),
 							  right.survivors->end());
 			delayed->insert(delayed->end(),right.delayed->begin(),
@@ -133,20 +129,11 @@ class StorkEventData
         [elementGet: { $ELEMENT = $THIS->fnEnergy->at($ELE_INDEX); }]
         [elementSet: { $THIS->fnEnergy->push_back($ELEMENT); }]
         */
-    
-       /* std::vector<G4String> *fnIsotopes; MSH: ptr_as_array
-        [elementType: G4String]
-        [elementCount: { $ELE_COUNT = $THIS->fnIsotopes->size(); }]
-        [elementGet: { $ELEMENT = $THIS->fnIsotopes->at($ELE_INDEX); }]
-        [elementSet: { $THIS->fnIsotopes->push_back($ELEMENT); }]
-        */
-    
 
         G4double totalLifetime;  //MSH: primitive
         G4int numNProd;  //MSH: primitive
         G4int numNLost;  //MSH: primitive
         G4int numDProd;  //MSH: primitive
-        G4int numUserCount; //MSH: primative
         G4int eventNum;  //MSH: primitive
 };
 //MSH_END

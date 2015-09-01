@@ -493,12 +493,12 @@ intVec UnionBinaryTree::createRegions(solidList* Temp1, ShapeEnum RegShape, G4do
                     volume = new G4UnionSolid("volume"+unionName.str(), Temp3[1].first, Temp3[0].first, 0, Temp3[0].second-Temp3[1].second);
 
                     G4int i=2;
-                    for( G4int i_=2; i_< G4int(Temp3.size()-1) ; i_++)
+                    for( i; i<G4int(Temp3.size()-1); i++)
                     {
                         unionName.str("");
                         unionName << count;
                         count++;
-                        volume = new G4UnionSolid("volume"+unionName.str(), Temp3[i_].first, volume, 0, Temp3[i_-1].second-Temp3[i_].second);
+                        volume = new G4UnionSolid("volume"+unionName.str(), Temp3[i].first, volume, 0, Temp3[i-1].second-Temp3[i].second);
                     }
                     unionName.str("");
                     unionName << count;

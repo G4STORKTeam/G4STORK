@@ -29,7 +29,6 @@ distribtion converges within the given limit (default is 3%).
 #include "StorkContainers.hh"
 #include "StorkInterpManager.hh"
 #include "StorkMatPropChange.hh"
-#include "StorkSteppingAction.hh"
 
 // Include Geant4 header files
 #include "G4RunManager.hh"
@@ -120,14 +119,9 @@ class StorkRunManager: public G4RunManager
 		// Average the results from all runs with source convergence
 		void AverageRunResults();
 
-        // Assigns each fission of the previous run to a material
-		void MapFissionSitesToMaterial();
-
 	protected:
         // Protected member variables
         StorkHeatTransfer* heatTransfer;
-        G4int gridSize[3];
-        G4int divisions;
         G4int numRuns;				// Total number of runs for the simulation
 
         G4double heatTransferCoefficient;
@@ -176,7 +170,6 @@ class StorkRunManager: public G4RunManager
         StorkRunAction *runAction;
         StorkEventAction *eventAction;
         StorkWorld *worldPointerCD;
-        StorkSteppingAction *stepAction;
         static G4EventManager *EventMan;
         const StorkInterpManager* theMPInterpMan;
 

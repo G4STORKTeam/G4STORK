@@ -30,6 +30,7 @@ need for Doppler broadening which speeds up the calculation.
 #include "G4Element.hh"
 #include "G4ParticleDefinition.hh"
 #include "G4PhysicsTable.hh"
+#include "G4SystemOfUnits.hh"
 
 #include "G4Neutron.hh"
 #include "G4ElementTable.hh"
@@ -38,7 +39,6 @@ need for Doppler broadening which speeds up the calculation.
 #include "G4Nucleus.hh"
 #include "G4NucleiProperties.hh"
 #include "G4Electron.hh"
-#include "G4SystemOfUnits.hh"
 
 
 class StorkNeutronHPCSData : public G4VCrossSectionDataSet

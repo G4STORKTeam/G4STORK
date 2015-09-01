@@ -30,6 +30,8 @@ output stream.
 #include "StorkMatPropChange.hh"
 #include "StorkInterpManager.hh"
 #include "G4SystemOfUnits.hh"
+#include "StorkSixVector.hh"
+
 
 
 class StorkParseInput
@@ -76,6 +78,16 @@ class StorkParseInput
 
 		G4String GetUniformDistributionShape() const { return uniDisShape; }
 		void SetUniformDistributionShape(G4String uniformDisShape) { uniDisShape=uniformDisShape; }
+
+
+		StorkSixVector<G4double> GetUniformDistDim() const
+		{
+            return uniDisDim;
+        }
+		void SetUniformDistDim(StorkSixVector<G4double> uniformDisDim)
+		{
+            uniDisDim=uniformDisDim;
+        }
 
 		G4int GetNumberOfRuns() const { return numberOfRuns; }
 		void SetNumberOfRuns(G4int numOfRuns) { numberOfRuns=numOfRuns; }
@@ -132,8 +144,6 @@ class StorkParseInput
         G4String GetTemperatureDataFile() const { return tempFileName; }
         void SetTemperatureDataFile(G4String temperatureFile);
 
-        const G4int* GetTempGridDivision() const { return tempGridDivision; }
-
 		// Interpolation and world property changes
 		G4bool GetInterpStartCond() const {return interpStart;}
 		void SetInterpStartCond(G4bool interpStartCond) { interpStart=interpStartCond; }
@@ -165,6 +175,9 @@ class StorkParseInput
 
         G4bool GetRunThermalModel() const { return RunThermalModel; }
         void SetRunThermalModel(G4bool tracking) {RunThermalModel=tracking;}
+		
+		G4bool GetUniformDistWithDim() const {return uniformDisWithDim;}
+		void SetUniformDistWithDim(G4bool uniDisWithDim) { uniformDisWithDim=uniDisWithDim; }
 
         G4bool GetInterp() const { return interp; }
         void SetInterp(G4bool yesno) {interp=yesno;}
@@ -238,6 +251,8 @@ class StorkParseInput
 		// World options
 		G4bool uniformDis;
 		G4String uniDisShape;
+		G4bool uniformDisWithDim;
+		StorkSixVector<G4double> uniDisDim;
 		G4bool interpStart;
 		G4bool periodicBC;
 		G4bool normalize;
@@ -247,7 +262,6 @@ class StorkParseInput
         G4int theDelayedOption;
         G4bool instantDelayed;
         G4bool sourcefileDelayed;
-
 
 		// Number of runs, events and primaries per event
 		G4int numberOfRuns;
@@ -265,8 +279,6 @@ class StorkParseInput
 
 		// Initial neutron energy (default source) in MeV
 		G4double initEnergy;
-
-		G4int tempGridDivision[4];
 
 		//Heat Transfer Coefficient
 		G4double htc;
@@ -301,11 +313,9 @@ class StorkParseInput
 		G4String initialSourceFile;
 		G4bool saveFissionData;			// Save fission data to file
 		G4String fissionDataFile;
-		G4bool precursorDelayed;		// Load initial delayed source from file
-		G4String sourcefileDelayedFile;
-		G4bool saveTempData;            // Saves the temperature of every material
-		G4String tempFileName;          // in the world every run
-        G4bool initialFissionData;      //Initial fission data was provided.
+		G4bool loadDelayed;				// Load initial delayed source from file
+		G4String initialDelayedFile;
+
 
         // Vector of data profile identifiers and file names
         std::vector<std::pair<G4String,G4String> > theDataProfiles;
@@ -321,7 +331,6 @@ class StorkParseInput
 
         // Map for user-added worlds
         std::map<G4String,StorkMatPropChangeVector> userWorlds;
-
 };
 
 #endif // STORKPARSEINPUT_H

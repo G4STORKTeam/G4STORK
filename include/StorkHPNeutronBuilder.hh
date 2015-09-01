@@ -90,11 +90,11 @@ class StorkHPNeutronBuilder : public G4VNeutronBuilder
         // Data
 //        StorkNeutronHPCSData *theHPElasticData;
         G4NeutronHPElasticData *theHPElasticData;
- //       StorkNeutronHPCSData *theHPInelasticData;
+//        StorkNeutronHPCSData *theHPInelasticData;
         G4NeutronHPInelasticData *theHPInelasticData;
- //       StorkNeutronHPCSData *theHPFissionData;
+//        StorkNeutronHPCSData *theHPFissionData;
         G4NeutronHPFissionData *theHPFissionData;
- //       StorkNeutronHPCSData *theHPCaptureData;
+//        StorkNeutronHPCSData *theHPCaptureData;
         G4NeutronHPCaptureData *theHPCaptureData;
 };
 

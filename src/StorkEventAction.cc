@@ -92,7 +92,6 @@ void StorkEventAction::EndOfEventAction(const G4Event *anEvent)
     	delayed = aTally->GetDelayed();
     	fnEnergy = aTally->GetFissionEnergies();
 
-
     	// Insert these into the event data structure
     	eventData->survivors->insert(eventData->survivors->begin(),
 									 survivors->begin(),survivors->end());
@@ -100,7 +99,6 @@ void StorkEventAction::EndOfEventAction(const G4Event *anEvent)
 								   delayed->begin(),delayed->end());
 		eventData->fnEnergy->insert(eventData->fnEnergy->begin(),
 								   fnEnergy->begin(),fnEnergy->end());
-
 
         // Get a pointer to the site vector and find the number of sites
         fSiteVector = (*tFuelHC)[0]->GetFissionSites();
@@ -117,12 +115,9 @@ void StorkEventAction::EndOfEventAction(const G4Event *anEvent)
         eventData->numNProd += (*tFuelHC)[0]->GetNProd();
         eventData->numNLost += (*tFuelHC)[0]->GetNLost();
         eventData->numDProd += (*tFuelHC)[0]->GetDProd();
-        eventData->numUserCount += (*tFuelHC)[0]->GetUserCounter();
-        
+
         eventData->totalLifetime += (*tFuelHC)[0]->GetTotalLifetime();
     }
-
-
 
 #ifdef G4TIMEEA
     calcTimer.Stop();
@@ -133,4 +128,3 @@ void StorkEventAction::EndOfEventAction(const G4Event *anEvent)
            << "Calculation time: " << calcTimer << G4endl;
 #endif
 }
-

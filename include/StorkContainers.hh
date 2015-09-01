@@ -67,9 +67,6 @@ typedef StorkQuad<G4String,MatPropPair,
 typedef std::map<MatPropPair,G4double> InitialPropertyMap;
 typedef std::map<MatPropPair,G4double*> WorldPropertyMap;
 typedef std::map<G4String,G4Material*> StorkMaterialMap;
-typedef std::map<G4String,G4double> StorkHeatCapacityMap;
-typedef std::map<G4String,G4int> StorkMaterialFissionMap;
-typedef std::map<G4String,G4double> StorkTemperatureFissionMap;
 typedef std::map<G4String,G4Material*>::iterator StorkMaterialMapItr;
 
 #endif // CONTAINERS_HH_INCLUDED

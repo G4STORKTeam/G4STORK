@@ -215,6 +215,7 @@ GetCrossSection(const G4DynamicParticle* aP, const G4Element*anE, G4double aT)
 //    }
 
 	numIL = G4int(std::max(10.,tempDiff/60.*kelvin));
+	//numIL = 1;
 
     // Find the Doppler broadened cross section
     while(counter < numMaxOL &&
@@ -255,4 +256,3 @@ GetCrossSection(const G4DynamicParticle* aP, const G4Element*anE, G4double aT)
 
     return result/(numIL*counter);
 }
-

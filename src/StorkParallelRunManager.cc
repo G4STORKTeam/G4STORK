@@ -177,7 +177,6 @@ void StorkParallelRunManager::DoEventLoop(G4int n_event, const char*, G4int)
     // Send events to the slaves and collect responses
     // Simulation pauses here until all events are simulated
     TOPC_master_slave(myGenerateEventInput, myDoEvent, myCheckEventResult,NULL);
-    
 }
 
 
@@ -296,7 +295,7 @@ TOPC_ACTION StorkParallelRunManager::CheckEventResult(void *input, void *output)
 
     // Recreate the marshalled event data
 	recMED = new MarshaledStorkEventData(output);
-    
+
     // Tally the event data in the run action
     runAction->TallyEvent(recMED->unmarshal());
 

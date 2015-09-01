@@ -56,7 +56,6 @@ class StorkRunAction : public G4UserRunAction
 {
     public:
         // Public member functions
-        friend class StorkPrimaryGeneratorAction;
 
         // Constructor and destructor
         StorkRunAction(StorkPrimaryGeneratorAction *genPtr,
@@ -98,8 +97,6 @@ class StorkRunAction : public G4UserRunAction
         MSHSiteVector GetCurrentFissionSites() { return CurrentfnSites; }
         DblVector GetCurrentFissionEnergy() { return CurrentfnEnergy; }
 
-    
-
 
     private:
         // Private member functions
@@ -115,7 +112,6 @@ class StorkRunAction : public G4UserRunAction
         // want the temperature change to depend on fisson that occured this run
         void ResetCurrentFissionData();
 
-
     private:
         // Private member variables
 
@@ -128,7 +124,6 @@ class StorkRunAction : public G4UserRunAction
         G4int numNProduced;         // Number of neutrons produced
         G4int numDelayProd;         // Number of delayed neutrons produced
         G4int numNLost;             // Number of neutrons lost
-        G4int userCount;            // User counter from detector.
         G4double runResults[8];     // Run results passed to run manager
         G4int numSites;             // Number of fission sites at the end of each run.
         G4int prevNumSites;         // Number of fission sites of the previous run.
@@ -180,8 +175,6 @@ class StorkRunAction : public G4UserRunAction
         DblVector CurrentfnEnergy;
         G4int numRuns;
         G4int primariesPerRun;
-
-
 
         // Pointers to other classes
         StorkPrimaryGeneratorAction *genAction;

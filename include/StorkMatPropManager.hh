@@ -27,7 +27,7 @@ PROP_UNITS and PROP_UNIT_NAMES.
 
 // Material and property enumerators used to identify/change the properties
 // of various materials
-enum MatEnum {all=0, fuel, coolant, moderator, poison, controlRod, MAX_MATS};
+enum MatEnum {all=0, fuel, coolant, moderator, poison, controlrod, MAX_MATS};
 enum PropEnum {temperature=0, density, dimension, concentration, position, rotation, MAX_PROPS};
 
 #include "G4UnitsTable.hh"

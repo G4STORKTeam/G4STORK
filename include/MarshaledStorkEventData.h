@@ -45,7 +45,6 @@ MarshaledStorkEventData(StorkEventData* objptr) : MarshaledObj() {
     marshal7();
     marshal8();
     marshal9();
-    marshal10();
 }
 
 MarshaledStorkEventData(void *buf, char isUnmarshaling = 'u')
@@ -80,7 +79,6 @@ StorkEventData* unmarshal() {
         unmarshal7();
         unmarshal8();
         unmarshal9();
-        unmarshal10();
         return this->param;
     }
 }
@@ -104,7 +102,6 @@ void unmarshalTo(StorkEventData* obj) {
         unmarshal7();
         unmarshal8();
         unmarshal9();
-        unmarshal10();
     }
 }
 
@@ -645,55 +642,6 @@ void unmarshal9() {
     msh_cursor += msh_currentSize;
 }
 
-void marshal10() {
-    //declare field_size to be the size of this field
-    int msh_currentSize = 0;
-    if (isUnmarshaling())
-        throw "Tried to marshal in obj marked isUnmarshaling == true";
-    
-    //Copy the sizespec into msh_currentSize here:
-    {
-        msh_currentSize = sizeof(G4int);
-        
-    }
-    
-    //Increase the size of buffer if needed
-    EXTEND_BUFFER(msh_currentSize + sizeof(int) + sizeof(int)); // 4 bytes for the total size of field, 4 bytes for the number of elements in the array (in the case of array marshaling)
-    //Mark the beginning position for this field, will write the total size of this field here later
-    msh_field_begin = msh_cursor;
-    
-    //Advance cursor of distance = sizeof(int)
-    msh_cursor += sizeof(int);
-          
-    //Now just copy "get" functions here
-    {
-        memcpy(msh_cursor, &Shadowed_param->numUserCount, sizeof(G4int));
-    }
-    //Now advance the cursor
-    msh_cursor += msh_currentSize;
-    //Now set the size of this field
-    int tmp; //use memcpy instead of *(int*)... =... to prevent bus error
-    tmp = (msh_cursor-msh_field_begin) - sizeof(int);
-    memcpy(msh_field_begin, &tmp, sizeof(int));
-          
-    //Now set msh_size
-    msh_size = msh_cursor - msh_buffer;
-    MSH_SET_TOTALSIZE(msh_size);    MSH_SET_TYPECHOICE(msh_typechoice);
-}
-      
-void unmarshal10() {
-    //declare currentSize to be the size of this field
-    int msh_currentSize = 0;
-    //copy the size of the current field into currentSize
-    memcpy(&msh_currentSize, msh_cursor, sizeof(int));
-    msh_cursor += sizeof(int);
-    //Now copy the setspec here
-    {
-        memcpy(&Shadowed_param->numUserCount, msh_cursor, sizeof(G4int));
-              
-    }
-        msh_cursor += msh_currentSize;
-}
 };
 #endif
 

@@ -42,8 +42,6 @@ class StorkTallyHit : public G4VHit
         G4int GetNProd() { return nProd; }
         void SetDProd(G4int numDelayProd) { dProd = numDelayProd; }
         G4int GetDProd() { return dProd; }
-        void SetUserCounter(G4int numCount) {userCounter = numCount;}
-        G4int GetUserCounter() {return userCounter;}
 
         void SetFissionSites(SiteVector sites) { fSites = sites; }
         const SiteVector* GetFissionSites() { return &fSites; }
@@ -53,8 +51,8 @@ class StorkTallyHit : public G4VHit
         const NeutronSources* GetSurvivors() { return &survivors; }
         void SetDelayed(NeutronSources dList) { delayed = dList; }
         const NeutronSources* GetDelayed() { return &delayed; }
-    
-    
+
+
     private:
         // Private member variables
 
@@ -62,12 +60,10 @@ class StorkTallyHit : public G4VHit
         G4int nLoss;                    // Number of neutrons lost
         G4int nProd;                    // Number of neutrons produced
         G4int dProd;                    // Number of delayed neutrons produced
-        G4int userCounter;                   // Number of neutrons produced from fissions
-    
         DblVector fnEnergy;             // Fission incident neutron energies
         SiteVector fSites;              // Positions of fissions
         NeutronSources survivors;       // Survivors vector
-        NeutronSources delayed;         // Delayed neutrons vectors
+        NeutronSources delayed;         // Delayed neutrons vector
 };
 
 typedef G4THitsCollection<StorkTallyHit> TallyHC;

@@ -37,7 +37,7 @@ StorkNeutronPhysicsList::StorkNeutronPhysicsList(const StorkParseInput* infile)
 StorkNeutronPhysicsList::~StorkNeutronPhysicsList()
 {
     delete theHPNeutron;
-   // delete theLEPNeutron;
+    //delete theLEPNeutron;
     delete theBertiniNeutron;
     delete theNeutrons;
 }
@@ -81,7 +81,7 @@ void StorkNeutronPhysicsList::ConstructProcess()
     // Create and register the builders
     theNeutrons->RegisterMe(theHPNeutron = new StorkHPNeutronBuilder(temp));
     theNeutrons->RegisterMe(theBertiniNeutron = new G4BertiniNeutronBuilder);
-//    theNeutrons->RegisterMe(theLEPNeutron = new G4LEPNeutronBuilder);
+    //theNeutrons->RegisterMe(theLEPNeutron = new G4LEPNeutronBuilder);
 
     // Set the minimum and maximum energies for the NeutronHP processes
     theHPNeutron->SetMinEnergy(0.*eV);

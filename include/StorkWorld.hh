@@ -38,8 +38,12 @@ class StorkWorld : public G4VUserDetectorConstruction
 		// Public member functions
 
         // Constructor and destructor
+        StorkWorld();
         StorkWorld(const StorkParseInput* infile);
         ~StorkWorld();
+
+        void InitializeWorldData(G4String worlnam);
+        void InitializeWorldData(const StorkParseInput* infile);
 
         // Construct the world (called when simulation begins)
         G4VPhysicalVolume* Construct();

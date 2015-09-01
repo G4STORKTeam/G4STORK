@@ -218,8 +218,8 @@ G4double StorkInterpVector::Integrate()
         G4int n= data.size();
         for(G4int i=0;i<n-1;i++)
         {
-            sum += 0.5*((data[i+1]).second+(data[i]).second)
-            *((data[i+1]).first-(data[i]).first);
+            sum += (((data[i+1]).second-(data[i]).second)*0.5 +(data[i]).second)
+                        * ((data[i+1]).first-(data[i]).first);
         }
     }
 

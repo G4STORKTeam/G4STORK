@@ -187,7 +187,6 @@ void StorkRunAction::BeginOfRunAction(const G4Run *aRun)
     avgLifetime = 0.0;
     numNProduced = 0;
     numNLost = 0;
-    userCount = 0;
 
     runID = aRun->GetRunID();
 
@@ -235,9 +234,12 @@ void StorkRunAction::BeginOfRunAction(const G4Run *aRun)
                 << "Duration (s) ";
         if(neutronFluxCalc){
         *output << "Flux (n cm^-2 s^-1) ";
-        }
-
         G4int underline = 150;
+
+        }
+		else{
+        	G4int underline = 129;
+		}
         G4String interpName;
 
 		// Output the material properties that are being interpolated
@@ -258,7 +260,6 @@ void StorkRunAction::BeginOfRunAction(const G4Run *aRun)
         output->width(underline);
         output->fill('-');
         *output << "-" << G4endl;
-
 
     }
 
@@ -299,11 +300,11 @@ void StorkRunAction::EndOfRunAction(const G4Run *aRun)
     // Collate the survivors and delayed neutrons
     CollateNeutronSources();
 
-   // G4int numPrimaries = genAction->GetNumPrimaries();
+    G4int numPrimaries = genAction->GetNumPrimaries();
 
     // Find the Shannon Entropy
-    shannonEntropy[0] = CalcShannonEntropy(fSites, totalFS);
-    shannonEntropy[1] = CalcShannonEntropy(sSites, G4int(survivors.size()));
+    shannonEntropy[0] = CalcShannonEntropy(fSites,totalFS);
+    shannonEntropy[1] = CalcShannonEntropy(sSites,G4int(survivors.size()));
 
     //Find neutron flux of specified material.
     if(neutronFluxCalc)
@@ -383,7 +384,6 @@ void StorkRunAction::EndOfRunAction(const G4Run *aRun)
     if(saveFissionData)
 		numFDCollectionRuns++;
 
-
 #ifdef G4TIMERA
     runCalcTimer.Stop();
     totalRunCalcTime += runCalcTimer.GetRealElapsed();
@@ -452,10 +452,9 @@ void StorkRunAction::TallyEvent(const StorkEventData *eventData)
     // Add the neutron production and loss
     numNProduced += eventData->numNProd;
     numNLost += eventData->numNLost;
-    userCount += eventData->numUserCount;
 
     // Add the fission sites to the 3D array
-    numSites = eventData->fSites->size();
+    G4int numSites = eventData->fSites->size();
     totalFS += numSites;
 
     // Discretize fission sites
@@ -481,15 +480,7 @@ void StorkRunAction::TallyEvent(const StorkEventData *eventData)
 						  eventData->fnEnergy->end());
         fnSites.insert(fnSites.end(),eventData->fSites->begin(),
 					   eventData->fSites->end());
-
     }
-
-    /*// Saves fission sites for temperature tracking purpose if necessary
-    if(RunThermalModel || updatePrecursors)
-    {
-        CurrentfnSites.insert(CurrentfnSites.begin(),eventData->fSites->begin(),
-					       eventData->fSites->end());
-    }*/
 
 #ifdef G4TIMERA
     // Add the tally event time to the calulation total
@@ -554,7 +545,7 @@ void StorkRunAction::UpdateWorldProperties(G4double *values)
 // SaveSources()
 // Saves the survivors and delayed to a text file with the following format
 // FILE FORMAT: each on a new line(s)
-// a) header lines (start with #)px
+// a) header lines (start with #)
 // b) current time of records
 // c) number of survivors
 // d) survivors (global time, lifetime, position (x,y,z), momentum (px,py,pz))
@@ -605,7 +596,6 @@ void StorkRunAction::SaveSources(G4String fname, G4int numRuns, G4double runEnd)
     for(G4int i=0; i<numEntries; i++)
     {
         record = &(survivors[i]);
-
         outFile << std::resetiosflags(std::ios_base::floatfield)
                 << record->first << " "
                 << std::right << std::setprecision(16) << std::scientific
@@ -621,7 +611,6 @@ void StorkRunAction::SaveSources(G4String fname, G4int numRuns, G4double runEnd)
                 << std::setw(25) << record->seventh << " "
                 << std::setw(25) << record->eigth << " "
                 << std::setw(25) << record->ninth << G4endl;
-
     }
 
 
@@ -664,7 +653,6 @@ void StorkRunAction::SaveSources(G4String fname, G4int numRuns, G4double runEnd)
 G4bool StorkRunAction::WriteFissionData(G4String fname,
 									 G4int start)
 {
-
 	// Declare and open file stream
 	std::ofstream outFile(fname.c_str(),std::ifstream::out);
 
@@ -686,6 +674,7 @@ G4bool StorkRunAction::WriteFissionData(G4String fname,
 
 		return false;
 	}
+
 
 	// Write header lines
     outFile << "# Fission data file for following input:" << G4endl

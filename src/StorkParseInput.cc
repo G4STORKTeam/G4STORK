@@ -25,10 +25,6 @@ StorkParseInput::StorkParseInput(G4bool master)
 	numSteps[1]=20;
     numSteps[2]=20;
 
-    tempGridDivision[0] = 2;
-    tempGridDivision[1] = 2;
-    tempGridDivision[2] = 2;
-    tempGridDivision[3] = 1;
 	initEnergy = 1.*MeV;
 	initialSourcePos.set(0.,0.,0.);
 	randomSeed = 0;
@@ -52,6 +48,7 @@ StorkParseInput::StorkParseInput(G4bool master)
 	periodicBC=false;
 	normalize = true;
 	uniformDis = false;
+	uniformDisWithDim = false;
 	interpStart = false;
 	saveFissionData = false;
 	overrideInitRandomSeed = false;
@@ -368,7 +365,7 @@ G4bool StorkParseInput::ReadInputFile(G4String filename)
 			{
 				reactorMat=92235;
 				theWorldProps[MatPropPair(all,dimension)] = 8.7*cm;
-				theWorldProps[MatPropPair(all,temperature)] = 293.6*kelvin;
+				theWorldProps[MatPropPair(all,temperature)] = 2093.6*kelvin;
 			}
 			else if(keyWord=="C6Lattice")
 			{
@@ -389,6 +386,14 @@ G4bool StorkParseInput::ReadInputFile(G4String filename)
 			else if(keyWord=="SLOWPOKE")
 			{
                 periodicBC=false;
+			}
+			else if(keyWord=="SCWR")
+			{
+
+			}
+			 else if(keyWord=="Test")
+			{
+
 			}
             else if(userWorlds.find(keyWord) != userWorlds.end())
             {
@@ -415,7 +420,7 @@ G4bool StorkParseInput::ReadInputFile(G4String filename)
 		{
 			infile >> numSteps[0] >> numSteps[1] >> numSteps[2];
 		}
-		else if(keyWord == "SE_NUM_RUNS_CONV")
+		else if(keyWord == "SE_NUM_CONV_RUNS")
 		{
 			infile >> convRuns;
 		}
@@ -488,6 +493,12 @@ G4bool StorkParseInput::ReadInputFile(G4String filename)
 		else if(keyWord=="UNIFORM_DISTRIBUTION")
 		{
 			infile >> uniformDis >> uniDisShape;
+        }
+        else if(keyWord=="UNIFORM_DIST_WITH_DIM")
+		{
+            G4double tempDim[6];
+			infile >> uniformDis >> uniDisShape >> uniformDisWithDim >> tempDim[0] >> tempDim[1] >> tempDim[2] >> tempDim[3] >> tempDim[4] >> tempDim[5];
+			uniDisDim = tempDim;
         }
 		else if(keyWord=="INITIAL_SOURCE_POS")
 		{
@@ -688,7 +699,6 @@ G4bool StorkParseInput::ReadInputFile(G4String filename)
 	}
 
 	datapath = getenv("G4NEUTRONHPDATA");
-
 
 	// Find the folder name for the cross sections from the data path
     pos = datapath.find_last_of("/");
@@ -1020,6 +1030,7 @@ G4bool StorkParseInput::ErrorChecking()
 		test=false;
         G4cerr << "*** ERROR:  Empty initial source file name." << G4endl;
 	}
+
 	if(loadSources)
 	{
 		std::ifstream initFile(initialSourceFile);

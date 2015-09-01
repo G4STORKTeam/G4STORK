@@ -24,6 +24,10 @@ member variable.
 #include "G4TransportationManager.hh"
 #include "G4NeutronHPFission.hh"
 
+#include "G4DynamicParticle.hh"
+#include "G4Material.hh"
+#include "G4Nucleus.hh"
+
 
 class StorkHadronFissionProcess : public G4HadronFissionProcess
 {
@@ -146,23 +150,25 @@ StorkNeutronData StorkHadronFissionProcess::GetADelayedNeutron(
 }
 
 
+// GetADelayedNeutron()
+// Produce the characteristics (momentum, time of birth, etc) of a delayed
+// neutron by simulating a fission with a given incoming neutron.
+// NOTE: the fission is virtual and DOES NOT OCCUR
 StorkNeutronData StorkHadronFissionProcess::GetADelayedNeutron(
-                                                               G4DynamicParticle *aNeutron,
-                                                               G4Material *theMat)
+													G4DynamicParticle *aNeutron,
+													G4Material *theMat)
 {
 	// Local Variables
 	G4Nucleus theTarget;
 	G4HadFinalState* theResult = NULL;
-    StorkHadProjectile thePro(*aNeutron,theMat);
+	G4HadProjectile thePro(*aNeutron);
 	G4HadronicInteraction *theFissionModel = NULL;
 	G4HadSecondary *aSec = NULL;
 	G4DynamicParticle *aDelayedN = NULL;
 	G4bool dnFlag = false;
-    if(!theDataStore) theDataStore = GetCrossSectionDataStore();
+	G4CrossSectionDataStore *theDataStore = GetCrossSectionDataStore();
 
 
-    
-    
 	// Find the target element
 	G4Element *anElement = NULL;
 	try
@@ -171,49 +177,48 @@ StorkNeutronData StorkHadronFissionProcess::GetADelayedNeutron(
 	}
 	catch(G4HadronicException & aR)
 	{
-		//DumpState(aTrack,"SampleZandA");
+//		DumpState(aTrack,"SampleZandA");
 		G4Exception("G4HadronicProcess", "007", FatalException,
 					"GetADelayedNeutron failed on element selection.");
 	}
-    
-    
-	// Find the appropriate interactione
+
+
+	// Find the appropriate interaction
 	try
 	{
 		theFissionModel = ChooseHadronicInteraction(
-                                                    aNeutron->GetKineticEnergy(),
-                                                    theMat, anElement);
+												aNeutron->GetKineticEnergy(),
+												theMat, anElement);
 	}
 	catch(G4HadronicException & aE)
 	{
-		//DumpState(aTrack,"ChooseHadronicInteraction");
+		G4cout << "Target element "<< anElement->GetName() << G4endl;
+//		DumpState(aTrack,"ChooseHadronicInteraction");
 		G4Exception("G4HadronicProcess", "007", FatalException,
 					"ChooseHadronicInteraction failed.");
 	}
-    
+
 	// Keep getting a result until a delayed neutron is produced
 	do
 	{
 		// Simulate a fission
 		try
 		{
-            G4HadProjectile* Temp = reinterpret_cast<G4HadProjectile*>(&thePro);
-			theResult = theFissionModel->ApplyYourself(*Temp, theTarget);
-            //theResult = theFissModel->ApplyYourself(*Temp,theTarget);
-            
+			theResult = theFissionModel->ApplyYourself(thePro, theTarget);
 		}
 		catch(G4HadronicException aR)
 		{
 			G4Exception("G4HadronicProcess", "007", FatalException,
 						"The fission model failed to produce a result.");
-            
+
 		}
-        
+
+
 		// Check to see if the result contains a delayed neutron
 		for(G4int i=0; i<theResult->GetNumberOfSecondaries(); i++)
 		{
 			aSec = theResult->GetSecondary(i);
-            
+
 			// Check if a delayed neutron was created
 			if(aSec->GetParticle()->GetParticleDefinition() ==
                G4Neutron::Neutron() &&
@@ -221,19 +226,19 @@ StorkNeutronData StorkHadronFissionProcess::GetADelayedNeutron(
 			{
 				dnFlag = true;
 				aDelayedN = aSec->GetParticle();
-                
+
 				break;
 			}
 		}
 	}
 	while(!dnFlag);
-    
-    
+
+
 	// Create the neutron data container
 	StorkNeutronData dnData(aSec->GetTime(),
                             aSec->GetTime()-aNeutron->GetProperTime(),
 						    G4ThreeVector(0.,0.,0.), aDelayedN->GetMomentum());
-    
+
 	return dnData;
 }
 

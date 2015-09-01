@@ -10,7 +10,7 @@ DebugConstructor::DebugConstructor()
 	contRodH = -199.86*cm;
 
 	// Set up variable property map
-	variablePropMap[MatPropPair(controlRod,position)] = &contRodH;
+	variablePropMap[MatPropPair(controlrod,position)] = &contRodH;
 
 }
 

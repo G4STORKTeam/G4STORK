@@ -19,23 +19,41 @@ Source code for the StorkWorld class.
 #include "C6LatticeConstructor.hh"
 #include "InfiniteUniformLatticeConstructor.hh"
 #include "SLOWPOKEConstructor.hh"
+#include "SCWRConstructor.hh"
+//#include "DebugConstructor.hh"
+#include "TestConstructor.hh"
 
 
 // Overloaded Constructor
 StorkWorld::StorkWorld(const StorkParseInput* infile)
 : worldPhysical(0), theWorld(0)
 {
-    // Copy user inputs
-    inFile = infile;
-    worldName = infile->GetWorld();
-
     // Add the three basic worlds to the world map
     AddWorld("C6Lattice", new C6LatticeConstructor());
     AddWorld("Sphere", new BareSphereConstructor());
     AddWorld("Cube", new InfiniteUniformLatticeConstructor());
     AddWorld("SLOWPOKE", new SLOWPOKEConstructor());
+    AddWorld("SCWR", new SCWRConstructor());
+//    AddWorld("Debug", new DebugConstructor());
+    AddWorld("Test", new TestConstructor());
+
+    // Copy user inputs
+    inFile = infile;
+    worldName = infile->GetWorld();
 }
 
+StorkWorld::StorkWorld()
+: worldPhysical(0), theWorld(0)
+{
+    // Add the three basic worlds to the world map
+    AddWorld("C6Lattice", new C6LatticeConstructor());
+    AddWorld("Sphere", new BareSphereConstructor());
+    AddWorld("Cube", new InfiniteUniformLatticeConstructor());
+    AddWorld("SLOWPOKE", new SLOWPOKEConstructor());
+    AddWorld("SCWR", new SCWRConstructor());
+//    AddWorld("Debug", new DebugConstructor());
+    AddWorld("Test", new TestConstructor());
+}
 
 // Destructor
 StorkWorld::~StorkWorld()
@@ -55,6 +73,20 @@ StorkWorld::~StorkWorld()
     availableWorlds.clear();
 }
 
+
+void StorkWorld::InitializeWorldData(const StorkParseInput* infile)
+{
+    // Copy user inputs
+    inFile = infile;
+    worldName = infile->GetWorld();
+}
+
+void StorkWorld::InitializeWorldData(G4String worlnam)
+{
+    // Copy user inputs
+
+    worldName = worlnam;
+}
 
 // Construct()
 // Use one of the constructors to build the world.

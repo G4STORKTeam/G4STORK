@@ -31,8 +31,7 @@ them into an StorkEventData container that can be marshalled.
 #include "G4UnitsTable.hh"
 #include "G4ios.hh"
 #include "globals.hh"
-#include "G4MCTSimEvent.hh"
-#include "G4MCTSimParticle.hh"
+
 
 class StorkEventAction: public G4UserEventAction
 {
@@ -48,13 +47,13 @@ class StorkEventAction: public G4UserEventAction
 
         StorkEventData* GetEventData() const { return eventData; };
 
+
     private:
         // Private member data
 
-        G4int tfHCID/*,tmHCID*/;
+        G4int tfHCID, tmHCID;
         G4String SDname;
         StorkEventData *eventData;
-
 
 
 #ifdef G4TIMEEA
