@@ -55,7 +55,7 @@ class StorkNeutronSD : public G4VSensitiveDetector
         // Public member functions
 
         // Constructor and destructor
-        StorkNeutronSD(G4String name, G4bool instD = false);
+        StorkNeutronSD(G4String name, G4int KCalcType, G4bool instD = false);
         ~StorkNeutronSD() {;}
 
         void Initialize(G4HCofThisEvent *HCE);
@@ -78,9 +78,12 @@ class StorkNeutronSD : public G4VSensitiveDetector
         // Private member variables
 
         // Manager pointers
+        G4int prevTrackID;
+        G4String hitProcess;
         StorkRunManager *runMan;
         StorkProcessManager *procMan;
 
+        G4int kCalcType;
 
         TallyHC *tallyHitColl;      // Collection of tally hits
         G4int HCID1;                // Index of the hit collection

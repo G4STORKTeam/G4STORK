@@ -109,8 +109,7 @@ StorkVWorldConstructor::ConstructNewWorld(const StorkParseInput* infile)
 
 	// Build sensitive detector
     G4SDManager *sDMan = G4SDManager::GetSDMpointer();
-    sDReactor = new StorkNeutronSD("Reactor",infile->GetInstantDelayed()/*,
-							  infile->GetPeriodicBC()*/);
+    sDReactor = new StorkNeutronSD("Reactor", infile->GetKCalcType(), infile->GetInstantDelayed());
     sDMan->AddNewDetector(sDReactor);
 
     // Add filters to the sensitive detectors so that they only track neutrons

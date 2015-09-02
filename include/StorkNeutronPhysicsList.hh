@@ -54,6 +54,7 @@ class StorkNeutronPhysicsList : public G4VUserPhysicsList
         // User inputs
         G4String csDirName;
         G4String fsDirName;
+        G4int kCalcType;
         std::vector<G4int>* periodicBCVec;
         std::vector<G4int>* reflectBCVec;
 

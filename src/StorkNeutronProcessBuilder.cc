@@ -15,7 +15,7 @@ Source code for StorkNeutronProcessBuilder class.
 
 
 // Constructor
-StorkNeutronProcessBuilder::StorkNeutronProcessBuilder(std::vector<G4int>* pBCVec, std::vector<G4int>* rBCVec, G4String FSDirName)
+StorkNeutronProcessBuilder::StorkNeutronProcessBuilder(std::vector<G4int>* pBCVec, std::vector<G4int>* rBCVec, G4String FSDirName, G4int KCalcType)
 :wasActivated(false)
 {
     // Create the physics processes
@@ -27,6 +27,7 @@ StorkNeutronProcessBuilder::StorkNeutronProcessBuilder(std::vector<G4int>* pBCVe
     TheUserBoundaryCond = new StorkUserBCStepLimiter(pBCVec,rBCVec);
     TheZeroBoundaryCond = new StorkZeroBCStepLimiter(pBCVec,rBCVec);
 
+    kCalcType = KCalcType;
     fsDirName=FSDirName;
 }
 
@@ -71,13 +72,10 @@ void StorkNeutronProcessBuilder::Build()
 
     if(fsDirName!="DEFAULT")
     {
-        StorkMaterial *aStorkMat;
-
         if(fsDirName[fsDirName.size()-1]=='/')
             fsDirName.erase(fsDirName.size()-1);
         ExtractTemp(fsDirName, fsTemp);
         setenv("G4NEUTRONHPDATA",fsDirName,1);
-
         std::vector<G4VNeutronBuilder *>::iterator i;
         for(i=theModelCollections.begin(); i!=theModelCollections.end(); i++)
         {
@@ -86,15 +84,13 @@ void StorkNeutronProcessBuilder::Build()
                 aHPBuilder->SetFSTemperature(fsTemp);
         }
 
+        /*
+        StorkMaterial *aStorkMat;
         G4MaterialTable *matTable = (G4MaterialTable*)G4Material::GetMaterialTable();
         G4LogicalVolumeStore* lvStore = G4LogicalVolumeStore::GetInstance();
         std::vector<G4int> lvIndexVec;
         G4int matTableSize = matTable->size();
 
-        //G4int matNum=10;
-        /*StorkMaterial *test = new StorkMaterial((*matTable)[matNum]->GetName(), (*matTable)[matNum]->GetDensity(), dynamic_cast<StorkMaterial*>((*matTable)[matNum]),
-                                                (*matTable)[matNum]->GetState(), (*matTable)[matNum]->GetTemperature(), (*matTable)[matNum]->GetPressure());*/
-        //G4Material *testing = dynamic_cast<G4Material*>(test);
         for(int j=0; j<matTableSize; j++)
         {
             if((*matTable)[j])
@@ -128,6 +124,7 @@ void StorkNeutronProcessBuilder::Build()
                 }
             }
         }
+        */
     }
 
     // Build the models and data for the neutron processes (all energies)
@@ -187,7 +184,8 @@ void StorkNeutronProcessBuilder::Build()
     theProcMan->AddDiscreteProcess(theNeutronInelastic);
     theProcMan->AddDiscreteProcess(theNeutronCapture);
     theProcMan->AddDiscreteProcess(theNeutronFission);
-    theProcMan->AddDiscreteProcess(theStepLimiter);
+    if(kCalcType!=2)
+        theProcMan->AddDiscreteProcess(theStepLimiter);
     theProcMan->AddDiscreteProcess(TheUserBoundaryCond);
     theProcMan->AddDiscreteProcess(TheZeroBoundaryCond);
 }

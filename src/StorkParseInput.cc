@@ -20,6 +20,7 @@ StorkParseInput::StorkParseInput(G4bool master)
 	// Default values
 	worldName = "Unknown";
 	reactorMat = 0;
+	kCalcType = 0;
 	csDirName = "DEFAULT";
 	fsDirName = "DEFAULT";
 
@@ -372,7 +373,7 @@ G4bool StorkParseInput::ReadInputFile(G4String filename)
 			{
 
 			}
-			 else if(keyWord=="Test")
+            else if(keyWord=="Test")
 			{
 
 			}
@@ -399,12 +400,33 @@ G4bool StorkParseInput::ReadInputFile(G4String filename)
 			infile >> reactorMat;
 		}
 
-		//CSDataFileLocation
+		// Keff calculation method
+		else if(keyWord=="K_CALC")
+		{
+            G4String kCalc;
+			infile >> kCalc;
+
+			if(kCalc == "K_Dynamic")
+			{
+                kCalcType = 0;
+			}
+			else if(kCalc == "K_Time_Absorption")
+			{
+                kCalcType = 1;
+			}
+			else if(kCalc == "K_Generational")
+			{
+                kCalcType = 2;
+			}
+
+		}
+
+		// CS Data File Location
 		else if(keyWord=="CS_DATA_DIR")
 		{
 			infile >> csDirName;
 		}
-		//Final State Data Location
+		// Final State Data Location
 		else if(keyWord=="FS_DATA_DIR")
 		{
 			infile >> fsDirName;
@@ -628,8 +650,25 @@ G4bool StorkParseInput::ReadInputFile(G4String filename)
     }
 
     // Open the logging file (if necessary)
+    G4String logDir;
     if(isMaster && logData)
     {
+        pos = logFile.find_last_of("/");
+        logDir = logFile.substr(0,pos);
+
+        if(!(DirectoryExists((logDir).c_str())))
+        {
+            system( ("mkdir -p -m=666 "+logDir).c_str());
+            if(DirectoryExists((logDir).c_str()))
+            {
+                G4cout << "created directory " << logDir << "\n" << G4endl;
+            }
+            else
+            {
+                G4cout << "\nError: could not create directory " << logDir << "\n" << G4endl;
+                return false;
+            }
+        }
     	logStream = new std::ofstream(logFile, std::ios_base::app);
     }
 
@@ -638,19 +677,45 @@ G4bool StorkParseInput::ReadInputFile(G4String filename)
     {
     	if(saveSources && sourceFile == "")
     	{
-    		pos = logFile.find_last_of("/");
-
-    		sourceFile = logFile.substr(0,pos) + "/Src-" +
-							logFile.substr(pos+1,logFile.length()-1);
+    		pos = logDir.find_last_of("/");
+    		sourceFile = logDir.substr(0,pos) + "/SourceFiles/";
+            if(!(DirectoryExists((sourceFile).c_str())))
+            {
+                system( ("mkdir -p -m=666 "+sourceFile).c_str());
+                if(DirectoryExists((sourceFile).c_str()))
+                {
+                    G4cout << "created directory " << sourceFile << "\n" << G4endl;
+                }
+                else
+                {
+                    G4cout << "\nError: could not create directory " << sourceFile << "\n" << G4endl;
+                    return false;
+                }
+            }
+            pos = logFile.find_last_of("/");
+            sourceFile += "Src-" + logFile.substr(pos+1,logFile.length()-1);
     	}
 
 
 		if(saveFissionData && fissionDataFile == "")
 		{
-    		pos = logFile.find_last_of("/");
-
-    		fissionDataFile = logFile.substr(0,pos) + "/Fission-" +
-								logFile.substr(pos+1,logFile.length()-1);
+    		pos = logDir.find_last_of("/");
+    		fissionDataFile = logDir.substr(0,pos) + "/FissionFiles/";
+            if(!(DirectoryExists((fissionDataFile).c_str())))
+            {
+                system( ("mkdir -p -m=666 "+fissionDataFile).c_str());
+                if(DirectoryExists((fissionDataFile).c_str()))
+                {
+                    G4cout << "created directory " << fissionDataFile << "\n" << G4endl;
+                }
+                else
+                {
+                    G4cout << "\nError: could not create directory " << fissionDataFile << "\n" << G4endl;
+                    return false;
+                }
+            }
+            pos = logFile.find_last_of("/");
+            fissionDataFile += "Fission-" + logFile.substr(pos+1,logFile.length()-1);
     	}
     }
 
@@ -695,6 +760,24 @@ G4int StorkParseInput::ConvertSide(G4String side)
         }
     }
     return sideNum;
+}
+
+G4bool StorkParseInput::DirectoryExists( const char* pzPath )
+{
+    if ( pzPath == NULL) return false;
+
+    DIR *pDir;
+    G4bool bExists = false;
+
+    pDir = opendir (pzPath);
+
+    if (pDir != NULL)
+    {
+        bExists = true;
+        closedir (pDir);
+    }
+
+    return bExists;
 }
 
 // AddWorldType()

@@ -395,9 +395,11 @@ G4int StorkPrimaryGeneratorAction::GetNumDNPrimaries()
 	G4double runStart = runMan->GetRunStart();
 	NeutronSources::iterator it = survivors.begin();
 
-	if(it->first > runStart)
-		count++;
-
+    for(;it<survivors.end(); it++)
+    {
+        if(it->first > runStart)
+            count++;
+    }
 	return count;
 }
 
@@ -748,7 +750,7 @@ void StorkPrimaryGeneratorAction::UniformPosition(StorkNeutronData* input)
             input->third.set(limit[0],limit[2],limit[1]);
         }
     }
-    input->third = input->third + origin;
+    input->third = input->third + origin*CLHEP::cm;
 }
 
 

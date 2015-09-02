@@ -63,8 +63,8 @@ SCWRDopplerConstructor::SCWRDopplerConstructor()
     linerDensity=7.9*g/cm3;
 
     coolantTemp=681.79*kelvin;
-    //coolantDensity=0.14933*g/cm3;
-    coolantDensity=0.001*g/cm3;
+    coolantDensity=0.14933*g/cm3;
+    //coolantDensity=0.001*g/cm3;
 
     inSheatheTemp=756.30*kelvin;
     inSheatheDensity=7.9*g/cm3;
@@ -82,8 +82,8 @@ SCWRDopplerConstructor::SCWRDopplerConstructor()
     flowTubeDensity=7.9*g/cm3;
 
     centralCoolantTemp=633.79*kelvin;
-    //centralCoolantDensity=0.58756*g/cm3;
-    centralCoolantDensity=0.001*g/cm3;
+    centralCoolantDensity=0.58756*g/cm3;
+    //centralCoolantDensity=0.001*g/cm3;
 }
 
 
@@ -577,11 +577,289 @@ void SCWRDopplerConstructor::ConstructMaterials()
     *OuterFuel, *InnerFuel, *FlowTube, *CentralCoolant ,*ExelLiner,
     *ZircSteel, /*ZircHydrid,*/ *H2O, *D2O, *Coolant;
 
-    // check material compositions against jasons files for inconsistancies
-    // Checked, inner fuel and outer fuel
-    // checked temperature and density
-    // need to check geometry as well
-    // checked all the isotope and material compositions against AECL and wikipedia get Jasons abundance list
+//    H1 = new G4Isotope("H1", 1, 1, 1.008*g/mole);
+//    H = new StorkElement("Hydrogen", "H", 1);
+//    H->AddIsotope(H1, 1.0);
+//
+//    H2 = new G4Isotope("H2", 1, 2, 2.014*g/mole);
+//    D = new StorkElement("Deterium", "D", 1);
+//    D->AddIsotope(H2, 1.0);
+//
+//    C12 = new G4Isotope("C12", 6, 12, 12.0*g/mole);
+//    C13 = new G4Isotope("C13", 6, 13, 13.0033548378*g/mole);
+//
+//    C = new StorkElement("Carbon", "C", 2);
+//    C->AddIsotope(C12, 98.93*perCent);
+//    C->AddIsotope(C13,  1.07*perCent);
+//
+//
+//    // Make oxygen isotope and element
+//    O16 = new G4Isotope("O16", 8, 16, 15.995*g/mole);
+//
+//    Oxygen = new StorkElement("Oxygen", "O", 1);
+//    Oxygen->AddIsotope(O16, 100.*perCent);
+//
+//    Si28 = new G4Isotope("Si28", 14, 28, 27.9769*g/mole);
+//    Si29 = new G4Isotope("Si29", 14, 29, 28.9765*g/mole);
+//    Si30 = new G4Isotope("Si30", 14, 28, 29.9738*g/mole);
+//
+//    Si = new StorkElement("Silicon", "Si", 3);
+//    Si->AddIsotope(Si28, 92.223*perCent);
+//    Si->AddIsotope(Si29,  4.685*perCent);
+//    Si->AddIsotope(Si30,  3.092*perCent);
+//
+//    // Make oxygen isotope and element
+//    P31 = new G4Isotope("P31", 15, 31, 30.97376*g/mole);
+//
+//    P = new StorkElement("Phosphorus", "P", 1);
+//    P->AddIsotope(P31, 100.*perCent);
+//
+//    S32 = new G4Isotope("S32", 16, 32, 31.9721*g/mole);
+//    S33 = new G4Isotope("S33", 16, 33, 32.9715*g/mole);
+//    S34 = new G4Isotope("S34", 16, 34, 33.9679*g/mole);
+//    S36 = new G4Isotope("S36", 16, 36, 35.9679*g/mole);
+//
+//    S = new StorkElement("Sulphur", "S", 1);
+//    S->AddIsotope(S32, 94.93*perCent);
+//    S->AddIsotope(S33,  0.76*perCent);
+//    S->AddIsotope(S34,  4.29*perCent);
+//    S->AddIsotope(S36,  0.02*perCent);
+//
+//    //make chromium isotopes and element
+//    Cr50 = new G4Isotope("Cr50", 24, 50, 49.9460422*g/mole);
+//    Cr52 = new G4Isotope("Cr52", 24, 52, 51.9405075*g/mole);
+//    Cr53 = new G4Isotope("Cr53", 24, 53, 52.9406494*g/mole);
+//    Cr54 = new G4Isotope("Cr54", 24, 54, 53.9388804*g/mole);
+//
+//    Cr = new StorkElement("Chromium", "Cr", 4);
+//    Cr->AddIsotope(Cr50,  4.345*perCent);
+//    Cr->AddIsotope(Cr52, 83.789*perCent);
+//    Cr->AddIsotope(Cr53,  9.501*perCent);
+//    Cr->AddIsotope(Cr54,  2.365*perCent);
+//
+//    //make chromium isotopes and element
+//    Mn55 = new G4Isotope("Mn55", 25, 55, 54.9380*g/mole);
+//
+//    Mn = new StorkElement("Manganese", "Mn", 1);
+//    Mn->AddIsotope(Mn55,  100.*perCent);
+//
+//    //make iron isotopes and element
+//    Fe54 = new G4Isotope("Fe54", 26, 54, 53.9396105*g/mole);
+//    Fe56 = new G4Isotope("Fe56", 26, 56, 55.9349375*g/mole);
+//    Fe57 = new G4Isotope("Fe57", 26, 57, 56.9353940*g/mole);
+//    Fe58 = new G4Isotope("Fe58", 26, 58, 57.9332756*g/mole);
+//
+//    Fe = new StorkElement("Iron", "Fe", 4);
+//    Fe->AddIsotope(Fe54,  5.845*perCent);
+//    Fe->AddIsotope(Fe56, 91.754*perCent);
+//    Fe->AddIsotope(Fe57,  2.119*perCent);
+//    Fe->AddIsotope(Fe58,  0.282*perCent);
+//
+//    //make nickel isotopes and element
+//    Ni58 = new G4Isotope("Ni58", 28, 58, 57.9353429*g/mole);
+//    Ni60 = new G4Isotope("Ni60", 28, 60, 59.9307864*g/mole);
+//    Ni61 = new G4Isotope("Ni61", 28, 61, 60.9310560*g/mole);
+//    Ni62 = new G4Isotope("Ni62", 28, 62, 61.9283451*g/mole);
+//    Ni64 = new G4Isotope("Ni64", 28, 64, 63.9279660*g/mole);
+//
+//    Ni = new StorkElement("Nickel", "Ni", 5);
+//    Ni->AddIsotope(Ni58, 68.0769*perCent);
+//    Ni->AddIsotope(Ni60, 26.2231*perCent);
+//    Ni->AddIsotope(Ni61, 1.1399*perCent);
+//    Ni->AddIsotope(Ni62, 3.6345*perCent);
+//    Ni->AddIsotope(Ni64,  0.9256*perCent);
+//
+//    //make niobium isotopes and element
+//    Nb93 = new G4Isotope("Nb93", 41, 93, 92.9063781*g/mole);
+//
+//    Nb = new StorkElement("Niobium", "Nb", 1);
+//    Nb->AddIsotope(Nb93, 100*perCent);
+//
+//    Y89 = new G4Isotope("Y89", 39, 89, 99.9058*g/mole);
+//
+//    Y = new StorkElement("Yttrium", "Y", 1);
+//    Y->AddIsotope(Y89,  100.*perCent);
+//
+//        //make Zirconium isotopes and element
+//    Mo92 = new G4Isotope("Mo92", 42, 92, 91.9068*g/mole);
+//    Mo94 = new G4Isotope("Mo94", 42, 94, 93.9051*g/mole);
+//    Mo95 = new G4Isotope("Mo95", 42, 95, 94.9058*g/mole);
+//    Mo96 = new G4Isotope("Mo96", 42, 96, 95.9047*g/mole);
+//    Mo97 = new G4Isotope("Mo97", 42, 97, 96.9060*g/mole);
+//    Mo98 = new G4Isotope("Mo98", 42, 98, 97.9054*g/mole);
+//    Mo100 = new G4Isotope("Mo100", 42, 100, 99.9075*g/mole);
+//
+//    Mo = new StorkElement("Molybdenum", "Mo", 7);
+//    Mo->AddIsotope(Mo92, 14.77*perCent);
+//    Mo->AddIsotope(Mo94, 9.23*perCent);
+//    Mo->AddIsotope(Mo95, 15.9*perCent);
+//    Mo->AddIsotope(Mo96, 16.68*perCent);
+//    Mo->AddIsotope(Mo97,  9.56*perCent);
+//    Mo->AddIsotope(Mo98, 24.19*perCent);
+//    Mo->AddIsotope(Mo100,  9.67*perCent);
+//
+//    Sn112 = new G4Isotope("Sn112", 50, 112, 111.9048*g/mole);
+//    Sn114 = new G4Isotope("Sn114", 50, 114, 113.9028*g/mole);
+//    Sn115 = new G4Isotope("Sn115", 50, 115, 114.9033*g/mole);
+//    Sn116 = new G4Isotope("Sn116", 50, 116, 115.9017*g/mole);
+//    Sn117 = new G4Isotope("Sn117", 50, 117, 116.9030*g/mole);
+//    Sn118 = new G4Isotope("Sn118", 50, 118, 117.9016*g/mole);
+//    Sn119 = new G4Isotope("Sn119", 50, 119, 118.9033*g/mole);
+//    Sn120 = new G4Isotope("Sn120", 50, 120, 119.9022*g/mole);
+//    Sn122 = new G4Isotope("Sn122", 50, 122, 121.9034*g/mole);
+//    Sn124 = new G4Isotope("Sn124", 50, 124, 123.9053*g/mole);
+//
+//    Sn = new StorkElement("Tin", "Sn", 10);
+//    Sn->AddIsotope(Sn112, 0.97*perCent);
+//    Sn->AddIsotope(Sn114, 0.66*perCent);
+//    Sn->AddIsotope(Sn115, 0.34*perCent);
+//    Sn->AddIsotope(Sn116, 14.54*perCent);
+//    Sn->AddIsotope(Sn117, 7.68*perCent);
+//    Sn->AddIsotope(Sn118, 24.22*perCent);
+//    Sn->AddIsotope(Sn119, 8.59*perCent);
+//    Sn->AddIsotope(Sn120, 32.58*perCent);
+//    Sn->AddIsotope(Sn122, 4.63*perCent);
+//    Sn->AddIsotope(Sn124, 5.79*perCent);
+//
+//    //make Zirconium isotopes and element
+//    Zr90 = new G4Isotope("Zr90", 40, 90, 89.9047044*g/mole);
+//    Zr91 = new G4Isotope("Zr91", 40, 91, 90.9056458*g/mole);
+//    Zr92 = new G4Isotope("Zr92", 40, 92, 91.9050408*g/mole);
+//    Zr94 = new G4Isotope("Zr94", 40, 94, 93.9063152*g/mole);
+//    Zr96 = new G4Isotope("Zr96", 40, 96, 95.9082734*g/mole);
+//
+//    Zr = new StorkElement("Zirconium", "Zr", 5);
+//    Zr->AddIsotope(Zr90, 51.45*perCent);
+//    Zr->AddIsotope(Zr91, 11.22*perCent);
+//    Zr->AddIsotope(Zr92, 17.15*perCent);
+//    Zr->AddIsotope(Zr94, 17.38*perCent);
+//    Zr->AddIsotope(Zr96,  2.80*perCent);
+//
+//    Th232 = new G4Isotope("Th232", 90, 232, 232.0381*g/mole);
+//
+//    Th = new StorkElement("Thorium", "Th", 1);
+//    Th->AddIsotope(Th232, 100.*perCent);
+//
+//    //make Plutonium isotopes and element
+//    Pu238 = new G4Isotope("Pu238", 94, 238, 238.0496*g/mole);
+//    Pu239 = new G4Isotope("Pu239", 94, 239, 239.0522*g/mole);
+//    Pu240 = new G4Isotope("Pu240", 94, 240, 240.0538*g/mole);
+//    Pu241 = new G4Isotope("Pu241", 94, 241, 241.0569*g/mole);
+//    Pu242 = new G4Isotope("Pu242", 94, 242, 242.0587*g/mole);
+//
+//// fixed the isotope compositon so that it is interms of abundance instead of weight percentage
+//    Pu = new StorkElement("Plutonium", "Pu", 5);
+//    Pu->AddIsotope(Pu238, 2.77*perCent);
+//    Pu->AddIsotope(Pu239, 52.11*perCent);
+//    Pu->AddIsotope(Pu240, 22.93*perCent);
+//    Pu->AddIsotope(Pu241, 15.15*perCent);
+//    Pu->AddIsotope(Pu242, 7.03*perCent);
+///*
+//    G4ElementTable *tempTab = Pu->GetElementTable();
+//    G4IsotopeVector *tempVec;
+//    G4double *tempVecAbun;
+//    for(int i=0; i<tempTab->size(); i++)
+//    {
+//        G4cout << "Element :" << ((*tempTab)[i])->GetName() << " contains " << ((*tempTab)[i])->GetNumberOfIsotopes() << " isotopes" << G4endl;
+//        tempVec = ((*tempTab)[i])->GetIsotopeVector();
+//        tempVecAbun = ((*tempTab)[i])->GetRelativeAbundanceVector();
+//        for(int j=0; j<((*tempTab)[i])->GetNumberOfIsotopes(); j++)
+//        {
+//            G4cout << "Isotope :" << ((*tempVec)[j])->GetName() << " has abundance" << tempVecAbun[j] << G4endl;
+//        }
+//    }
+//
+//    G4cout << "\n### Element properties after they have been added to the materials ###\n" << G4endl;
+//*/
+//    // Create the world material
+//    World = new StorkMaterial("Galactic", 1, 1, 1.e-25*g/cm3, kStateGas,
+//						   2.73*kelvin, 3.e-18*pascal);
+//
+//    // Create H20 material
+//    H2O = new StorkMaterial("LightWater", 1.*g/cm3, 2, kStateLiquid, coolantTemp);
+//    H2O->AddElement(H,2);
+//    H2O->AddElement(Oxygen,1);
+//
+//    // Create D20 material
+//    D2O = new StorkMaterial("HeavyWater", 1.1*g/cm3, 2, kStateLiquid, moderatorTemp);
+//    D2O->AddElement(D,2);
+//    D2O->AddElement(Oxygen,1);
+//
+//
+//    // Create Coolant
+//	Coolant = new StorkMaterial("Coolant", coolantDensity, 1, kStateLiquid,
+//							 coolantTemp);
+//    Coolant->AddMaterial(H2O,  100*perCent);
+//
+//    //Create Moderator
+//    Moderator = new StorkMaterial("Moderator", moderatorDensity, 2, kStateLiquid,
+//							   moderatorTemp);
+//    Moderator->AddMaterial(D2O,99.833*perCent);
+//    Moderator->AddMaterial(H2O,0.167*perCent);
+//
+//    //Create Moderator
+//    ExelLiner = new StorkMaterial("ExelLiner", 1, 4, kStateSolid, pressTubeTemp);
+//    ExelLiner->AddElement(Sn,3.5*perCent);
+//    ExelLiner->AddElement(Mo,0.8*perCent);
+//    ExelLiner->AddElement(Nb,0.8*perCent);
+//    ExelLiner->AddElement(Zr,94.9*perCent);
+//
+//    ZircSteel = new StorkMaterial("ZircSteel", 1, 10, kStateSolid, outSheatheTemp);
+//    ZircSteel->AddElement(C,0.034*perCent);
+//    ZircSteel->AddElement(Si,0.51*perCent);
+//    ZircSteel->AddElement(Mn,0.74*perCent);
+//    ZircSteel->AddElement(P,0.016*perCent);
+//    ZircSteel->AddElement(S,0.002*perCent);
+//    ZircSteel->AddElement(Ni,20.82*perCent);
+//    ZircSteel->AddElement(Cr,25.04*perCent);
+//    ZircSteel->AddElement(Fe,51.738*perCent);
+//    ZircSteel->AddElement(Mo,0.51*perCent);
+//    ZircSteel->AddElement(Zr,0.59*perCent);
+//
+//    /*ZircHydrid = new StorkMaterial("ZircHydrid", 1, 2, kStateSolid, 1);
+//    ZircHydrid->AddElement(Zr,98.26*perCent);
+//    ZircHydrid->AddElement(H,1.74*perCent);*/
+//
+//    Insulator = new StorkMaterial("Insulator", insulatorDensity, 3, kStateSolid, insulatorTemp);
+//    Insulator->AddElement(Zr,66.63*perCent);
+//    Insulator->AddElement(Y,7.87*perCent);
+//    Insulator->AddElement(Oxygen,25.5*perCent);
+//
+//    //Create Fuel
+//    OuterFuel = new StorkMaterial("OuterFuel", outerFuelDensity, 3, kStateSolid, outerFuelTemp);
+//    OuterFuel->AddElement(Oxygen,12.08*perCent);
+//    OuterFuel->AddElement(Pu,10.59*perCent);
+//    OuterFuel->AddElement(Th,77.34*perCent);
+//
+//    InnerFuel = new StorkMaterial("InnerFuel", innerFuelDensity, 3, kStateSolid, innerFuelTemp);
+//    InnerFuel->AddElement(Oxygen,12.07*perCent);
+//    InnerFuel->AddElement(Pu,13.23*perCent);
+//    InnerFuel->AddElement(Th,74.7*perCent);
+//
+//    OutSheathe = new StorkMaterial("OutSheathe", outSheatheDensity, 1, kStateSolid, outSheatheTemp);
+//    OutSheathe->AddMaterial(ZircSteel,100*perCent);
+//
+//    InSheathe = new StorkMaterial("InSheathe", inSheatheDensity, 1, kStateSolid, inSheatheTemp);
+//    InSheathe->AddMaterial(ZircSteel,100*perCent);
+//
+//    Liner = new StorkMaterial("Liner", linerDensity, 1, kStateSolid, linerTemp);
+//    Liner->AddMaterial(ZircSteel,100*perCent);
+//
+//    FlowTube = new StorkMaterial("FlowTube", flowTubeDensity, 1, kStateSolid, flowTubeTemp);
+//    FlowTube->AddMaterial(ZircSteel,100*perCent);
+//
+//    PressTube = new StorkMaterial("PressTube", pressTubeDensity, 1, kStateSolid, pressTubeTemp);
+//    PressTube->AddMaterial(ExelLiner,100*perCent);
+//
+//    OutLiner = new StorkMaterial("OutLiner", outLinerDensity, 1, kStateSolid, outLinerTemp);
+//    OutLiner->AddMaterial(ExelLiner,100*perCent);
+//
+//    CentralCoolant = new StorkMaterial("CentralCoolant", centralCoolantDensity, 1, kStateLiquid, centralCoolantTemp);
+//    CentralCoolant->AddMaterial(Coolant,  100*perCent);
+
+// Adjusted Material Data
+    StorkElement *HMod;
+
     H1 = new G4Isotope("H1", 1, 1, 1.008*g/mole);
     H = new StorkElement("Hydrogen", "H", 1);
     H->AddIsotope(H1, 1.0);
@@ -589,6 +867,10 @@ void SCWRDopplerConstructor::ConstructMaterials()
     H2 = new G4Isotope("H2", 1, 2, 2.014*g/mole);
     D = new StorkElement("Deterium", "D", 1);
     D->AddIsotope(H2, 1.0);
+
+    HMod = new StorkElement("HMod", "D", 2);
+    HMod->AddIsotope(H1, 0.178808*perCent);
+    HMod->AddIsotope(H2, 99.8212*perCent);
 
     C12 = new G4Isotope("C12", 6, 12, 12.0*g/mole);
     C13 = new G4Isotope("C13", 6, 13, 13.0033548378*g/mole);
@@ -609,9 +891,9 @@ void SCWRDopplerConstructor::ConstructMaterials()
     Si30 = new G4Isotope("Si30", 14, 28, 29.9738*g/mole);
 
     Si = new StorkElement("Silicon", "Si", 3);
-    Si->AddIsotope(Si28, 92.223*perCent);
-    Si->AddIsotope(Si29,  4.685*perCent);
-    Si->AddIsotope(Si30,  3.092*perCent);
+    Si->AddIsotope(Si28, 92.5003*perCent);
+    Si->AddIsotope(Si29,  4.5605*perCent);
+    Si->AddIsotope(Si30,  2.94*perCent);
 
     // Make oxygen isotope and element
     P31 = new G4Isotope("P31", 15, 31, 30.97376*g/mole);
@@ -637,10 +919,10 @@ void SCWRDopplerConstructor::ConstructMaterials()
     Cr54 = new G4Isotope("Cr54", 24, 54, 53.9388804*g/mole);
 
     Cr = new StorkElement("Chromium", "Cr", 4);
-    Cr->AddIsotope(Cr50,  4.345*perCent);
-    Cr->AddIsotope(Cr52, 83.789*perCent);
-    Cr->AddIsotope(Cr53,  9.501*perCent);
-    Cr->AddIsotope(Cr54,  2.365*perCent);
+    Cr->AddIsotope(Cr50,  4.52276*perCent);
+    Cr->AddIsotope(Cr52, 83.86853*perCent);
+    Cr->AddIsotope(Cr53,  9.338*perCent);
+    Cr->AddIsotope(Cr54,  2.27872*perCent);
 
     //make chromium isotopes and element
     Mn55 = new G4Isotope("Mn55", 25, 55, 54.9380*g/mole);
@@ -655,10 +937,10 @@ void SCWRDopplerConstructor::ConstructMaterials()
     Fe58 = new G4Isotope("Fe58", 26, 58, 57.9332756*g/mole);
 
     Fe = new StorkElement("Iron", "Fe", 4);
-    Fe->AddIsotope(Fe54,  5.845*perCent);
-    Fe->AddIsotope(Fe56, 91.754*perCent);
-    Fe->AddIsotope(Fe57,  2.119*perCent);
-    Fe->AddIsotope(Fe58,  0.282*perCent);
+    Fe->AddIsotope(Fe54,  6.05079*perCent);
+    Fe->AddIsotope(Fe56, 91.5996*perCent);
+    Fe->AddIsotope(Fe57,  2.07762*perCent);
+    Fe->AddIsotope(Fe58,  0.271994*perCent);
 
     //make nickel isotopes and element
     Ni58 = new G4Isotope("Ni58", 28, 58, 57.9353429*g/mole);
@@ -668,11 +950,11 @@ void SCWRDopplerConstructor::ConstructMaterials()
     Ni64 = new G4Isotope("Ni64", 28, 64, 63.9279660*g/mole);
 
     Ni = new StorkElement("Nickel", "Ni", 5);
-    Ni->AddIsotope(Ni58, 68.0769*perCent);
-    Ni->AddIsotope(Ni60, 26.2231*perCent);
-    Ni->AddIsotope(Ni61, 1.1399*perCent);
-    Ni->AddIsotope(Ni62, 3.6345*perCent);
-    Ni->AddIsotope(Ni64,  0.9256*perCent);
+    Ni->AddIsotope(Ni58, 68.93742*perCent);
+    Ni->AddIsotope(Ni60, 25.6715*perCent);
+    Ni->AddIsotope(Ni61, 1.09601*perCent);
+    Ni->AddIsotope(Ni62, 3.4444*perCent);
+    Ni->AddIsotope(Ni64,  0.850692*perCent);
 
     //make niobium isotopes and element
     Nb93 = new G4Isotope("Nb93", 41, 93, 92.9063781*g/mole);
@@ -695,13 +977,13 @@ void SCWRDopplerConstructor::ConstructMaterials()
     Mo100 = new G4Isotope("Mo100", 42, 100, 99.9075*g/mole);
 
     Mo = new StorkElement("Molybdenum", "Mo", 7);
-    Mo->AddIsotope(Mo92, 14.77*perCent);
-    Mo->AddIsotope(Mo94, 9.23*perCent);
-    Mo->AddIsotope(Mo95, 15.9*perCent);
-    Mo->AddIsotope(Mo96, 16.68*perCent);
-    Mo->AddIsotope(Mo97,  9.56*perCent);
-    Mo->AddIsotope(Mo98, 24.19*perCent);
-    Mo->AddIsotope(Mo100,  9.67*perCent);
+    Mo->AddIsotope(Mo92, 9.5471*perCent);
+    Mo->AddIsotope(Mo94, 5.85553*perCent);
+    Mo->AddIsotope(Mo95, 9.98504*perCent);
+    Mo->AddIsotope(Mo96, 62.09203*perCent);
+    Mo->AddIsotope(Mo97,  2.77674*perCent);
+    Mo->AddIsotope(Mo98, 7.05023*perCent);
+    Mo->AddIsotope(Mo100,  2.69333*perCent);
 
     Sn112 = new G4Isotope("Sn112", 50, 112, 111.9048*g/mole);
     Sn114 = new G4Isotope("Sn114", 50, 114, 113.9028*g/mole);
@@ -715,16 +997,16 @@ void SCWRDopplerConstructor::ConstructMaterials()
     Sn124 = new G4Isotope("Sn124", 50, 124, 123.9053*g/mole);
 
     Sn = new StorkElement("Tin", "Sn", 10);
-    Sn->AddIsotope(Sn112, 0.97*perCent);
-    Sn->AddIsotope(Sn114, 0.66*perCent);
-    Sn->AddIsotope(Sn115, 0.34*perCent);
-    Sn->AddIsotope(Sn116, 14.54*perCent);
-    Sn->AddIsotope(Sn117, 7.68*perCent);
-    Sn->AddIsotope(Sn118, 24.22*perCent);
-    Sn->AddIsotope(Sn119, 8.59*perCent);
-    Sn->AddIsotope(Sn120, 32.58*perCent);
-    Sn->AddIsotope(Sn122, 4.63*perCent);
-    Sn->AddIsotope(Sn124, 5.79*perCent);
+    Sn->AddIsotope(Sn112, 1.02987*perCent);
+    Sn->AddIsotope(Sn114, 0.684453*perCent);
+    Sn->AddIsotope(Sn115, 0.353998*perCent);
+    Sn->AddIsotope(Sn116, 14.886*perCent);
+    Sn->AddIsotope(Sn117, 7.7997*perCent);
+    Sn->AddIsotope(Sn118, 24.3796*perCent);
+    Sn->AddIsotope(Sn119, 8.58074*perCent);
+    Sn->AddIsotope(Sn120, 32.2277*perCent);
+    Sn->AddIsotope(Sn122, 4.50456*perCent);
+    Sn->AddIsotope(Sn124, 5.5534*perCent);
 
     //make Zirconium isotopes and element
     Zr90 = new G4Isotope("Zr90", 40, 90, 89.9047044*g/mole);
@@ -734,11 +1016,11 @@ void SCWRDopplerConstructor::ConstructMaterials()
     Zr96 = new G4Isotope("Zr96", 40, 96, 95.9082734*g/mole);
 
     Zr = new StorkElement("Zirconium", "Zr", 5);
-    Zr->AddIsotope(Zr90, 51.45*perCent);
-    Zr->AddIsotope(Zr91, 11.22*perCent);
-    Zr->AddIsotope(Zr92, 17.15*perCent);
-    Zr->AddIsotope(Zr94, 17.38*perCent);
-    Zr->AddIsotope(Zr96,  2.80*perCent);
+    Zr->AddIsotope(Zr90, 52.32717*perCent);
+    Zr->AddIsotope(Zr91, 11.34266*perCent);
+    Zr->AddIsotope(Zr92, 16.82896*perCent);
+    Zr->AddIsotope(Zr94, 16.81345*perCent);
+    Zr->AddIsotope(Zr96,  2.68775*perCent);
 
     Th232 = new G4Isotope("Th232", 90, 232, 232.0381*g/mole);
 
@@ -782,8 +1064,8 @@ void SCWRDopplerConstructor::ConstructMaterials()
 
     // Create H20 material
     H2O = new StorkMaterial("LightWater", 1.*g/cm3, 2, kStateLiquid, coolantTemp);
-    H2O->AddElement(H,2);
-    H2O->AddElement(Oxygen,1);
+    H2O->AddElement(H,11.191*perCent);
+    H2O->AddElement(Oxygen,88.809*perCent);
 
     // Create D20 material
     D2O = new StorkMaterial("HeavyWater", 1.1*g/cm3, 2, kStateLiquid, moderatorTemp);
@@ -799,8 +1081,8 @@ void SCWRDopplerConstructor::ConstructMaterials()
     //Create Moderator
     Moderator = new StorkMaterial("Moderator", moderatorDensity, 2, kStateLiquid,
 							   moderatorTemp);
-    Moderator->AddMaterial(D2O,99.833*perCent);
-    Moderator->AddMaterial(H2O,0.167*perCent);
+    Moderator->AddElement(HMod,20.1*perCent);
+    Moderator->AddElement(Oxygen,79.9*perCent);
 
     //Create Moderator
     ExelLiner = new StorkMaterial("ExelLiner", 1, 4, kStateSolid, pressTubeTemp);
@@ -818,8 +1100,8 @@ void SCWRDopplerConstructor::ConstructMaterials()
     ZircSteel->AddElement(Ni,20.82*perCent);
     ZircSteel->AddElement(Cr,25.04*perCent);
     ZircSteel->AddElement(Fe,51.738*perCent);
-    ZircSteel->AddElement(Mo,0.51*perCent);
-    ZircSteel->AddElement(Zr,0.59*perCent);
+    ZircSteel->AddElement(Mo,0.817*perCent);
+    ZircSteel->AddElement(Zr,0.283*perCent);
 
     /*ZircHydrid = new StorkMaterial("ZircHydrid", 1, 2, kStateSolid, 1);
     ZircHydrid->AddElement(Zr,98.26*perCent);
@@ -861,220 +1143,7 @@ void SCWRDopplerConstructor::ConstructMaterials()
 
     CentralCoolant = new StorkMaterial("CentralCoolant", centralCoolantDensity, 1, kStateLiquid, centralCoolantTemp);
     CentralCoolant->AddMaterial(Coolant,  100*perCent);
-/*
-    G4cout << "\n### Element properties for the entire table ###\n" << G4endl;
 
-    for(int i=0; i<tempTab->size(); i++)
-    {
-        G4cout << "Element :" << ((*tempTab)[i])->GetName() << " contains " << ((*tempTab)[i])->GetNumberOfIsotopes() << " isotopes" << " and has a temperature of " << dynamic_cast<StorkElement*>((*tempTab)[i])->GetTemperature() << G4endl;
-
-        tempVec = ((*tempTab)[i])->GetIsotopeVector();
-        tempVecAbun = ((*tempTab)[i])->GetRelativeAbundanceVector();
-        for(int j=0; j<((*tempTab)[i])->GetNumberOfIsotopes(); j++)
-        {
-            G4cout << "Isotope :" << ((*tempVec)[j])->GetName() << " has abundance" << tempVecAbun[j] << G4endl;
-        }
-    }
-    */
-  /*
-  //pointer to ionisation parameters:
-  //
-  inline G4IonisParamElm* GetIonisation() const {return fIonisation;}*/
-
-/*
-    G4MaterialTable *matTable = (G4MaterialTable*)G4Material::GetMaterialTable();
-
-    int j = World->GetIndex();
-    World->~StorkMaterial();
-    matTable->erase(matTable->begin()+j);
-    new (World) StorkMaterial("Galactic", 1, 1, 1.e-25*g/cm3, kStateGas,
-						   2.73*kelvin, 3.e-18*pascal);
-
-    j = H2O->GetIndex();
-    H2O->~StorkMaterial();
-    matTable->erase(matTable->begin()+j);
-    // Create H20 material
-    new (H2O) StorkMaterial("LightWater", 1.*g/cm3, 2, kStateLiquid, coolantTemp);
-    H2O->AddElement(H,2);
-    H2O->AddElement(Oxygen,1);
-
-    j = D2O->GetIndex();
-    D2O->~StorkMaterial();
-    matTable->erase(matTable->begin()+j);
-    // Create D20 material
-    new (D2O) StorkMaterial("HeavyWater", 1.1*g/cm3, 2, kStateLiquid, moderatorTemp);
-    D2O->AddElement(D,2);
-    D2O->AddElement(Oxygen,1);
-
-    j = Coolant->GetIndex();
-    Coolant->~StorkMaterial();
-    matTable->erase(matTable->begin()+j);
-    // Create Coolant
-	new (Coolant) StorkMaterial("Coolant", coolantDensity, 1, kStateLiquid,
-							 coolantTemp);
-    Coolant->AddMaterial(H2O,  100*perCent);
-
-    j = Moderator->GetIndex();
-    Moderator->~StorkMaterial();
-    matTable->erase(matTable->begin()+j);
-    //Create Moderator
-    new (Moderator) StorkMaterial("Moderator", moderatorDensity, 2, kStateLiquid,
-							   moderatorTemp);
-    Moderator->AddMaterial(D2O,99.833*perCent);
-    Moderator->AddMaterial(H2O,0.167*perCent);
-
-    j = ExelLiner->GetIndex();
-    ExelLiner->~StorkMaterial();
-    matTable->erase(matTable->begin()+j);
-    //Create Moderator
-    new (ExelLiner) StorkMaterial("ExelLiner", 1, 4, kStateSolid, pressTubeTemp);
-    ExelLiner->AddElement(Sn,3.5*perCent);
-    ExelLiner->AddElement(Mo,0.8*perCent);
-    ExelLiner->AddElement(Nb,0.8*perCent);
-    ExelLiner->AddElement(Zr,94.9*perCent);
-
-    j = ZircSteel->GetIndex();
-    ZircSteel->~StorkMaterial();
-    matTable->erase(matTable->begin()+j);
-    new (ZircSteel) StorkMaterial("ZircSteel", 1, 10, kStateSolid, outSheatheTemp);
-    ZircSteel->AddElement(C,0.034*perCent);
-    ZircSteel->AddElement(Si,0.51*perCent);
-    ZircSteel->AddElement(Mn,0.74*perCent);
-    ZircSteel->AddElement(P,0.016*perCent);
-    ZircSteel->AddElement(S,0.002*perCent);
-    ZircSteel->AddElement(Ni,20.82*perCent);
-    ZircSteel->AddElement(Cr,25.04*perCent);
-    ZircSteel->AddElement(Fe,51.738*perCent);
-    ZircSteel->AddElement(Mo,0.51*perCent);
-    ZircSteel->AddElement(Zr,0.59*perCent);
-
-    j = Insulator->GetIndex();
-    Insulator->~StorkMaterial();
-    matTable->erase(matTable->begin()+j);
-    new (Insulator) StorkMaterial("Insulator", insulatorDensity, 3, kStateSolid, insulatorTemp);
-    Insulator->AddElement(Zr,66.63*perCent);
-    Insulator->AddElement(Y,7.87*perCent);
-    Insulator->AddElement(Oxygen,25.5*perCent);
-
-    j = OuterFuel->GetIndex();
-    OuterFuel->~StorkMaterial();
-    matTable->erase(matTable->begin()+j);
-    //Create Fuel
-    new (OuterFuel) StorkMaterial("OuterFuel", outerFuelDensity, 3, kStateSolid, outerFuelTemp);
-    OuterFuel->AddElement(Oxygen,12.08*perCent);
-    OuterFuel->AddElement(Pu,10.59*perCent);
-    OuterFuel->AddElement(Th,77.34*perCent);
-
-    j = InnerFuel->GetIndex();
-    InnerFuel->~StorkMaterial();
-    matTable->erase(matTable->begin()+j);
-    new (InnerFuel) StorkMaterial("InnerFuel", innerFuelDensity, 3, kStateSolid, innerFuelTemp);
-    InnerFuel->AddElement(Oxygen,12.07*perCent);
-    InnerFuel->AddElement(Pu,13.23*perCent);
-    InnerFuel->AddElement(Th,74.7*perCent);
-
-    j = OutSheathe->GetIndex();
-    OutSheathe->~StorkMaterial();
-    matTable->erase(matTable->begin()+j);
-    new (OutSheathe) StorkMaterial("OutSheathe", outSheatheDensity, 1, kStateSolid, outSheatheTemp);
-    OutSheathe->AddMaterial(ZircSteel,100*perCent);
-
-    j = InSheathe->GetIndex();
-    InSheathe->~StorkMaterial();
-    matTable->erase(matTable->begin()+j);
-    new (InSheathe) StorkMaterial("InSheathe", inSheatheDensity, 1, kStateSolid, inSheatheTemp);
-    InSheathe->AddMaterial(ZircSteel,100*perCent);
-
-    j = Liner->GetIndex();
-    Liner->~StorkMaterial();
-    matTable->erase(matTable->begin()+j);
-    new (Liner) StorkMaterial("Liner", linerDensity, 1, kStateSolid, linerTemp);
-    Liner->AddMaterial(ZircSteel,100*perCent);
-
-    j = FlowTube->GetIndex();
-    FlowTube->~StorkMaterial();
-    matTable->erase(matTable->begin()+j);
-    new (FlowTube) StorkMaterial("FlowTube", flowTubeDensity, 1, kStateSolid, flowTubeTemp);
-    FlowTube->AddMaterial(ZircSteel,100*perCent);
-
-    j = PressTube->GetIndex();
-    PressTube->~StorkMaterial();
-    matTable->erase(matTable->begin()+j);
-    new (PressTube) StorkMaterial("PressTube", pressTubeDensity, 1, kStateSolid, pressTubeTemp);
-    PressTube->AddMaterial(ExelLiner,100*perCent);
-
-    j = OutLiner->GetIndex();
-    OutLiner->~StorkMaterial();
-    matTable->erase(matTable->begin()+j);
-    new (OutLiner) StorkMaterial("OutLiner", outLinerDensity, 1, kStateSolid, outLinerTemp);
-    OutLiner->AddMaterial(ExelLiner,100*perCent);
-
-    j = CentralCoolant->GetIndex();
-    CentralCoolant->~StorkMaterial();
-    matTable->erase(matTable->begin()+j);
-    new (CentralCoolant) StorkMaterial("CentralCoolant", centralCoolantDensity, 1, kStateLiquid, centralCoolantTemp);
-    CentralCoolant->AddMaterial(Coolant,  100*perCent);
-
-*/
-/*
-    // Create the world material
-    World = new StorkMaterial("Galactic1", 1.e-25*g/cm3, World, kStateGas,
-						   2.73*kelvin, 3.e-18*pascal);
-
-    // Create H20 material
-    H2O = new StorkMaterial("LightWater1", 1.*g/cm3, H2O, kStateLiquid, coolantTemp);
-
-    // Create D20 material
-    D2O = new StorkMaterial("HeavyWater1", 1.1*g/cm3, D2O, kStateLiquid, moderatorTemp);
-
-
-    // Create Coolant
-	Coolant = new StorkMaterial("Coolant1", coolantDensity, Coolant, kStateLiquid,
-							 coolantTemp);
-    //Create Moderator
-    Moderator = new StorkMaterial("Moderator1", moderatorDensity, Moderator, kStateLiquid,
-							   moderatorTemp);
-
-    //Create Moderator
-    ExelLiner = new StorkMaterial("ExelLiner1", 1, ExelLiner, kStateSolid, pressTubeTemp);
-
-    ZircSteel = new StorkMaterial("ZircSteel1", 1, ZircSteel, kStateSolid, outSheatheTemp);
-
-    Insulator = new StorkMaterial("Insulator1", insulatorDensity, Insulator, kStateSolid, insulatorTemp);
-
-    //Create Fuel
-    OuterFuel = new StorkMaterial("OuterFuel1", outerFuelDensity, OuterFuel, kStateSolid, outerFuelTemp);
-
-    InnerFuel = new StorkMaterial("InnerFuel1", innerFuelDensity, InnerFuel, kStateSolid, innerFuelTemp);
-
-    OutSheathe = new StorkMaterial("OutSheathe1", outSheatheDensity, OutSheathe, kStateSolid, outSheatheTemp);
-
-    InSheathe = new StorkMaterial("InSheathe1", inSheatheDensity, InSheathe, kStateSolid, inSheatheTemp);
-
-    Liner = new StorkMaterial("Liner1", linerDensity, Liner, kStateSolid, linerTemp);
-
-    FlowTube = new StorkMaterial("FlowTube1", flowTubeDensity, FlowTube, kStateSolid, flowTubeTemp);
-
-    PressTube = new StorkMaterial("PressTube1", pressTubeDensity, PressTube, kStateSolid, pressTubeTemp);
-
-    OutLiner = new StorkMaterial("OutLiner1", outLinerDensity, OutLiner, kStateSolid, outLinerTemp);
-
-    CentralCoolant = new StorkMaterial("CentralCoolant1", centralCoolantDensity, CentralCoolant, kStateLiquid, centralCoolantTemp);
-
-    G4cout << "\n### Element properties after conversion ###\n" << G4endl;
-
-    for(int i=0; i<tempTab->size(); i++)
-    {
-        G4cout << "Element :" << ((*tempTab)[i])->GetName() << " contains " << ((*tempTab)[i])->GetNumberOfIsotopes() << " isotopes" << " and has a temperature of " << dynamic_cast<StorkElement*>((*tempTab)[i])->GetTemperature() << G4endl;
-
-        tempVec = ((*tempTab)[i])->GetIsotopeVector();
-        tempVecAbun = ((*tempTab)[i])->GetRelativeAbundanceVector();
-        for(int j=0; j<((*tempTab)[i])->GetNumberOfIsotopes(); j++)
-        {
-            G4cout << "Isotope :" << ((*tempVec)[j])->GetName() << " has abundance" << tempVecAbun[j] << G4endl;
-        }
-    }
-*/
     // Add materials to the map indexed by either ZA (format ZZAAA or ZZ)
     // For composite materials:  world is 0, heavy water is 1, UHW is 2
     matMap["Galactic"] = World;

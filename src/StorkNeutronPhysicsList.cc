@@ -21,6 +21,7 @@ StorkNeutronPhysicsList::StorkNeutronPhysicsList(const StorkParseInput* infile)
 
     csDirName = infile->GetCSDirName();
     fsDirName = infile->GetFSDirName();
+    kCalcType = infile->GetKCalcType();
     infile->GetPeriodicBCVector(periodicBCVec);
     infile->GetReflectBCVector(reflectBCVec);
 
@@ -78,7 +79,7 @@ void StorkNeutronPhysicsList::ConstructParticle()
 void StorkNeutronPhysicsList::ConstructProcess()
 {
     // Create the Bertini neutron processes ( > 20 MeV)
-    theNeutrons = new StorkNeutronProcessBuilder(periodicBCVec, reflectBCVec, fsDirName);
+    theNeutrons = new StorkNeutronProcessBuilder(periodicBCVec, reflectBCVec, fsDirName, kCalcType);
 
     // Create and register the builders
     theNeutrons->RegisterMe(theHPNeutron = new StorkHPNeutronBuilder(csDirName));

@@ -51,7 +51,7 @@ class StorkNeutronProcessBuilder
     public:
         // Public member functions
 
-        StorkNeutronProcessBuilder(std::vector<G4int>* pBCVec, std::vector<G4int>* rBCVec, G4String FSDirName);
+        StorkNeutronProcessBuilder(std::vector<G4int>* pBCVec, std::vector<G4int>* rBCVec, G4String FSDirName, G4int KCalcType);
         ~StorkNeutronProcessBuilder();
 
         // Build and register the models
@@ -83,6 +83,7 @@ class StorkNeutronProcessBuilder
 
         std::vector<G4VNeutronBuilder *> theModelCollections;
 
+        G4int kCalcType;
         G4String fsDirName;
         G4bool wasActivated;
 };

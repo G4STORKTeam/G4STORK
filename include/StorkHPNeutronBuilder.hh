@@ -33,10 +33,10 @@ broadening is used.
 #include "G4HadronFissionProcess.hh"
 
 // Models
-#include "G4NeutronHPElastic.hh"
-#include "G4NeutronHPInelastic.hh"
-#include "G4NeutronHPCapture.hh"
-#include "G4NeutronHPFission.hh"
+#include "StorkNeutronHPElastic.hh"
+#include "StorkNeutronHPInelastic.hh"
+#include "StorkNeutronHPCapture.hh"
+#include "StorkNeutronHPFission.hh"
 
 // Data Sets
 #include "StorkNeutronHPCSData.hh"
@@ -85,10 +85,10 @@ class StorkHPNeutronBuilder : public G4VNeutronBuilder
         G4double fsTemp;
 
         // Models
-        G4NeutronHPElastic *nElasticModel;
-        G4NeutronHPInelastic *nInelasticModel;
-        G4NeutronHPFission *nFissionModel;
-        G4NeutronHPCapture *nCaptureModel;
+        StorkNeutronHPElastic *nElasticModel;
+        StorkNeutronHPInelastic *nInelasticModel;
+        StorkNeutronHPFission *nFissionModel;
+        StorkNeutronHPCapture *nCaptureModel;
 
         // Data
         StorkNeutronHPCSData *HPElasticData;

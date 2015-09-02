@@ -22,6 +22,7 @@ StorkRunAction::StorkRunAction(StorkPrimaryGeneratorAction *genPtr,
     // Set default and user input values
     infile = fIn;
     runDuration = fIn->GetRunDuration();
+    kCalcType = fIn->GetKCalcType();
     worldSize = G4ThreeVector(0.,0.,0.);
     survivorsBuffer = NULL;
     delayedBuffer = NULL;
@@ -272,10 +273,32 @@ void StorkRunAction::EndOfRunAction(const G4Run *aRun)
     avgLifetime /= G4double(numNLost);
 
     // Correct the production total for the delayed primary neutrons
-    numNProduced += genAction->GetNumDNPrimaries();
+    // the delay neutrons are already added on to the total production in StorkNeutronSD
+    //numNProduced += genAction->GetNumDNPrimaries();
 
-    // Find keff from production/loss rates
-    keff = G4double(numNProduced) / G4double(numNLost);
+    // Find keff
+
+    // Dynamic Criticality Method
+    if(kCalcType == 0)
+    {
+        keff = G4double(numNProduced) / G4double(numNLost);
+    }
+    // Time Absorption Method
+    else if(kCalcType == 1)
+    {
+        G4double alpha = (std::log(krun))/runDuration;
+        keff = std::exp(alpha*avgLifetime);
+    }
+    // Generational Method
+    else if(kCalcType == 2)
+    {
+        keff = G4double(numNProduced) / G4double(numNLost);
+    }
+    else
+    {
+        G4cout << "Error: Invalid Keff calculation method selected!" << G4endl;
+        keff=0.;
+    }
 
     // Find the run time
     runTimer.Stop();
@@ -504,6 +527,20 @@ void StorkRunAction::SaveSources(G4String fname, G4int numRuns, G4double runEnd)
     StorkNeutronData *record;
 
 	// Open stream to output file (append)
+	G4String FDir = fname.substr(0, fname.find_last_of('/'));
+	if(!(DirectoryExists(FDir.data())))
+    {
+        system( ("mkdir -p -m=666 "+FDir).c_str());
+        if(DirectoryExists(FDir.data()))
+        {
+            G4cout << "created directory " << FDir << "\n" << G4endl;
+        }
+        else
+        {
+            G4cout << "\nError: could not create directory " << FDir << "\n" << G4endl;
+            return;
+        }
+    }
     std::ofstream outFile(fname.data(),std::ios_base::app);
 
     if(!outFile.is_open())
@@ -591,6 +628,20 @@ G4bool StorkRunAction::WriteFissionData(G4String fname, G4double avgkrun,
 									 G4int start)
 {
 	// Declare and open file stream
+	G4String FDir = fname.substr(0, fname.find_last_of('/'));
+	if(!(DirectoryExists(FDir.data())))
+    {
+        system( ("mkdir -p -m=666 "+FDir).c_str());
+        if(DirectoryExists(FDir.data()))
+        {
+            G4cout << "created directory " << FDir << "\n" << G4endl;
+        }
+        else
+        {
+            G4cout << "\nError: could not create directory " << FDir << "\n" << G4endl;
+            return false;
+        }
+    }
 	std::ofstream outFile(fname.c_str(),std::ifstream::out);
 
 	// Check that stream is ready for use
@@ -643,3 +694,20 @@ G4bool StorkRunAction::WriteFissionData(G4String fname, G4double avgkrun,
     return true;
 }
 
+G4bool StorkRunAction::DirectoryExists( const char* pzPath )
+{
+    if ( pzPath == NULL) return false;
+
+    DIR *pDir;
+    G4bool bExists = false;
+
+    pDir = opendir (pzPath);
+
+    if (pDir != NULL)
+    {
+        bExists = true;
+        closedir (pDir);
+    }
+
+    return bExists;
+}

@@ -43,6 +43,7 @@ calculated and printed to the output stream (screen or file).
 #include <fstream>
 #include <cmath>
 #include <iomanip>
+#include <dirent.h>
 
 // Class forward declaration
 class StorkPrimaryGeneratorAction;
@@ -76,6 +77,8 @@ class StorkRunAction : public G4UserRunAction
         // Save fission data to a file
         G4bool WriteFissionData(G4String fname, G4double avgkrun, G4int start);
 
+        G4bool DirectoryExists( const char* pzPath );
+
         // Set functions
         void SetWorldDimensions(G4ThreeVector worldDims)
         {
@@ -98,6 +101,8 @@ class StorkRunAction : public G4UserRunAction
 
     private:
         // Private member variables
+
+        G4int kCalcType;
 
         G4double keff;              // k_eff for the current run
         G4double krun;              // k_run for the current run

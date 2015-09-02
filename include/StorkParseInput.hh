@@ -18,6 +18,7 @@ output stream.
 #define STORKPARSEINPUT_H
 
 #include <fstream>
+#include <dirent.h>
 #include "Randomize.hh"
 #include "globals.hh"
 #include "G4ThreeVector.hh"
@@ -49,6 +50,8 @@ class StorkParseInput
 		void PrintInput(std::ostream *output) const;	// Print input values to stream
 		G4bool FinalizeInputs();
 
+        G4bool DirectoryExists( const char* pzPath );
+
 		// Add world with default values to ParseInput
 		void AddWorldType(G4String name, StorkMatPropChangeVector defaults);
 
@@ -67,6 +70,9 @@ class StorkParseInput
 
 		G4ThreeVector GetWorldDimensions() const;
 		void SetWorldDimensions(G4double dim) { theWorldProps[MatPropPair(all,dimension)]=dim; }
+
+		G4int GetKCalcType() const { return kCalcType; }
+		void SetKCalcType(G4int KCalcType) { kCalcType = KCalcType; }
 
 		G4String GetCSDirName() const { return csDirName; }
 		void SetCSDirName(G4String CSDirName) { csDirName=CSDirName; }
@@ -212,6 +218,7 @@ class StorkParseInput
 		// World properties
 		G4String worldName;
 		G4int reactorMat;
+		G4int kCalcType;
 		G4String csDirName;
 		G4String fsDirName;
 		G4long randomSeed;

@@ -16,8 +16,8 @@ Source code file for StorkNeutronSD class.
 
 
 // Constructor
-StorkNeutronSD::StorkNeutronSD(G4String name, G4bool instD/*, G4bool pBC*/)
-:G4VSensitiveDetector(name), /*periodicBC(pBC),*/ instantDelayed(instD)
+StorkNeutronSD::StorkNeutronSD(G4String name, G4int KCalcType, G4bool instD)
+:G4VSensitiveDetector(name), kCalcType(KCalcType), instantDelayed(instD)
 {
     // Set collection name and initialize ID
     collectionName.insert("Tally");
@@ -59,6 +59,7 @@ void StorkNeutronSD::Initialize(G4HCofThisEvent *HCE)
     fnEnergy.clear();
     survivors.clear();
 	delayed.clear();
+	prevTrackID = -1;
 
 #ifdef STORK_EXPLICIT_LOSS
 	nCap = nFiss = nEsc = nInel = 0;
@@ -143,8 +144,20 @@ G4bool StorkNeutronSD::ProcessHits(G4Step *aStep, G4TouchableHistory*)
 		aTrack->SetUserInformation(new StorkTrackInfo(pnInfo->GetWeight()));
 	}
 
+//	if(prevTrackID==-1)
+//    {
+//        prevTrackID=aTrack->GetTrackID();
+//    }
+//    else if(prevTrackID!=aTrack->GetTrackID())
+//    {
+//        if((hitProcess!="StorkHadronFission")&&(hitProcess!="StorkHadronCapture")&&(hitProcess!="StorkUserBCStepLimiter")&&(hitProcess!="StorkNeutronInelastic"))
+//        {
+//            G4cout << "\nError: " << hitProcess << " caused track to stop\n" << G4endl;
+//        }
+//        prevTrackID=aTrack->GetTrackID();
+//    }
 
-    // Find the process used in the hit (if it is defined)    G4String hitProcess = "";    if(postStepPoint->GetProcessDefinedStep() != 0)    {        hitProcess = postStepPoint->GetProcessDefinedStep()->GetProcessName();    }
+    // Find the process used in the hit (if it is defined)    hitProcess = "";    if(postStepPoint->GetProcessDefinedStep() != 0)    {        hitProcess = postStepPoint->GetProcessDefinedStep()->GetProcessName();    }
 
 	// If the time is beyond the simulation time, the kill the track and
 	// any secondaries (stops simulation from running forever)
@@ -164,10 +177,13 @@ G4bool StorkNeutronSD::ProcessHits(G4Step *aStep, G4TouchableHistory*)
 		return true;
 	}
 
-	if(hitTime > runEnd)
-	{
-	    G4cout << "*** ERROR particle exists beyond run end: "
-               << hitTime << " > " << runEnd << G4endl;
+    if(kCalcType != 2)
+    {
+        if(hitTime > runEnd)
+        {
+            G4cout << "*** ERROR particle exists beyond run end: "
+                   << hitTime << " > " << runEnd << G4endl;
+        }
 	}
 
 
@@ -176,61 +192,82 @@ G4bool StorkNeutronSD::ProcessHits(G4Step *aStep, G4TouchableHistory*)
 	// neutron daughters.
 	if(hitProcess == "StorkHadronFission")
 	{
-		trackVector = const_cast<G4TrackVector*>(aStep->GetSecondary());
-		itr = trackVector->begin();
+        trackVector = const_cast<G4TrackVector*>(aStep->GetSecondary());
+        itr = trackVector->begin();
 
-		// Record number of daughter neutrons
-		for( ; itr != trackVector->end(); itr++)
-		{
-			// Check if secondary is a neutron
-			if((*itr)->GetDefinition() == G4Neutron::NeutronDefinition())
-			{
-				// Check if the neutron is a delayed neutron
-				if((*itr)->GetGlobalTime() > hitTime)
-				{
-					// Correct the lifetime of the delayed neutron
-					(*itr)->SetLocalTime((*itr)->GetGlobalTime() - hitTime);
+        // Record number of daughter neutrons
+        for( ; itr != trackVector->end(); itr++)
+        {
+            // Check if secondary is a neutron
+            if((*itr)->GetDefinition() == G4Neutron::NeutronDefinition())
+            {
+                // Check if the neutron is a delayed neutron
+                if((*itr)->GetGlobalTime() > hitTime)
+                {
+                    // Correct the lifetime of the delayed neutron
+                    (*itr)->SetLocalTime((*itr)->GetGlobalTime() - hitTime);
 
-					// Correct global time to produce instantaneously
-					if(instantDelayed)
-					{
-						(*itr)->SetGlobalTime(hitTime);
-					}
-					// Otherwise save (and kill) the delayed neutron for later
-					else
-					{
-						SaveDelayed(*itr);
-						(*itr)->SetTrackStatus(fKillTrackAndSecondaries);
-					}
+                    // Correct global time to produce instantaneously
+                    if(instantDelayed)
+                    {
+                        (*itr)->SetGlobalTime(hitTime);
+                        if(kCalcType == 2)
+                        {
+                            SaveSurvivors((*itr));
+                            (*itr)->SetTrackStatus(fKillTrackAndSecondaries);
+                        }
+                    }
+                    // Otherwise save (and kill) the delayed neutron for later
+                    else
+                    {
+                        SaveDelayed(*itr);
+                        (*itr)->SetTrackStatus(fKillTrackAndSecondaries);
+                    }
 
-					// Increment delayed neutron production counter
-					dProd++;
-				}
+                    // Increment delayed neutron production counter
+                    dProd++;
+                }
+                else if(kCalcType == 2)
+                {
+                    SaveSurvivors((*itr));
+                    (*itr)->SetTrackStatus(fKillTrackAndSecondaries);
+                }
 
-				// Increment neutron production counter
-				nProd++;
+                // Increment neutron production counter
+                nProd++;
 
-			}
-			// Stop and kill particle if it is not a neutron
-			else
-			{
-				(*itr)->SetTrackStatus(fKillTrackAndSecondaries);
-			}
-		}
+            }
+            // Stop and kill particle if it is not a neutron
+            else
+            {
+                (*itr)->SetTrackStatus(fKillTrackAndSecondaries);
+            }
+        }
 
-		// Record tally info
-		nLoss++;
-		totalLifetime += lifetime;
-		fSites.push_back(postStepPoint->GetPosition());
+        // Record tally info
+        nLoss++;
+        totalLifetime += lifetime;
+        fSites.push_back(postStepPoint->GetPosition());
 
-		// changed fnenergy to collect the energy from the poststeppoint instead of the presteppoint
-		//fnEnergy.push_back(postStepPoint->GetKineticEnergy());
+        // changed fnenergy to collect the energy from the poststeppoint instead of the presteppoint
+        //fnEnergy.push_back(postStepPoint->GetKineticEnergy());
 
-		fnEnergy.push_back(preStepPoint->GetKineticEnergy());
+        fnEnergy.push_back(preStepPoint->GetKineticEnergy());
 
-#ifdef STORK_EXPLICIT_LOSS
-		nFiss++;
-#endif
+        #ifdef STORK_EXPLICIT_LOSS
+            nFiss++;
+        #endif
+
+        if(kCalcType == 2)
+        {
+            #ifdef G4TIMESD
+                phTimer.Stop();
+                cycleTime += phTimer.GetRealElapsed();
+                cycles++;
+            #endif
+
+            return true;
+        }
 	}
 	// If the neutron is captured, update the loss counter and record the
 	// lifetime.
@@ -252,23 +289,7 @@ G4bool StorkNeutronSD::ProcessHits(G4Step *aStep, G4TouchableHistory*)
 		nCap++;
 #endif
 	}
-	// If the neutron leaves the simulation world, update the loss counter and
-	// lifetime total.
-	/*
-	else if(!periodicBC && postStepPoint->GetPhysicalVolume()->GetName()
-			== "worldPhysical")
-	{
-		nLoss++;
-		totalLifetime += lifetime;
 
-		// Kill the neutron
-		aTrack->SetTrackStatus(fKillTrackAndSecondaries);
-
-#ifdef STORK_EXPLICIT_LOSS
-		nEsc++;
-#endif
-	}
-	*/
 	// If an inelastic collision occurs, set the first daughter to be the
 	// incident neutron, and then any others (n,2n; etc.) are simply
 	// daughter neutrons. Update the production and loss totals.
@@ -324,13 +345,14 @@ G4bool StorkNeutronSD::ProcessHits(G4Step *aStep, G4TouchableHistory*)
 			{
 				(*itr)->SetTrackStatus(fKillTrackAndSecondaries);
 			}
-			// this production here may be wrong, I am not sure why it is here
             else
             {
-                //nProd++;
+                nProd++;
             }
 		}
 	}
+	// If the neutron leaves the simulation world, update the loss counter and
+	// lifetime total.
 	else if(hitProcess == "StorkZeroBCStepLimiter")
 	{
 		nLoss++;
@@ -350,7 +372,6 @@ G4bool StorkNeutronSD::ProcessHits(G4Step *aStep, G4TouchableHistory*)
 			G4cerr << "***WARNING: Untracked process is" << hitProcess << G4endl;
 	}
 
-
 #ifdef G4TIMESD
     phTimer.Stop();
     cycleTime += phTimer.GetRealElapsed();
@@ -369,19 +390,32 @@ G4bool StorkNeutronSD::ProcessHits(G4Step *aStep, G4TouchableHistory*)
 void StorkNeutronSD::SaveSurvivors(const G4Track *aTrack)
 {
     // Get size of last step
-    G4double previousStepSize = aTrack->GetStep()->GetStepLength();
+    if(aTrack->GetStep())
+    {
+        G4double previousStepSize = aTrack->GetStep()->GetStepLength();
 
-	// Get the number of interaction length left data
-	G4double *n_lambda = procMan->
-                            GetNumberOfInteractionLengthsLeft(previousStepSize);
+        // Get the number of interaction length left data
+        G4double *n_lambda = procMan->
+                                GetNumberOfInteractionLengthsLeft(previousStepSize);
 
-	// Create the survivor record
-	StorkNeutronData aSurvivor(runEnd, aTrack->GetLocalTime(),
-                       aTrack->GetPosition(), aTrack->GetMomentum(),
-                       n_lambda[0], n_lambda[1], n_lambda[2], n_lambda[3], 1.0);
+        // Create the survivor record
+        StorkNeutronData aSurvivor(runEnd, aTrack->GetLocalTime(),
+                           aTrack->GetPosition(), aTrack->GetMomentum(),
+                           n_lambda[0], n_lambda[1], n_lambda[2], n_lambda[3], 1.0);
 
-    // Add the survivor to the list
-    survivors.push_back(aSurvivor);
+        // Add the survivor to the list
+        survivors.push_back(aSurvivor);
+    }
+    else
+    {
+        // Create the survivor record
+        StorkNeutronData aSurvivor(runEnd, aTrack->GetLocalTime(),
+                           aTrack->GetPosition(), aTrack->GetMomentum(),
+                           -1.0, -1.0, -1.0, -1.0, 1.0);
+
+        // Add the survivor to the list
+        survivors.push_back(aSurvivor);
+    }
 }
 
 

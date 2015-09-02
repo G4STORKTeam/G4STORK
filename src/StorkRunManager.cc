@@ -205,11 +205,8 @@ void StorkRunManager::BeamOn(G4int n_event, const char* macroFile,
             {
                 // Process the run
                 RunInitialization();
-                //G4cout << " made it to the past RunInitialization() in StorkRunManager::BeamOn" << G4endl;
                 DoEventLoop(n_event,macroFile,n_select);
-                G4cout << " made it to the past DoEventLoop in StorkRunManager::BeamOn" << G4endl;
                 RunTermination();
-                //G4cout << " made it to the past RunTermination() in StorkRunManager::BeamOn" << G4endl;
 
                 // Record the important results of the run
                 TallyRunResults();
@@ -243,7 +240,6 @@ void StorkRunManager::BeamOn(G4int n_event, const char* macroFile,
 void StorkRunManager::DoEventLoop(G4int n_event, const char* macroFile,
                                G4int n_select)
 {
-    //G4cout << " made it to the beginning of the StorkRunManager::DoEventLoop" << G4endl;
     if(verboseLevel>0)
     { timer->Start(); }
 
@@ -259,7 +255,6 @@ void StorkRunManager::DoEventLoop(G4int n_event, const char* macroFile,
 
     // Initialize the current run
     genAction->InitializeRun();
-    //G4cout << " made it to the past InitializeRun() in StorkRunManager::DoEventLoop" << G4endl;
 
     // Event loop
     G4int i_event;
@@ -269,11 +264,8 @@ void StorkRunManager::DoEventLoop(G4int n_event, const char* macroFile,
         genAction->SetPrimaries(genAction->GetPrimaryData(i_event));
 
         currentEvent = GenerateEvent(i_event);
-        //G4cout << " made it to the past GenerateEvent(i_event) in StorkRunManager::DoEventLoop" << G4endl;
         eventManager->ProcessOneEvent(currentEvent);
-        //G4cout << " made it to the past eventManager->ProcessOneEvent(currentEvent) in StorkRunManager::DoEventLoop" << G4endl;
         AnalyzeEvent(currentEvent);
-        //G4cout << " made it to the past AnalyzeEvent(currentEvent) in StorkRunManager::DoEventLoop" << G4endl;
         UpdateScoring();
 
         // Update the run action tallies
@@ -413,10 +405,6 @@ G4bool StorkRunManager::UpdateCheckSourceConvergence()
 {
 	// If the source has already converged, do nothing
 	if(sourceConverged) return true;
-	if(runIDCounter>=25)
-	{
-        G4cout << "Here we are" << G4endl;
-	}
 	//changed elseif so that it checks convergence when there is no known discontuinity in the shannon entropy instead of every totalConv runs has passed
 	else if((runIDCounter < totalConv) || (convergeStop > (runIDCounter-totalConv)) ) return false;
 

@@ -158,7 +158,7 @@ StorkUserBCStepLimiter::PostStepDoIt(const G4Track &aTrack,
     G4ThreeVector newPos  =	preStepPoint->GetPosition ();
     G4ThreeVector newMomDir  =	preStepPoint->GetMomentumDirection ();
     G4ThreeVector n = solidVol->SurfaceNormal(newPos);
-    int side = 0;
+    G4int side=-1;
 
     for(G4int i=0; i<3; i++)
     {
