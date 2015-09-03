@@ -24,8 +24,6 @@ StorkVWorldConstructor::StorkVWorldConstructor()
 	physChanged = false;
 	encWorldDim = G4ThreeVector(0.,0.,0.);
 	reactorDim = encWorldDim;
-	thermalGrid[0] = G4ThreeVector(200*mm,200*mm,-1500*mm);
-	thermalGrid[1] = G4ThreeVector(-900*mm,-900*mm,-2800*mm);
 	charPosition = new std::vector<G4int>;
 }
 
@@ -181,40 +179,6 @@ StorkVWorldConstructor::UpdateWorldProperties(StorkMatPropChangeVector changes)
 	return changed;
 }
 
-
-// ModifyMaterialTemperatures()
-// Changes the temperature of the different world materials based on their heat capacity,
-// the number of fission that took place inside them, and the reactor power and heat transfer
-G4VPhysicalVolume*
-StorkVWorldConstructor::ModifyMaterialTemperatures(StorkMaterialFissionMap* fissionMap, G4double reactorHeat, StorkMatPropChangeVector theChanges)
-{
-
-
-    if(theChanges.size() != 0)
-    {
-        UpdateWorldProperties(theChanges);
-    }
-
-    // Return the reconstructed world
-    return ConstructWorld();
-}
-
-
-// CalculateTotalNumberOfFission()
-// Adds up all the fission to find the total
-G4int
-StorkVWorldConstructor::CalculateTotalNumberOfFission(StorkMaterialFissionMap* fissionMap)
-{
-    G4int totalNumFission = 0;
-
-    // Iterates through the map and adds fission to total
-    for(std::map<G4String,G4int>::iterator it = fissionMap->begin(); it != fissionMap->end(); it++)
-    {
-        totalNumFission += (*it).second;
-    }
-
-    return totalNumFission;
-}
 
 
 // SaveMaterialTemperatureHeader()

@@ -28,7 +28,7 @@ load the initial distribution from a file.
 #include "StorkRunManager.hh"
 #include "StorkProcessManager.hh"
 #include "StorkMaterial.hh"
-#include "StorkDelayedNeutronData.hh"
+#include "StorkDelayedNeutron.hh"
 #include "StorkSixVector.hh"
 
 // Include Geant4 headers
@@ -134,11 +134,11 @@ class StorkPrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
 								// produced instantaneously
 
         G4double initEnergy;    // Initial energy of source neutrons
-        G4ThreeVector Origin;
+        G4ThreeVector origin;
         G4String shape; // The shape to be used for the Uniform Distribution
         G4double runEnd;        // End time of the run
-	G4int numPrimaries;     // Number of primary particles per event
-	G4int realNumPrimaries; // True number of primaries if normalization is
+        G4int numPrimaries;     // Number of primary particles per event
+        G4int realNumPrimaries; // True number of primaries if normalization is
                                 //not used
         G4int numDNeutrons;     // The number of delayed neutrons produced.
 

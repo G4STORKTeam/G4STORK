@@ -275,7 +275,7 @@ void StorkParseInput::SetInitialSourceFile(G4String SourceFile)
 
 void StorkParseInput::SetInitialDelayedFile(G4String DelayedFile)
 {
-    sourcefileDelayedFile=DelayedFile;
+    precursorDelayedFile=DelayedFile;
     precursorDelayed=true;
 }
 
@@ -442,7 +442,7 @@ G4bool StorkParseInput::ReadInputFile(G4String filename)
 		}
 		else if(keyWord=="INITIAL_FISSION_DATA_FILE")
 		{
-			infile >> sourcefileDelayedFile;
+			infile >> initialfissionDataFile;
 			initialFissionData=true;
 		}
 

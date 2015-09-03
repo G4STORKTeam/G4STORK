@@ -58,13 +58,13 @@ class StorkUnionSolid : public G4BooleanSolid
 {
   public:  // with description
 
-    StorkUnionSolid( const G4String& pName, G4VSolid* pSolidA , G4VSolid* pSolidB, ShapeEnum shape, StorkSixVector<G4double> regDim, G4ThreeVector offset={0.,0.,0.} ) ;
+    StorkUnionSolid( const G4String& pName, G4VSolid* pSolidA , G4VSolid* pSolidB, ShapeEnum shape, StorkSixVector<G4double> regDim, G4ThreeVector offset ) ;
 
     StorkUnionSolid( const G4String& pName, G4VSolid* pSolidA, G4VSolid* pSolidB, G4RotationMatrix* rotMatrix, const G4ThreeVector& transVector,
-                        ShapeEnum shape, StorkSixVector<G4double> regDim, G4ThreeVector offset={0.,0.,0.} ) ;
+                        ShapeEnum shape, StorkSixVector<G4double> regDim, G4ThreeVector offset) ;
 
     StorkUnionSolid( const G4String& pName, G4VSolid* pSolidA , G4VSolid* pSolidB , const G4Transform3D& transform,
-                        ShapeEnum shape, StorkSixVector<G4double> regDim, G4ThreeVector offset={0.,0.,0.} ) ;
+                        ShapeEnum shape, StorkSixVector<G4double> regDim, G4ThreeVector offset) ;
 
 //    StorkUnionSolid( StorkUnionSolid* solid, G4double addRegion[], ShapeEnum shape, DirEnum dir) ;
 

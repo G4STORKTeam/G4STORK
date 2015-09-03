@@ -37,6 +37,7 @@ StorkPrimaryGeneratorAction::StorkPrimaryGeneratorAction(
     runDuration = infile->GetRunDuration();
     theNav = G4TransportationManager::GetTransportationManager()->
     GetNavigatorForTracking();
+    sourcefileDelayed = infile->GetSourceFileDelayed();
 
     // Set initial source files (on master only)
     if(master)
@@ -71,10 +72,6 @@ StorkPrimaryGeneratorAction::~StorkPrimaryGeneratorAction()
 {
 	if(primaryData) delete primaryData;
     if(delayedNeutronGenerator) delete delayedNeutronGenerator;
-
-    if (fSites) delete [] fSites;
-
-    if (fnEnergy) delete [] fnEnergy;
 }
 
 
@@ -431,7 +428,7 @@ void StorkPrimaryGeneratorAction::LoadSource(G4String fname)
     // Reserve memory for the delayed vector
     infile >> numRecords;
 
-    if(!initialDelayed){
+    if(sourcefileDelayed){
         // Read in delayed
         for(G4int i=0; i<numRecords; i++)
         {

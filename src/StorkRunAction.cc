@@ -136,6 +136,7 @@ StorkRunAction::~StorkRunAction()
 // output data.
 void StorkRunAction::BeginOfRunAction(const G4Run *aRun)
 {
+    G4int underline;
     // Start the timer
     runTimer.Start();
 
@@ -233,12 +234,12 @@ void StorkRunAction::BeginOfRunAction(const G4Run *aRun)
                 << " S Shannon H "
                 << "Duration (s) ";
         if(neutronFluxCalc){
-        *output << "Flux (n cm^-2 s^-1) ";
-        G4int underline = 150;
+            *output << "Flux (n cm^-2 s^-1) ";
+            underline = 150;
 
         }
 		else{
-        	G4int underline = 129;
+        	underline = 129;
 		}
         G4String interpName;
 

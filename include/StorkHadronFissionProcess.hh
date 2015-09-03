@@ -166,7 +166,7 @@ StorkNeutronData StorkHadronFissionProcess::GetADelayedNeutron(
 	G4HadSecondary *aSec = NULL;
 	G4DynamicParticle *aDelayedN = NULL;
 	G4bool dnFlag = false;
-	G4CrossSectionDataStore *theDataStore = GetCrossSectionDataStore();
+	theDataStore = GetCrossSectionDataStore();
 
 
 	// Find the target element

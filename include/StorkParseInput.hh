@@ -133,7 +133,7 @@ class StorkParseInput
 		void SetInitialSourceFile(G4String SourceFile);
 
 		G4bool GetPrecursorDelayed() const { return precursorDelayed; }
-		G4String GetInitialDelayedFile() const { return sourcefileDelayedFile; }
+		G4String GetInitialDelayedFile() const { return precursorDelayedFile; }
 		void SetInitialDelayedFile(G4String DelayedFile);
 
 		G4bool SaveFissionData() const { return saveFissionData; }
@@ -184,6 +184,8 @@ class StorkParseInput
 
         G4bool GetNeutronFluxCalc() const { return neutronFluxCalc;}
         void SetNeutronFluxCalc(G4bool neutronFlux) { neutronFluxCalc = neutronFlux;}
+    
+        G4bool GetSourceFileDelayed() const {return sourcefileDelayed;}
 
         const G4double* GetEnergyRange() const { return energyRange;}
 
@@ -262,6 +264,7 @@ class StorkParseInput
         G4int theDelayedOption;
         G4bool instantDelayed;
         G4bool sourcefileDelayed;
+        G4bool precursorDelayed;
 
 		// Number of runs, events and primaries per event
 		G4int numberOfRuns;
@@ -314,7 +317,11 @@ class StorkParseInput
 		G4bool saveFissionData;			// Save fission data to file
 		G4String fissionDataFile;
 		G4bool loadDelayed;				// Load initial delayed source from file
-		G4String initialDelayedFile;
+		G4String initialfissionDataFile;    //Initial loaded fission data file
+        G4bool saveTempData;
+        G4String tempFileName;
+        G4String precursorDelayedFile;
+        G4bool initialFissionData;
 
 
         // Vector of data profile identifiers and file names

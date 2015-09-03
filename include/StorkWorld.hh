@@ -79,9 +79,6 @@ class StorkWorld : public G4VUserDetectorConstruction
         void SetPhysChanged(G4bool value);
         void SetMatChanged(G4bool value);
 
-        // Computes heat capacity of different of materials in the world
-        G4VPhysicalVolume* ModifyMaterialTemperatures(StorkMaterialFissionMap* fissionMap, G4double reactorHeat, StorkMatPropChangeVector theChanges);
-
         // Outputs temperatures of all materials to file specified in StorkParseInput
         void SaveMaterialTemperatures(G4String fname, G4int runNumber);
         void SaveMaterialTemperatureHeader(G4String fname);

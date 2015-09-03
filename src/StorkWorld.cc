@@ -146,23 +146,6 @@ void StorkWorld::SetPhysChanged(G4bool value)
     theWorld->SetPhysChanged(value);
 }
 
-// GetThermalGrid()
-// Returns the thermal grid dimensions
-G4ThreeVector* StorkWorld::GetThermalGrid(void)
-{
-    return theWorld->GetThermalGrid();
-}
-
-// ModifyMaterialTemperatures()
-// Changes temperature of all materials based on their heat capacity and e fission
-// that ocured inside each
-G4VPhysicalVolume*
-StorkWorld::ModifyMaterialTemperatures(StorkMaterialFissionMap* fissionMap,
-                                       G4double reactorHeat,
-                                       StorkMatPropChangeVector theChanges)
-{
-    return theWorld->ModifyMaterialTemperatures(fissionMap, reactorHeat, theChanges);
-}
 
 // EvaluateHeatCapacities()
 // Output material temperature header to specified file in Input file

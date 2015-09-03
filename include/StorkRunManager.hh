@@ -161,7 +161,6 @@ class StorkRunManager: public G4RunManager
         G4bool interp;
         G4Navigator* theNavigator; // Navigator
         G4double reactorPower; // Power output of the reactor
-        StorkMaterialFissionMap* fissionMap; // Map of materials and fission
         G4bool fMap;                //Fission Map boolean flag.
         MSHSiteVector fnSites;      // Temporary storage for fission sites
 

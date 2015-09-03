@@ -67,6 +67,10 @@ class StorkVWorldConstructor
 		// Create and update simulation world
 		virtual G4VPhysicalVolume* ConstructNewWorld(const StorkParseInput* infile);
         virtual G4VPhysicalVolume* UpdateWorld(StorkMatPropChangeVector changes);
+    
+    
+        // Get the world material map
+        StorkMaterialMap* GetMaterialMap(void) { return &matMap; }
 
 		// Check whether material-property is variable for this world
         G4bool IsApplicable(MatPropPair matProp);
@@ -81,12 +85,6 @@ class StorkVWorldConstructor
 		// Get the reactor logical volume
         virtual G4LogicalVolume* GetWorldLogical() { return worldLogical; }
 
-        // Get the world material map
-        StorkMaterialMap* GetMaterialMap(void) { return &matMap; }
-
-        // Evaluates the heat capacity associated with the materials in the world
-        virtual G4VPhysicalVolume* ModifyMaterialTemperatures(StorkMaterialFissionMap* fissionMap, G4double reactorHeat,StorkMatPropChangeVector theChanges);
-
         // Output temperature of every material
         void SaveMaterialTemperatureHeader(G4String fname);
         void SaveMaterialTemperatures(G4String fname, G4int runNumber);
@@ -98,7 +96,6 @@ class StorkVWorldConstructor
 		void SetMatChanged(G4bool value) {matChanged = value;}
 		G4bool HasPhysChanged() {return physChanged;}
 		void SetPhysChanged(G4bool value) {physChanged = value;}
-		G4ThreeVector* GetThermalGrid(void) { return thermalGrid; }
 		void SetFuelDimensions(G4ThreeVector value) {FuelDimensions = value;}
 		G4ThreeVector GetFuelDimensions() {return FuelDimensions;}
         void SetFuelTemperatures(G4double ft[]) {for(G4int i =0; i<34;i++){
@@ -117,8 +114,6 @@ class StorkVWorldConstructor
 		// Update the variable material-properties
 		G4bool UpdateWorldProperties(StorkMatPropChangeVector changes);
 
-        // Total number of fission calculator
-        G4int CalculateTotalNumberOfFission(StorkMaterialFissionMap* fissionMap);
     protected:
         // Protected member variables
 

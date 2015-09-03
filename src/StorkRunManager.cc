@@ -31,7 +31,6 @@ StorkRunManager::StorkRunManager()
     seSelect = NULL;
     nConv = 0;
     heatTransfer = NULL;
-    fissionMap = NULL;
 
 }
 
@@ -48,7 +47,6 @@ StorkRunManager::StorkRunManager(const StorkParseInput* infile)
     sourceConverged = false;
     seSelect = NULL;
     nConv = 0;
-    fissionMap = NULL;
 
     // Set default values
     runDuration = infile->GetRunDuration();
