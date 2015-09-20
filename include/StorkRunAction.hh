@@ -70,9 +70,6 @@ class StorkRunAction : public G4UserRunAction
         void TallyEvent(const StorkEventData *eventData);
         void CollateNeutronSources();
 
-        //Calculate Heat generation
-        void CalcHeatDistribution(G4double power, G4int start);
-
 
         // Update the source distributions of StorkPrimaryGeneratorAction
         void UpdateSourceDistributions();
@@ -191,6 +188,7 @@ class StorkRunAction : public G4UserRunAction
     
         //Flag to save the run data (fission data and survivor data)
         G4bool saveRundata;
+    
 
 #ifdef G4TIMERA
         // Performance timer

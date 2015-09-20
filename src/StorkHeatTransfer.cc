@@ -7,6 +7,7 @@ StorkHeatTransfer::StorkHeatTransfer(const StorkParseInput* fIn)
     
     if(worldname == "SLOWPOKE")
         InitializeSlowpokeModel(fIn);
+    
 
 }
 // Destructor
@@ -16,13 +17,14 @@ StorkHeatTransfer::~StorkHeatTransfer(void)
 
 void StorkHeatTransfer::InitializeSlowpokeModel(const StorkParseInput* input)
 {
-    dt = input->GetRunDuration()*ms;
+    dt = input->GetRunDuration();
     heatTransferCoeff = input->GetHeatTransferCoefficient();
     temp_infty = input->GetAmbientTemperature();
     saveMaterialData = input->SaveTemperature();
     saveMaterialfilename = input->GetTemperatureDataFile();
     fissionToEnergyCoeff = input->GetFissionToEnergyCoefficient();
     baselineFissionRate = input->GetBaselineFissionRate();
+    createHeader = true;
     return;
 }
 
@@ -97,12 +99,16 @@ void StorkHeatTransfer::UpdateFuelProperties(G4double FuelTemperatures[],G4doubl
         //Get material.
         material = static_cast<StorkMaterial*>((*matMap)[it->first]);
         
-        //Get material and geometric properties.
-        heatCapacity = material->GetSpecificHeatCapacity();
-        oldDensity = material->GetDensity();
-        mass = oldDensity*CLHEP::pi*fuelDimensions[2]*FuelRadii[i]*FuelRadii[i];
-        surfaceArea = 2*CLHEP::pi*fuelDimensions[2]*FuelRadii[i];
+        //Fuel dimensions in mm convert to cm.
+        G4double radius = FuelRadii[i]*pow(10,-1);
+        G4double length = fuelDimensions[2]*pow(10,-1);
         
+        //Get material and geometric properties.
+        heatCapacity = material->GetSpecificHeatCapacity()*pow(10,9);
+        oldDensity = material->GetDensity()*cm3/g;
+        mass = oldDensity*CLHEP::pi*length*radius*radius;
+        surfaceArea = 2*CLHEP::pi*length*radius;
+
         //Calculate new material properties.
         newTemperature = CalcFuelTemperature(HeatInMaterial, mass, surfaceArea, FuelTemperatures[i], heatCapacity);
         //newDensity = CalcFuelDensity(newTemperature);
@@ -115,7 +121,7 @@ void StorkHeatTransfer::UpdateFuelProperties(G4double FuelTemperatures[],G4doubl
         
         //Calculate averages.
         if(saveMaterialData){
-            fuelTempAvg += newTemperature/size;
+            fuelTempAvg += G4double(newTemperature/size);
            // fuelDensityAvg += newDensity/size;
            // fuelRadiusAvg += newRadius/size;
         }
@@ -165,7 +171,6 @@ void StorkHeatTransfer::CalcHeatDistribution(){
         else
             fnDistribution[currentMaterialName] = fPercent;
         
-        
     }
     
     //Calculate the effective fission energy.
@@ -179,8 +184,10 @@ G4double StorkHeatTransfer::CalcFuelTemperature(G4double heatGeneration, G4doubl
     
     //Initialize with proper units.
     G4double newTemperature;
-    G4double htc = heatTransferCoeff*(joule/(s*m2*kelvin));
-    G4double t = dt*ns;
+    //htc in J/cm2*K
+    G4double htc = heatTransferCoeff*pow(10,-4);
+    //t left in ns
+    G4double t = dt*pow(10,-9);
     
     //Calculate coefficients for new temperature.
     G4double a = -htc*surfaceArea/(mass*heatcapacity);
@@ -243,26 +250,19 @@ void StorkHeatTransfer::SaveSLOWPOKEFuelProperties(G4String filename)
             
             return;
         }
-        else
-        {
-        
-            outFile.fill(' ');
-            outFile << "    *** SLOWPOKE REACTOR - LUMPED PARAMETER THERMAL MODEL ***   " << G4endl;
-            outFile << "            VERSION - 1.0 - DATE: 07/14/2015        " << G4endl;
+        outFile.fill(' ');
+        outFile << "    *** SLOWPOKE REACTOR - LUMPED PARAMETER THERMAL MODEL ***   " << G4endl;
+        outFile << "            VERSION - 1.0 - DATE: 07/14/2015        " << G4endl;
 
-            outFile << " Avg. Fuel Temperature  "
-                    << " Avg. Fuel Density      "
-                    << " Avg. Fuel Volume       "
-                    << G4endl;
-        
-        
-            outFile.width(120);
-            outFile.fill('-');
-        
-            outFile << G4endl;
-            outFile.close();
-            createHeader = false;
-        }
+        outFile << std::setw(18) << "  Avg. Fuel Temperature "
+                << std::setw(18) << "  Avg. Fuel Density  "
+                << std::setw(18) << "  Avg. Fuel Volume  "
+                << G4endl
+                << "----------------------------------------------------------------"
+                << G4endl;
+
+        outFile.close();
+        createHeader = false;
     }
     
     std::ofstream outFile(filename.c_str(),std::ofstream::app);
@@ -270,13 +270,13 @@ void StorkHeatTransfer::SaveSLOWPOKEFuelProperties(G4String filename)
     if(!outFile.good()){
         G4cerr << G4endl << "ERROR:  Could not write material temperatures to file. " << G4endl
         << "Improper file name: " << filename << G4endl
-        << "Continuing program without material temperature data output" << G4endl;
+        << "Continuing simulation without material temperature data output" << G4endl;
     }
     else{
     
-        outFile << std::setw(24) << fuelTempAvg
-                << std::setw(24) << fuelDensityAvg
-                << std::setw(24) << fuelRadiusAvg
+        outFile << std::setw(18) << fuelTempAvg
+                << std::setw(18) << fuelDensityAvg
+                << std::setw(18) << fuelRadiusAvg
                 << G4endl;
         
         outFile.close();

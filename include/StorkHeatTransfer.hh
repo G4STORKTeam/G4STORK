@@ -18,6 +18,8 @@ is used to track keep track of heat transfer with time
 #include "G4TransportationManager.hh"
 #include <math.h>
 #include <string.h>
+#include "G4ParticleDefinition.hh"
+#include "G4ParticleTable.hh"
 
 class StorkHeatTransfer
 {

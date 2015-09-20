@@ -247,11 +247,18 @@ void StorkRunManager::BeamOn(G4int n_event, const char* macroFile,
                 runStart += runDuration;
                 runEnd += runDuration;
 
+                
+                //Run thermal calculation
+                if(RunThermalModel)
+                    heatTransfer->RunThermalCalculation(runAction->GetCurrentFissionSites());
+
                 // Save the source distribution if the given interval of runs
                 // has passed
                 if(saveInterval && !(runIDCounter%saveInterval)){
                     SaveSourceDistribution(saveFile);
                     if(saveFissionData) SaveFissionDistribution(fissionFile);
+                    
+                
                 }
             }
 
@@ -348,7 +355,8 @@ void StorkRunManager::RunInitialization()
 			timeOffset = runStart;
 			runInterpStarted = runIDCounter;
 			interpStarted = true;
-
+            
+            /*
 			// Since interpolation just started create header and record
 			// pre interpolation temperatures
 			if(saveMatTemp)
@@ -356,24 +364,25 @@ void StorkRunManager::RunInitialization()
 			    worldPointerCD->SaveMaterialTemperatureHeader(matTempFile);
                 worldPointerCD->SaveMaterialTemperatures(matTempFile, G4int(runStart/runDuration));
 			}
+             */
 		}
 
+        /*
 		// Update the material temperature based on fission sites if
         // RunThermalModel is on
         if(RunThermalModel)
         {
             //MapFissionSitesToMaterial();
             heatTransfer->RunThermalCalculation(runAction->GetCurrentFissionSites());
+  
             
-            if(saveMatTemp)
-            
-            
+            /*
             // Save the new temperatures only if asked to do so
             if(saveMatTemp)
             {
                 worldPointerCD->SaveMaterialTemperatures(matTempFile, G4int(runEnd/runDuration));
             }
-        }
+        }*/
         
         
         // Update the world properties

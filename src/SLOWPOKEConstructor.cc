@@ -16,7 +16,7 @@ outSmallBeamLogical(0), outLargeBeamLogical(0), alumShellLogical(0), cellLogical
 
     //Set initial T.H. properties of fuel and geometry.
     FuelRadius = 0.2064*cm;
-	FuelTemp = (20 + 273.15)*kelvin;
+	FuelTemp = (25 + 273.15)*kelvin;
     FuelDensity = 10.6*g/cm3;
     
     //Initialize property vectors.
@@ -130,6 +130,7 @@ G4VPhysicalVolume* SLOWPOKEConstructor::ConstructWorld()
 	G4double ZirconiumRodDim[3] = {0., 0.262*cm, 23.3805*cm};
     G4double AirGapDim[3] = {0., 0.212*cm, 23.1105*cm};
     G4double FuelRodDim[3] = {0., 0.2064*cm, 22.6975*cm};
+    SetFuelDimensions(G4ThreeVector(FuelRodDim[0],FuelRodDim[1],FuelRodDim[2]));
     
     // Top Zirconium rod
     G4double Center1[2] = {(3-12)*0.551833696*cm, (12-3)*0.955804*cm};
@@ -535,7 +536,7 @@ G4VPhysicalVolume* SLOWPOKEConstructor::ConstructWorld()
     
     // Creating Air Gap in fuel Assemblie and fuel rod elements
     AirGapLogical = new G4LogicalVolume(theSolids->GetSolid("AirGapRod"), matMap["Air"], "AirGapLogical32");
-    FuelRodLogical = new G4LogicalVolume(theSolids->GetSolid("FuelRod"), matMap[Material.str()], "FuelRodLogical32");
+    FuelRodLogical = new G4LogicalVolume(theSolids->GetSolid("FuelRod32"), matMap[Material.str()], "FuelRodLogical32");
     new G4PVPlacement(0, G4ThreeVector(0, 0, -0.0875*cm),  FuelRodLogical, "FuelRodPhysical32", AirGapLogical, 0, 0);
     
     
@@ -567,7 +568,7 @@ G4VPhysicalVolume* SLOWPOKEConstructor::ConstructWorld()
     
     // Creating Air Gap in fuel Assemblie and fuel rod elements
     AirGapLogical = new G4LogicalVolume(theSolids->GetSolid("AirGapRod"), matMap["Air"], "AirGapLogical33");
-    FuelRodLogical = new G4LogicalVolume(theSolids->GetSolid("FuelRod"), matMap[Material.str()], "FuelRodLogical33");
+    FuelRodLogical = new G4LogicalVolume(theSolids->GetSolid("FuelRod33"), matMap[Material.str()], "FuelRodLogical33");
     new G4PVPlacement(0, G4ThreeVector(0, 0, -0.0875*cm),  FuelRodLogical, "FuelRodPhysical33", AirGapLogical, 0, 0);
     
     new G4PVPlacement(0, G4ThreeVector(Center2[0], Center2[1], 11.82975*cm),  AirGapLogical, "AirGapPhysical33", ZirconiumLogical2, 0, AirGapNum+1);

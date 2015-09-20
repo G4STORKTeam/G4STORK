@@ -124,8 +124,8 @@ class StorkRunManager: public G4RunManager
         StorkHeatTransfer* heatTransfer;
         G4int numRuns;				// Total number of runs for the simulation
 
-        G4double heatTransferCoefficient;
-        G4double T_infinity;
+       // G4double heatTransferCoefficient;
+        //G4double T_infinity;
 
         // Source distribution output
         G4int saveInterval;			// Interval at which source distribution is

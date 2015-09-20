@@ -275,7 +275,7 @@ void StorkParseInput::SetInitialSourceFile(G4String SourceFile)
 
 void StorkParseInput::SetInitialDelayedFile(G4String DelayedFile)
 {
-    precursorDelayedFile=DelayedFile;
+    initialfissionDataFile=DelayedFile;
     precursorDelayed=true;
 }
 
@@ -391,7 +391,7 @@ G4bool StorkParseInput::ReadInputFile(G4String filename)
 			{
 
 			}
-			 else if(keyWord=="Test")
+            else if(keyWord=="Test")
 			{
 
 			}
@@ -732,10 +732,10 @@ G4bool StorkParseInput::ReadInputFile(G4String filename)
     // Set the units of input data
 	runDuration *= ns;
 	initEnergy *= MeV;
-
+    
 	// Create the inital properties vector from the world property map
 	SetInitialPropertiesVector();
-
+    
 	return ErrorChecking();
 }
 
@@ -1046,6 +1046,7 @@ G4bool StorkParseInput::ErrorChecking()
 			initFile.close();
 		}
 	}
+    
     //Check proper delayed option was provided.
     if(theDelayedOption>3 || theDelayedOption<0)
     {
@@ -1053,12 +1054,16 @@ G4bool StorkParseInput::ErrorChecking()
         G4cerr << "*** ERROR: Incorrect option for delayed neutrons, choose options 0 - 4." << G4endl;
     }
     if(precursorDelayed && !fissionDataFile)
+    {
+        test= false;
+        G4cerr <<"*** ERROR: missing fission data file!" << G4endl;
+    }
     //Check require inputs for thermal model are provided.
     if(RunThermalModel && (!htc || !T_infty || !baselineFissionRate || !FissionToEnergy || !reactorPower))
     {
         test = false;
         G4cerr << "*** ERROR:  Missing input for thermal model." << G4endl;
     }
-
+    
     return test;
 }

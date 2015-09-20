@@ -136,9 +136,13 @@ G4bool StorkDelayedNeutron::GetInitialPrecursors(G4int numPrimaries)
 
 void StorkDelayedNeutron::SetFissionSource(MSHSiteVector fissionSites, DblVector fissionEnergies)
 {
-    fSites = (fissionSites);
-    fEnergy = (fissionEnergies);
     
+    fSites.clear();
+    fEnergy.clear();
+    
+    fSites.insert(fSites.end(),fissionSites.begin(),fissionSites.end());
+    fEnergy.insert(fEnergy.end(),fissionEnergies.begin(),fissionEnergies.end());
+
     return;
 }
 

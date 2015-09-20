@@ -46,7 +46,7 @@ StorkRunAction::StorkRunAction(StorkPrimaryGeneratorAction *genPtr,
     fn_index = save_index = 0;
     Origin = fIn->GetOrigin();
 
-
+    //Set up the neutron flux calcution
     if(neutronFluxCalc){
         fluxCalcShape = fIn->GetFluxCalcShape();
 
@@ -58,6 +58,7 @@ StorkRunAction::StorkRunAction(StorkPrimaryGeneratorAction *genPtr,
         EnergyRange[0]=(fIn->GetEnergyRange())[0];
         EnergyRange[1]=(fIn->GetEnergyRange())[1];
     }
+    
 
 	// Set the shannon entropy mesh
     for(G4int i=0; i<3; i++)
@@ -334,7 +335,6 @@ void StorkRunAction::EndOfRunAction(const G4Run *aRun)
 
 
     //Index to start next iteration at the end of previous fission lists.
-    
 
     // Find the run time
     runTimer.Stop();

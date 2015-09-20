@@ -81,12 +81,12 @@ class StorkPrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
         StorkPrimaryData* GetPrimaryData(G4int eventNum);
 
         // Get the total number of primaries/delayed neutron primaries
-	G4int GetNumPrimaries();
-	G4int GetNumDNPrimaries();
+        G4int GetNumPrimaries();
+        G4int GetNumDNPrimaries();
 
-	// Set the number of events per run
-	void SetNumEvents(G4int numE) { numEvents = numE; };
-	// Create the initial neutron source
+        // Set the number of events per run
+        void SetNumEvents(G4int numE) { numEvents = numE; };
+        // Create the initial neutron source
         void InitialSource();
 
         // Disable renormalization of the number of survivors at the start of
@@ -125,12 +125,14 @@ class StorkPrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
         G4String sourceFile;    // Filename of source file
 
         G4bool sourcefileDelayed;			// Flag denotes whether an initial
+    
+        G4bool precursorDelayed;   //Flag to indicate if precursors are used.
 										// delayed distribution is to be used
         G4String delayedSourceFile; 	// Filename for initial delayed source
 
         G4bool normalize;       // Flag denotes whether population is
                                 // renormalized at the start of a new run
-	G4bool instantDelayed;	// Flag denotes whether delayed neutrons are
+        G4bool instantDelayed;	// Flag denotes whether delayed neutrons are
 								// produced instantaneously
 
         G4double initEnergy;    // Initial energy of source neutrons

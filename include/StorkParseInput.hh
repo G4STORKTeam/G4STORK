@@ -133,7 +133,7 @@ class StorkParseInput
 		void SetInitialSourceFile(G4String SourceFile);
 
 		G4bool GetPrecursorDelayed() const { return precursorDelayed; }
-		G4String GetInitialDelayedFile() const { return precursorDelayedFile; }
+		G4String GetInitialDelayedFile() const { return initialfissionDataFile; }
 		void SetInitialDelayedFile(G4String DelayedFile);
 
 		G4bool SaveFissionData() const { return saveFissionData; }
@@ -316,11 +316,9 @@ class StorkParseInput
 		G4String initialSourceFile;
 		G4bool saveFissionData;			// Save fission data to file
 		G4String fissionDataFile;
-		G4bool loadDelayed;				// Load initial delayed source from file
 		G4String initialfissionDataFile;    //Initial loaded fission data file
         G4bool saveTempData;
         G4String tempFileName;
-        G4String precursorDelayedFile;
         G4bool initialFissionData;
 
 

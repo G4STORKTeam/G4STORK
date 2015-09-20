@@ -33,7 +33,7 @@ StorkPrimaryGeneratorAction::StorkPrimaryGeneratorAction(
     primaryData = NULL;
     normalize = infile->GetRenormalizeAfterRun();
     instantDelayed = infile->GetInstantDelayed();
-    sourcefileDelayed = infile->GetPrecursorDelayed();
+    precursorDelayed = infile->GetPrecursorDelayed();
     runDuration = infile->GetRunDuration();
     theNav = G4TransportationManager::GetTransportationManager()->
     GetNavigatorForTracking();
@@ -44,7 +44,7 @@ StorkPrimaryGeneratorAction::StorkPrimaryGeneratorAction(
     {
     	if(infile->LoadInitialSources())
 			sourceFile = infile->GetInitialSourceFile();
-		if(sourcefileDelayed){
+		if(precursorDelayed){
 			delayedSourceFile = infile->GetInitialDelayedFile();
             delayedNeutronGenerator = new StorkDelayedNeutron(delayedSourceFile,runDuration,numPrimaries);
         }
