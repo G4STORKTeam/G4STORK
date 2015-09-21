@@ -1,6 +1,0 @@
-    *** SLOWPOKE REACTOR - LUMPED PARAMETER THERMAL MODEL ***   
-            VERSION - 1.0 - DATE: 07/14/2015        
-  Avg. Fuel Temperature   Avg. Fuel Density    Avg. Fuel Volume  
-----------------------------------------------------------------
-           298.389                 0                 0
-           298.628                 0                 0

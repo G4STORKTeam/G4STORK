@@ -1,2 +1,0 @@
-/Users/andrewtan/geant4/G4-STORK-1.0/Build/CMakeFiles/G4_STORK.dir
-/Users/andrewtan/geant4/G4-STORK-1.0/Build/CMakeFiles/g4stork.dir
