@@ -21,6 +21,9 @@ member variable.
 #include "StorkHadronicProcess.hh"
 #include "StorkHadProjectile.hh"
 #include "StorkNeutronData.hh"
+#include "StorkHadProjectile.hh"
+#include "G4TransportationManager.hh"
+#include "G4NeutronHPFission.hh"
 
 #include "G4DynamicParticle.hh"
 #include "G4Material.hh"
@@ -36,9 +39,15 @@ class StorkHadronFissionProcess : public G4HadronFissionProcess
         StorkHadronFissionProcess(const G4String& processName = "StorkHadronFission")
         :G4HadronFissionProcess(processName)
         {
+            theFissModel = new G4NeutronHPFission;
+            theNavi = NULL;
+            theDataStore = NULL;
+            
 //            SetVerboseLevel(2);
         }
-        virtual ~StorkHadronFissionProcess() {;};
+        virtual ~StorkHadronFissionProcess() {
+            if(theFissModel) delete theFissModel;
+        };
 
         // Set the number of interaction lengths left from previous run
         virtual void StartTracking(G4Track *aTrack)
@@ -67,13 +76,79 @@ class StorkHadronFissionProcess : public G4HadronFissionProcess
         // Produce the characteristics of a delayed neutron
 		inline StorkNeutronData GetADelayedNeutron(G4DynamicParticle *aNeutron,
 												G4Material *theMat);
+        inline StorkNeutronData GetADelayedNeutron(G4DynamicParticle *aNeutron,
+                                               G4Material *theMat, G4Nucleus theTarget);
+    
+        inline G4Nucleus GetFissionNucleus(G4StepPoint* aStep);
+        inline G4Nucleus GetFissionNucleus(G4double fnEnergy, G4ThreeVector fnSite);
 
 
 	private:
 
 		G4int procIndex;
+        G4NeutronHPFission *theFissModel;
+        G4Navigator* theNavi;
+        G4CrossSectionDataStore *theDataStore;
+    
 };
 
+StorkNeutronData StorkHadronFissionProcess::GetADelayedNeutron(
+                                                               G4DynamicParticle *aNeutron,
+                                                               G4Material *theMat, G4Nucleus theTarget)
+{
+	// Local Variables
+	G4HadFinalState* theResult = NULL;
+    StorkHadProjectile thePro(*aNeutron,theMat);
+	G4HadSecondary *aSec = NULL;
+	G4DynamicParticle *aDelayedN = NULL;
+	G4bool dnFlag = false;
+    
+    
+	// Keep getting a result until a delayed neutron is produced
+	do
+	{
+		// Simulate a fission
+		try
+		{
+            G4HadProjectile* Temp = reinterpret_cast<G4HadProjectile*>(&thePro);
+			//theResult = theFissionModel->ApplyYourself(*Temp, theTarget);
+            theResult = theFissModel->ApplyYourself(*Temp,theTarget);
+            
+		}
+		catch(G4HadronicException aR)
+		{
+			G4Exception("G4HadronicProcess", "007", FatalException,
+						"The fission model failed to produce a result.");
+            
+		}
+        
+		// Check to see if the result contains a delayed neutron
+		for(G4int i=0; i<theResult->GetNumberOfSecondaries(); i++)
+		{
+			aSec = theResult->GetSecondary(i);
+            
+			// Check if a delayed neutron was created
+			if(aSec->GetParticle()->GetParticleDefinition() ==
+               G4Neutron::Neutron() &&
+               aSec->GetTime() > aNeutron->GetProperTime())
+			{
+				dnFlag = true;
+				aDelayedN = aSec->GetParticle();
+                
+				break;
+			}
+		}
+	}
+	while(!dnFlag);
+    
+    
+	// Create the neutron data container
+	StorkNeutronData dnData(aSec->GetTime(),
+                            aSec->GetTime()-aNeutron->GetProperTime(),
+						    G4ThreeVector(0.,0.,0.), aDelayedN->GetMomentum());
+    
+	return dnData;
+}
 
 
 // GetADelayedNeutron()
@@ -92,7 +167,7 @@ StorkNeutronData StorkHadronFissionProcess::GetADelayedNeutron(
 	G4HadSecondary *aSec = NULL;
 	G4DynamicParticle *aDelayedN = NULL;
 	G4bool dnFlag = false;
-	G4CrossSectionDataStore *theDataStore = GetCrossSectionDataStore();
+	theDataStore = GetCrossSectionDataStore();
 
 
 	// Find the target element
@@ -169,6 +244,77 @@ StorkNeutronData StorkHadronFissionProcess::GetADelayedNeutron(
 	return dnData;
 }
 
+G4Nucleus StorkHadronFissionProcess::GetFissionNucleus(G4StepPoint* aStep){
+
+    G4DynamicParticle *aNeutron;
+    if(!theNavi) theNavi = G4TransportationManager::GetTransportationManager()->GetNavigatorForTracking();
+
+    aNeutron = new G4DynamicParticle(G4Neutron::NeutronDefinition(),
+                                     aStep->GetMomentumDirection(), aStep->GetKineticEnergy());
+    
+    G4ThreeVector Location = aStep->GetPosition();
+    
+    
+    G4Material* Material = theNavi
+                                ->LocateGlobalPointAndSetup(Location)->GetLogicalVolume()->GetMaterial();
+   
+    G4Element *theEle = NULL;
+    G4Nucleus aNuc;
+
+    if(!theDataStore) theDataStore = GetCrossSectionDataStore();
+    
+    try
+	{
+		theEle = theDataStore->SampleZandA(aNeutron, Material, aNuc);
+	}
+	catch(G4HadronicException & aR)
+	{
+		G4Exception("G4HadronicProcess", "007", FatalException,
+					"GetNeutronFissionIso failed on element selection.");
+	}
+    
+    if(aNeutron) delete aNeutron;
+    return aNuc;
+
+
+}
+
+G4Nucleus StorkHadronFissionProcess::GetFissionNucleus(G4double fnEnergy, G4ThreeVector fnSite){
+    
+    G4DynamicParticle *aNeutron;
+    G4ThreeVector MomentumDir;
+    if(!theNavi) theNavi = G4TransportationManager::GetTransportationManager()->GetNavigatorForTracking();
+
+    MomentumDir.setRThetaPhi(1.0, G4UniformRand()*CLHEP::pi,
+                          G4UniformRand()*2.0*CLHEP::pi);
+    
+    aNeutron = new G4DynamicParticle(G4Neutron::NeutronDefinition(),
+                                    MomentumDir, fnEnergy);
+
+    theNavi->ResetStackAndState();
+    G4Material* Material = theNavi
+    ->LocateGlobalPointAndSetup(fnSite)->GetLogicalVolume()->GetMaterial();
+    
+    G4Element *theEle = NULL;
+    G4Nucleus aNuc;
+    
+    if(!theDataStore) theDataStore = GetCrossSectionDataStore();
+    
+    try
+	{
+		theEle = theDataStore->SampleZandA(aNeutron, Material, aNuc);
+	}
+	catch(G4HadronicException & aR)
+	{
+		G4Exception("G4HadronicProcess", "007", FatalException,
+					"GetFissionNucleus failed on element selection.");
+	}
+    
+    if(aNeutron) delete aNeutron;
+    return aNuc;
+    
+    
+}
 
 #endif // NSHADRONFISSIONPROCESS_H
 

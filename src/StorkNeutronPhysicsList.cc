@@ -94,13 +94,11 @@ void StorkNeutronPhysicsList::ConstructProcess()
     theBertiniNeutron->SetMinEnergy(20.0*MeV);
     theBertiniNeutron->SetMaxEnergy(9.9*GeV);
 
-    // Set the minimum and maximum energies for the LEP processes
-
-    //theLEPNeutron->SetMinEnergy(20.0*MeV);
-    //theLEPNeutron->SetMinInelasticEnergy(9.5*GeV);
-    //theLEPNeutron->SetMaxInelasticEnergy(25.*GeV);
-
-
+   /* // Set the minimum and maximum energies for the LEP processes
+    theLEPNeutron->SetMinEnergy(20.0*MeV);
+    theLEPNeutron->SetMinInelasticEnergy(9.5*GeV);
+    theLEPNeutron->SetMaxInelasticEnergy(25.*GeV);
+    */
     // Build the models and data
     theNeutrons->Build();
 

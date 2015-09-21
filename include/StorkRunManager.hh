@@ -21,6 +21,7 @@ distribtion converges within the given limit (default is 3%).
 #include "StorkPrimaryGeneratorAction.hh"
 #include "StorkRunAction.hh"
 #include "StorkEventAction.hh"
+#include "StorkHeatTransfer.hh"
 #include "StorkWorld.hh"
 #include "StorkInterpVector.hh"
 #include "StorkParseInput.hh"
@@ -64,7 +65,8 @@ class StorkRunManager: public G4RunManager
         void InitializeRunData(const StorkParseInput* infile);
         void InitializeRunData(G4double runDur, G4int numberRuns, G4int numSaveInterval, G4String saveFileName, G4bool interpStartCondition,
                                 const StorkInterpManager* theMPInterpManager, G4double convergenceLim, G4int numConvRuns, G4bool saveFissionDataCond,
-                                G4String fissionDataFile, std::ostream *logOutput);
+                                G4String fissionDataFile, std::ostream *logOutput, G4bool temperatureTracking,G4double nuclearReactorPower,
+                                G4bool saveTemperature, G4String temperatureDataFile);
 
         // Starts the simulation
         virtual void BeamOn(G4int n_event, const char* macroFile=0,
@@ -84,6 +86,9 @@ class StorkRunManager: public G4RunManager
 
         // Save the source distribution of the current run to a file
         void SaveSourceDistribution(G4String fname);
+
+        //save the fission distribution of the current run to a file.
+        void SaveFissionDistribution(G4String name);
 
         // Get functions
         G4double GetRunDuration() { return runDuration; }
@@ -116,8 +121,11 @@ class StorkRunManager: public G4RunManager
 
 	protected:
         // Protected member variables
-
+        StorkHeatTransfer* heatTransfer;
         G4int numRuns;				// Total number of runs for the simulation
+
+       // G4double heatTransferCoefficient;
+        //G4double T_infinity;
 
         // Source distribution output
         G4int saveInterval;			// Interval at which source distribution is
@@ -145,6 +153,18 @@ class StorkRunManager: public G4RunManager
                                         // convergence
         G4int convergeStop;
 		G4int nConv;					// Run when convergence achieved
+
+
+        // Material temperature output
+        G4bool saveMatTemp; // Flag to output the temperature of all materails
+        G4String matTempFile; // Output file for material temperature
+        G4bool RunThermalModel; // Flag to track fission and
+                                                // change energy acordingly
+        G4bool interp;
+        G4Navigator* theNavigator; // Navigator
+        G4double reactorPower; // Power output of the reactor
+        G4bool fMap;                //Fission Map boolean flag.
+        MSHSiteVector fnSites;      // Temporary storage for fission sites
 
         // Class pointers
         StorkPrimaryGeneratorAction *genAction;

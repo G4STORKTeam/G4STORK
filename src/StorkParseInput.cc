@@ -37,6 +37,10 @@ StorkParseInput::StorkParseInput(G4bool master)
 	numberOfRuns=0;
 	limitSE = 2.0;
 	convRuns = 25;
+	reactorPower = 0;
+	htc = 0.;
+	T_infty = 20;
+    Origin.set(0.,0.,0.);
 
 	reflectBC = new std::vector<int>;
     periodicBC = new std::vector<int>;
@@ -46,12 +50,20 @@ StorkParseInput::StorkParseInput(G4bool master)
 	loadDelayed=false;
 	logData=false;
 	instantDelayed=false;
+    sourcefileDelayed=false;
+    precursorDelayed=false;
+	periodicBC=false;
 	normalize = true;
 	uniformDis = false;
 	uniformDisWithDim = false;
 	interpStart = false;
 	saveFissionData = false;
 	overrideInitRandomSeed = false;
+	RunThermalModel = false;
+	saveTempData = false;
+	interp = false;
+    neutronFluxCalc = false;
+    initialFissionData=false;
 
 	// Set null file names
 	logFile = "";
@@ -110,11 +122,11 @@ G4bool StorkParseInput::FinalizeInputs()
     {
         saveSources=numberOfRuns;
     }
-    // Reset interpStart flag if no interpolations set
+/*    // Reset interpStart flag if no interpolations set
     if(interpStart && theMPInterpMan.GetNumberOfInterpVectors() == 0)
     {
     	interpStart = false;
-    }
+    }*/
     // Set the random seed if not set by the input file
     if(isMaster && randomSeed <= 0)
     {
@@ -205,6 +217,10 @@ void StorkParseInput::SetWorld(G4String worldNam)
             theWorldProps[MatPropPair(fuel,concentration)] = 0.7204*perCent;
             theWorldProps[MatPropPair(moderator,concentration)] = 90.0*perCent;
         }
+        else if(worldNam=="SLOWPOKE")
+        {
+            periodicBC=false;
+        }
         else if(userWorlds.find(worldNam) != userWorlds.end())
         {
             StorkMatPropChangeVector defaults = userWorlds[worldNam];
@@ -249,14 +265,21 @@ void StorkParseInput::SetInitialSourceFile(G4String SourceFile)
 
 void StorkParseInput::SetInitialDelayedFile(G4String DelayedFile)
 {
-    initialDelayedFile=DelayedFile;
-    loadDelayed=true;
+    initialfissionDataFile=DelayedFile;
+    precursorDelayed=true;
 }
 
 void StorkParseInput::SetFissionDataFile(G4String fissionFile)
 {
     fissionDataFile=fissionFile;
     saveFissionData=true;
+}
+
+
+void StorkParseInput::SetTemperatureDataFile(G4String temperatureFile)
+{
+    tempFileName = temperatureFile;
+    saveTempData = true;
 }
 
 void StorkParseInput::SetNSInterpolationManager(G4String mat, G4String prop, G4String interpDataFile)
@@ -359,7 +382,7 @@ G4bool StorkParseInput::ReadInputFile(G4String filename)
 			}
 			else if(keyWord=="SLOWPOKE")
 			{
-
+                periodicBC=false;
 			}
 			else if(keyWord=="SCWR")
 			{
@@ -457,10 +480,10 @@ G4bool StorkParseInput::ReadInputFile(G4String filename)
 			infile >> initialSourceFile;
 			loadSources=true;
 		}
-		else if(keyWord=="INITIAL_DELAYED_FILE")
+		else if(keyWord=="INITIAL_FISSION_DATA_FILE")
 		{
-			infile >> initialDelayedFile;
-			loadDelayed=true;
+			infile >> initialfissionDataFile;
+			initialFissionData=true;
 		}
 
 
@@ -515,10 +538,16 @@ G4bool StorkParseInput::ReadInputFile(G4String filename)
 		{
 			infile >> normalize;
 		}
-		else if(keyWord=="INSTANT_DELAYED")
-		{
-			infile >> instantDelayed;
-		}
+        else if(keyWord=="DELAYED_OPTION")
+        {
+            infile >> theDelayedOption;
+            if(theDelayedOption == 1)
+                instantDelayed = true;
+            else if (theDelayedOption == 2)
+                sourcefileDelayed = true;
+            else if (theDelayedOption == 3)
+                precursorDelayed = true;
+        }
 		else if(keyWord=="UNIFORM_DISTRIBUTION")
 		{
 			infile >> uniformDis >> uniDisShape;
@@ -537,7 +566,17 @@ G4bool StorkParseInput::ReadInputFile(G4String filename)
 		{
 			infile >> interpStart;
 		}
+        else if(keyWord=="NEUTRON_FLUX_CALC")
+        {
+            infile >> fluxCalcShape >> energyRange[0] >> energyRange[1] >> fluxCalcRegion[0]
+            >> fluxCalcRegion[1] >> fluxCalcRegion[2]>> fluxCalcRegion[3];
+            neutronFluxCalc = true;
 
+        }
+        else if(keyWord=="SET_ORIGIN")
+        {
+            infile >> Origin[0] >> Origin[1] >> Origin[2];
+        }
 
 		// Logging
 		else if(keyWord=="OUTPUT_LOG")
@@ -566,6 +605,36 @@ G4bool StorkParseInput::ReadInputFile(G4String filename)
 			infile >> fissionDataFile;
 			saveFissionData = true;
 		}
+        //Thermal model variables
+        else if(keyWord=="RUN_THERMAL_MODEL")
+        {
+            infile >> RunThermalModel;
+        }
+        else if(keyWord=="REACTOR_POWER")
+        {
+            infile >> reactorPower;
+        }
+        else if(keyWord == "OUTPUT_PROPERTIES")
+		{
+		    infile >> tempFileName;
+			saveTempData = true;
+		}
+		else if(keyWord == "SET_HEAT_TRANSFER_COEFFICIENT")
+		{
+            infile >> htc;
+		}
+		else if(keyWord == "SET_AMBIENT_TEMPERATURE")
+		{
+            infile >> T_infty;
+		}
+        else if(keyWord == "SET_BASELINE_FISSION_RATE")
+        {
+            infile >> baselineFissionRate;
+        }
+        else if(keyWord == "SET_FISSION_TO_ENERGY_COEFFICIENT")
+        {
+            infile >> FissionToEnergy;
+        }
 
 		// World data (initial and interpolation)
 		else if(keyWord == "INTERPOLATION_DATA")
@@ -587,6 +656,9 @@ G4bool StorkParseInput::ReadInputFile(G4String filename)
 			theMPInterpMan.CreateInterpVector(mpString.strip(':'),
 										dataFile.second, mpPair,
 										theMPMan->GetUnits(mpPair.second));
+
+            // Sets the interpolation data falg to high
+            interp = true;
 		}
 		else if(keyWord=="SET_WORLD_PROP")
 		{
@@ -637,11 +709,11 @@ G4bool StorkParseInput::ReadInputFile(G4String filename)
     {
         saveSources=numberOfRuns;
     }
-    // Reset interpStart flag if no interpolations set
+    /*// Reset interpStart flag if no interpolations set
     if(interpStart && theMPInterpMan.GetNumberOfInterpVectors() == 0)
     {
     	interpStart = false;
-    }
+    }*/
     // Set the random seed if not set by the input file
     if(isMaster && randomSeed <= 0)
     {
@@ -1085,6 +1157,24 @@ G4bool StorkParseInput::ErrorChecking()
 			initFile.close();
 		}
 	}
+
+    //Check proper delayed option was provided.
+    if(theDelayedOption>3 || theDelayedOption<0)
+    {
+        test = false;
+        G4cerr << "*** ERROR: Incorrect option for delayed neutrons, choose options 0 - 4." << G4endl;
+    }
+    if(precursorDelayed && !fissionDataFile)
+    {
+        test= false;
+        G4cerr <<"*** ERROR: missing fission data file!" << G4endl;
+    }
+    //Check require inputs for thermal model are provided.
+    if(RunThermalModel && (!htc || !T_infty || !baselineFissionRate || !FissionToEnergy || !reactorPower))
+    {
+        test = false;
+        G4cerr << "*** ERROR:  Missing input for thermal model." << G4endl;
+    }
 
     return test;
 }

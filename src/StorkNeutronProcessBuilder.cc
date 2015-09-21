@@ -50,15 +50,6 @@ StorkNeutronProcessBuilder::~StorkNeutronProcessBuilder()
         delete TheUserBoundaryCond;
     if(TheZeroBoundaryCond)
         delete TheZeroBoundaryCond;
-    /*
-    if(theHighElasticModel)
-        delete theHighElasticModel;
-    if(theHighFissionModel)
-        delete theHighFissionModel;
-    if(theHighCaptureModel)
-        delete theHighCaptureModel;
-        */
-
 }
 
 
@@ -143,13 +134,7 @@ void StorkNeutronProcessBuilder::Build()
     }
 
     // Create the high energy elastic model
-
     theHighElasticModel = new G4DiffuseElastic();
-    //theHighElasticModel = new G4ChipsElasticModel();
-    //theHighElasticModel = new G4HadronElastic();
-
-
-    // Set the minimum energy limit
     theHighElasticModel->SetMinEnergy(20.0*MeV);
     theHighElasticModel->SetMaxEnergy(20000.*GeV);
 
@@ -175,7 +160,6 @@ void StorkNeutronProcessBuilder::Build()
 
     // Register model with fission process
     theNeutronCapture->RegisterMe(theHighCaptureModel);
-
 
     // Add processes to the process manager
     G4ProcessManager * theProcMan = G4Neutron::Neutron()->GetProcessManager();

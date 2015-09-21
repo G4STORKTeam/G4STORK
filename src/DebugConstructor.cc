@@ -12,6 +12,7 @@ DebugConstructor::DebugConstructor()
 	// Set up variable property map
 	variablePropMap[MatPropPair(controlrod,position)] = &contRodH;
 
+<<<<<<< HEAD
 	cellVisAtt=NULL;
 	alumShellVisAtt=NULL;
 	alumContVisAtt=NULL;

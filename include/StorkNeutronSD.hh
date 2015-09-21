@@ -55,7 +55,7 @@ class StorkNeutronSD : public G4VSensitiveDetector
         // Public member functions
 
         // Constructor and destructor
-        StorkNeutronSD(G4String name, G4int KCalcType, G4bool instD = false);
+        StorkNeutronSD(G4String name, G4int KCalcType, G4bool instD = false, G4bool initialD = false);
         ~StorkNeutronSD() {;}
 
         void Initialize(G4HCofThisEvent *HCE);
@@ -89,7 +89,10 @@ class StorkNeutronSD : public G4VSensitiveDetector
         G4int HCID1;                // Index of the hit collection
         G4bool periodicBC;          // Periodic boundary flag
         G4bool instantDelayed;      // Flag to make delayed neutrons prompt
-        G4bool logDelayedSpectrum;  // Flag to saved delayed neutron spectrum
+        G4bool sourcefileDelayed;   // Flag to produce delayed neutrons from previous fission data.
+        G4bool precursorDelayed;
+
+       // G4bool logDelayedSpectrum;  // Flag to saved delayed neutron spectrum
         G4double runEnd;            // Time at the end of the run
 
         G4double totalLifetime;     // Total lifetime of lost neutrons

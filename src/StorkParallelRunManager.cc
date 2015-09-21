@@ -120,15 +120,19 @@ void StorkParallelRunManager::BeamOn(G4int n_event, const char* macroFile,
                 // Save the source distribution if the given interval of runs
                 // has passed
                 if(TOPC_is_master() && saveInterval > 0
-                   && !(runIDCounter%saveInterval))
+                   && !(runIDCounter%saveInterval)){
                     SaveSourceDistribution(saveFile);
+                    if(saveFissionData) SaveFissionDistribution(fissionFile);
+                }
             }
 
             // Save the final source distribution if the save interval is not
             // zero and it has not been just saved
             if(TOPC_is_master() && saveInterval && (runIDCounter%saveInterval ||
-                                                    saveInterval == 1))
+                                                    saveInterval == 1)){
                 SaveSourceDistribution(saveFile);
+                if(saveFissionData) SaveFissionDistribution(fissionFile);
+            }
         }
    }
 }

@@ -7,7 +7,7 @@ Modified:		11-03-2013
 
 Definition for StorkNeutronData class.
 
-This is the basic container clas used to store the survivor and delayed neutron
+This is the basic container class used to store the survivor and delayed neutron
 data. The class holds four pieces of data publicly:
     1. Global Time = the current simulation time the other data was recorded at
     2. Lifetime = the total simulation time since the hit that created the

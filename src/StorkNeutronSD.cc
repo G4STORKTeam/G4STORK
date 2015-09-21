@@ -16,8 +16,9 @@ Source code file for StorkNeutronSD class.
 
 
 // Constructor
-StorkNeutronSD::StorkNeutronSD(G4String name, G4int KCalcType, G4bool instD)
-:G4VSensitiveDetector(name), kCalcType(KCalcType), instantDelayed(instD)
+
+StorkNeutronSD::StorkNeutronSD(G4String name, G4int KCalcType, G4bool instD, G4bool sourcefileD)
+:G4VSensitiveDetector(name), kCalcType(KCalcType), instantDelayed(instD), sourcefileDelayed(sourcefileD)
 {
     // Set collection name and initialize ID
     collectionName.insert("Tally");
@@ -144,20 +145,12 @@ G4bool StorkNeutronSD::ProcessHits(G4Step *aStep, G4TouchableHistory*)
 		aTrack->SetUserInformation(new StorkTrackInfo(pnInfo->GetWeight()));
 	}
 
-//	if(prevTrackID==-1)
-//    {
-//        prevTrackID=aTrack->GetTrackID();
-//    }
-//    else if(prevTrackID!=aTrack->GetTrackID())
-//    {
-//        if((hitProcess!="StorkHadronFission")&&(hitProcess!="StorkHadronCapture")&&(hitProcess!="StorkUserBCStepLimiter")&&(hitProcess!="StorkNeutronInelastic"))
-//        {
-//            G4cout << "\nError: " << hitProcess << " caused track to stop\n" << G4endl;
-//        }
-//        prevTrackID=aTrack->GetTrackID();
-//    }
-
-    // Find the process used in the hit (if it is defined)    hitProcess = "";    if(postStepPoint->GetProcessDefinedStep() != 0)    {        hitProcess = postStepPoint->GetProcessDefinedStep()->GetProcessName();    }
+    // Find the process used in the hit (if it is defined)
+    G4String hitProcess = "";
+    if(postStepPoint->GetProcessDefinedStep() != 0)
+    {
+        hitProcess = postStepPoint->GetProcessDefinedStep()->GetProcessName();
+    }
 
 	// If the time is beyond the simulation time, the kill the track and
 	// any secondaries (stops simulation from running forever)
@@ -235,7 +228,6 @@ G4bool StorkNeutronSD::ProcessHits(G4Step *aStep, G4TouchableHistory*)
 
                 // Increment neutron production counter
                 nProd++;
-
             }
             // Stop and kill particle if it is not a neutron
             else

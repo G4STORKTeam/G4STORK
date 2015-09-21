@@ -124,7 +124,7 @@ G4VPhysicalVolume* BareSphereConstructor::ConstructWorld()
     worldPhysical = new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), worldLogical,
                                       "worldPhysical",0,0,0);
 
-    // Create the homogenous sphereical reactor
+    // Create the homogenous spherical reactor
     reactorLogical = new G4LogicalVolume(theSolids->GetSolid("reactorSphere"),
 										 matMap[materialID], "reactorLogical",
 										 0,0,0);

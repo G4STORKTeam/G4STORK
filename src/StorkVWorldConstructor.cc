@@ -20,8 +20,11 @@ StorkVWorldConstructor::StorkVWorldConstructor()
 	// Initialize member variables
 	geomChanged = true;
 	matChanged = true;
+	Initiation = true;
+	physChanged = false;
 	encWorldDim = G4ThreeVector(0.,0.,0.);
 	reactorDim = encWorldDim;
+	charPosition = new std::vector<G4int>;
 }
 
 
@@ -30,6 +33,7 @@ StorkVWorldConstructor::~StorkVWorldConstructor()
 {
 	// Destroy all materials, elements and isotopes
     DestroyMaterials();
+
     if(worldVisAtt)
         delete worldVisAtt;
 }
@@ -109,7 +113,7 @@ StorkVWorldConstructor::ConstructNewWorld(const StorkParseInput* infile)
 
 	// Build sensitive detector
     G4SDManager *sDMan = G4SDManager::GetSDMpointer();
-    sDReactor = new StorkNeutronSD("Reactor", infile->GetKCalcType(), infile->GetInstantDelayed());
+    sDReactor = new StorkNeutronSD("Reactor", infile->GetKCalcType(), infile->GetInstantDelayed(), infile->GetPrecursorDelayed());
     sDMan->AddNewDetector(sDReactor);
 
     // Add filters to the sensitive detectors so that they only track neutrons
@@ -161,17 +165,118 @@ StorkVWorldConstructor::UpdateWorldProperties(StorkMatPropChangeVector changes)
 	}
 
 	// Apply changes
+	G4bool changed = false;
 	for(G4int i=0; i<G4int(changes.size()); i++)
 	{
-		// Change the variable properties
-		*(variablePropMap[changes[i].GetMatPropPair()]) = changes[i].change;
+        G4double previous = *(variablePropMap[changes[i].GetMatPropPair()]);
 
-        if(changes[i].GetMatPropPair().second!=theMPMan->ParsePropEnum("position"))
-            matChanged = true;
+	    // Checks to make sure there was a change in the properties (to avoid unecessary optimizations)
+	    if(previous != changes[i].change)
+	    {
+	        // Checks to see if we are changing a material property, or not
+            if(theMPMan->GetPropType(changes[i].GetMatPropPair().second) == "material")
+            {
+                physChanged = true;
+                matChanged = true;
+            }
+	        // Change the variable properties
+            *(variablePropMap[changes[i].GetMatPropPair()]) = changes[i].change;
+            changed = true;
+	    }
 	}
 
-	return true;
+	return changed;
 }
 
 
 
+// SaveMaterialTemperatureHeader()
+// Outputs the header of the temperature data file
+void
+StorkVWorldConstructor::SaveMaterialTemperatureHeader(G4String fname)
+{
+    // Declare and open file stream
+	std::ofstream outFile(fname.c_str(),std::ofstream::app);
+
+	// Check that stream is ready for use
+	if(!outFile.good())
+	{
+		G4cerr << G4endl << "ERROR:  Could not write material temperatures to file. " << G4endl
+			   << "Improper file name: " << fname << G4endl
+			   << "Continuing program without material temperature data output" << G4endl;
+
+        return;
+	}
+
+    outFile.fill(' ');
+    outFile << "All temperatures are given in Kelvin." << G4endl;
+    outFile << "#########################################################" << G4endl;
+    outFile << "Run # ";
+
+    // Cycle through all the elements of the map and output the name of each material
+	for(std::map<G4String,G4Material*>::iterator it = matMap.begin(); it != matMap.end(); it++)
+	{
+	    // Need at least 6 space to output the number 5 significant digits and comma
+	    if((*it).first.size() < 6)
+	    {
+	        outFile << std::setw(6) << (*it).first << " ";
+	        charPosition->push_back(6);
+	    }
+	    else
+	    {
+	        outFile << (*it).first << " ";
+	        charPosition->push_back((*it).first.size());
+	    }
+	}
+    outFile << G4endl;
+    outFile.close();
+}
+
+
+// SaveMaterialTemperatures()
+// Outputs temperatures to file specified in StorkParseInput
+void
+StorkVWorldConstructor::SaveMaterialTemperatures(G4String fname, G4int runNumber)
+{
+    // Declare and open file stream
+	std::ofstream outFile(fname.c_str(),std::ofstream::app);
+
+	// Check that stream is ready for use
+	if(!outFile.good())
+	{
+		G4cerr << G4endl << "ERROR:  Could not write material temperatures to file. " << G4endl
+			   << "Improper file name: " << fname << G4endl
+			   << "Continuing program without material temperature data output" << G4endl;
+
+		return;
+	}
+
+    outFile.fill(' ');
+    G4int matNum = 0;
+
+    // Print the run number
+    outFile << std::setw(5) << runNumber << " ";
+
+    // Print the temperature of all the material one after the other
+    for(std::map<G4String,G4Material*>::iterator it = matMap.begin(); it != matMap.end(); it++)
+	{
+	    if(matNum < G4int(charPosition->size()))
+	    {
+	        outFile << std::resetiosflags(std::ios_base::floatfield) << std::right
+                << std::setprecision(5)
+                << std::setw((*charPosition)[matNum]) << (*it).second->GetTemperature() << " ";
+            matNum++;
+	    }
+
+	    // This is in case the length of the matMap changed from when the header was created
+	    else
+	    {
+	       outFile << std::resetiosflags(std::ios_base::floatfield) << std::right
+                << std::setprecision(5)
+                << std::setw(12) << (*it).second->GetTemperature() << " ";
+	    }
+
+	}
+	outFile << G4endl;
+    outFile.close();
+}

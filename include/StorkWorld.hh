@@ -20,6 +20,7 @@ Additionally, it sets the sensisitive detector.
 // Include G4-STORK headers
 #include "StorkParseInput.hh"
 #include "StorkMatPropManager.hh"
+#include "StorkEventAction.hh"
 
 // Include Geant4 headers
 #include "G4VUserDetectorConstruction.hh"
@@ -53,6 +54,9 @@ class StorkWorld : public G4VUserDetectorConstruction
         // Update the world based on a vector of changes
         G4VPhysicalVolume* UpdateWorld(StorkMatPropChangeVector theChanges);
 
+        // Get the material map of the world
+        StorkMaterialMap* GetMaterialMap(void);
+
 		// Get the dimensions of the smallest box enclosing the world
         G4ThreeVector GetWorldBoxDimensions();
 
@@ -61,6 +65,7 @@ class StorkWorld : public G4VUserDetectorConstruction
 
 		// Get the logical volume of the world
         G4LogicalVolume* GetWorldLogicalVolume();
+        G4ThreeVector* GetThermalGrid(void);
 
         // Get major world dimensions
         G4ThreeVector GetWorldDimensions();
@@ -68,6 +73,20 @@ class StorkWorld : public G4VUserDetectorConstruction
         // Add world type
         void AddWorld(G4String name, StorkVWorldConstructor *aNewWorld);
 
+        // World flag returners/modifiers
+        G4bool HasMatChanged();
+        G4bool HasPhysChanged();
+        void SetPhysChanged(G4bool value);
+        void SetMatChanged(G4bool value);
+
+        // Outputs temperatures of all materials to file specified in StorkParseInput
+        void SaveMaterialTemperatures(G4String fname, G4int runNumber);
+        void SaveMaterialTemperatureHeader(G4String fname);
+
+        G4ThreeVector GetFuelDimensions();
+        G4double* GetFuelTemperatures();
+        G4double* GetFuelDensities();
+        G4double* GetFuelRadii();
 
     private:
         // Private member functions

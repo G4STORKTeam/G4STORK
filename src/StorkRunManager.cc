@@ -31,8 +31,11 @@ StorkRunManager::StorkRunManager()
     convergeStop=0;
     seSelect = NULL;
     nConv = 0;
+    heatTransfer = NULL;
+
 }
 
+// Constructor with input file
 StorkRunManager::StorkRunManager(const StorkParseInput* infile)
 :G4RunManager()
 {
@@ -55,6 +58,18 @@ StorkRunManager::StorkRunManager(const StorkParseInput* infile)
     saveFile = infile->GetSourceFile();
 	theMPInterpMan = infile->GetNSInterpolationManager();
 	interpStartCond = infile->GetInterpStartCond();
+
+	// Fission Energy Deposition Flags and files
+	interp = infile->GetInterp();
+    RunThermalModel = infile->GetRunThermalModel();
+	reactorPower = infile->GetReactorPower();
+	saveMatTemp = infile->SaveTemperature();
+	matTempFile = infile->GetTemperatureDataFile();
+
+	if(RunThermalModel)
+    {
+        heatTransfer = new StorkHeatTransfer(infile);
+    }
 
 	// Initialize flags and values
     convergenceLimit = infile->GetConvergenceLimit();
@@ -95,6 +110,10 @@ StorkRunManager::~StorkRunManager()
         delete [] runData[i];
     }
 
+    // Delete Heat Transfer Class
+    if(heatTransfer)
+        delete heatTransfer;
+
     // Delete Shannon entropy array
     if(seSelect) delete [] seSelect;
 
@@ -102,6 +121,7 @@ StorkRunManager::~StorkRunManager()
     if(propValues) delete [] propValues;
 }
 
+// Data Initializer in case no input file was used during construction
 void StorkRunManager::InitializeRunData(const StorkParseInput* infile)
 {
     // Set default values
@@ -112,6 +132,13 @@ void StorkRunManager::InitializeRunData(const StorkParseInput* infile)
     saveFile = infile->GetSourceFile();
 	theMPInterpMan = infile->GetNSInterpolationManager();
 	interpStartCond = infile->GetInterpStartCond();
+
+	// Fission Energy Deposition Flags and files
+	interp = infile->GetInterp();
+    RunThermalModel = infile->GetRunThermalModel();
+	reactorPower = infile->GetReactorPower();
+	saveMatTemp = infile->SaveTemperature();
+	matTempFile = infile->GetTemperatureDataFile();
 
 	// Initialize flags and values
     convergenceLimit = infile->GetConvergenceLimit();
@@ -144,7 +171,8 @@ void StorkRunManager::InitializeRunData(const StorkParseInput* infile)
 
 void StorkRunManager::InitializeRunData(G4double runDur, G4int numberRuns, G4int numSaveInterval, G4String saveFileName, G4bool interpStartCondition,
                                         const StorkInterpManager* theMPInterpManager, G4double convergenceLim, G4int numConvRuns, G4bool saveFissionDataCond,
-                                        G4String fissionDataFile, std::ostream *logOutput)
+                                        G4String fissionDataFile, std::ostream *logOutput, G4bool temperatureTracking,G4double nuclearReactorPower,
+                                        G4bool saveTemperature, G4String temperatureDataFile)
 {
     // Set default values
     runDuration = runDur;
@@ -154,6 +182,12 @@ void StorkRunManager::InitializeRunData(G4double runDur, G4int numberRuns, G4int
     saveFile = saveFileName;
 	theMPInterpMan = theMPInterpManager;
 	interpStartCond = interpStartCondition;
+
+	// Fission Energy Deposition Flags and files
+    RunThermalModel = temperatureTracking;
+	reactorPower = nuclearReactorPower;
+	saveMatTemp = saveTemperature;
+	matTempFile = temperatureDataFile;
 
 	// Initialize flags and values
     convergenceLimit = convergenceLim;
@@ -220,16 +254,27 @@ void StorkRunManager::BeamOn(G4int n_event, const char* macroFile,
                 runStart += runDuration;
                 runEnd += runDuration;
 
+
+                //Run thermal calculation
+                if(RunThermalModel)
+                    heatTransfer->RunThermalCalculation(runAction->GetCurrentFissionSites());
+
                 // Save the source distribution if the given interval of runs
                 // has passed
-                if(saveInterval && !(runIDCounter%saveInterval))
+                if(saveInterval && !(runIDCounter%saveInterval)){
                     SaveSourceDistribution(saveFile);
+                    if(saveFissionData) SaveFissionDistribution(fissionFile);
+
+
+                }
             }
 
             // Save the final source distribution if the save interval is not
             // zero and it has not been just saved
-            if(saveInterval && runIDCounter%saveInterval)
+            if(saveInterval && runIDCounter%saveInterval){
                 SaveSourceDistribution(saveFile);
+                if(saveFissionData) SaveFissionDistribution(fissionFile);
+            }
         }
    }
 }
@@ -240,8 +285,9 @@ void StorkRunManager::BeamOn(G4int n_event, const char* macroFile,
 void StorkRunManager::DoEventLoop(G4int n_event, const char* macroFile,
                                G4int n_select)
 {
-    if(verboseLevel>0)
-    { timer->Start(); }
+    timer->Start();
+    //if(verboseLevel>0)
+    //{ timer->Start(); }
 
     G4String msg;
     if(macroFile!=0)
@@ -316,11 +362,39 @@ void StorkRunManager::RunInitialization()
 			timeOffset = runStart;
 			runInterpStarted = runIDCounter;
 			interpStarted = true;
+
+            /*
+			// Since interpolation just started create header and record
+			// pre interpolation temperatures
+			if(saveMatTemp)
+			{
+			    worldPointerCD->SaveMaterialTemperatureHeader(matTempFile);
+                worldPointerCD->SaveMaterialTemperatures(matTempFile, G4int(runStart/runDuration));
+			}
+             */
 		}
 
-		// Update the world properties
-		UpdateWorld(theMPInterpMan->GetStorkMatPropChanges(runStart -
-                                                           timeOffset));
+        /*
+		// Update the material temperature based on fission sites if
+        // RunThermalModel is on
+        if(RunThermalModel)
+        {
+            //MapFissionSitesToMaterial();
+            heatTransfer->RunThermalCalculation(runAction->GetCurrentFissionSites());
+
+
+            /*
+            // Save the new temperatures only if asked to do so
+            if(saveMatTemp)
+            {
+                worldPointerCD->SaveMaterialTemperatures(matTempFile, G4int(runEnd/runDuration));
+            }
+        }*/
+
+
+        // Update the world properties
+        UpdateWorld(theMPInterpMan->GetStorkMatPropChanges(runStart -timeOffset));
+
 	}
 
     // For each variable property, set it in the run action
@@ -351,12 +425,14 @@ void StorkRunManager::RunInitialization()
 // Rebuild the world with new properties.
 void StorkRunManager::UpdateWorld(StorkMatPropChangeVector theChanges)
 {
-	// Create new world volume
-	DefineWorldVolume(worldPointerCD->UpdateWorld(theChanges));
-
-	// Inform kernel of change
-	if(theMPInterpMan->IsMatModify())
+    // Create new world volume
+    DefineWorldVolume(worldPointerCD->UpdateWorld(theChanges));
+    if(worldPointerCD->HasPhysChanged())
+    {
+        // Inform kernel of change
         PhysicsHasBeenModified();
+    }
+
 }
 
 
@@ -376,6 +452,21 @@ void StorkRunManager::SaveSourceDistribution(G4String fname)
               << runIDCounter << ".txt";
 
     runAction->SaveSources(nameCount.str(), runIDCounter, runEnd-runDuration);
+}
+
+void StorkRunManager::SaveFissionDistribution(G4String name)
+{
+    // Find the end of the output file name minus ".txt"
+    std::stringstream nameCount;
+    G4int pos = name.find(".txt");
+
+    // Set the fill character to '0'
+    nameCount.fill('0');
+
+    nameCount << name.substr(0,pos) << "-" << std::setw(numRunOutputWidth)
+              << runIDCounter << ".txt";
+
+    runAction->WriteFissionData(nameCount.str(), runIDCounter);
 }
 
 
@@ -411,7 +502,6 @@ G4bool StorkRunManager::UpdateCheckSourceConvergence()
 	// Local variables
 	G4int i=0;
 	G4double seMean=0.;
-
 
 	// Clear the seSelect array if full
 	if(seSelect) delete [] seSelect;
@@ -507,9 +597,9 @@ void StorkRunManager::OutputResults()
 		*output << "# Source converged after " << nConv << " runs." << G4endl;
 	}
 
-	// Write fission data to file if necessary
+	/*// Write fission data to file if necessary
 	if(saveFissionData)
-		runAction->WriteFissionData(fissionFile, avgRunData[4],nConv);
+		runAction->WriteFissionData(fissionFile, nConv);*/
 }
 
 
@@ -564,5 +654,9 @@ void StorkRunManager::InitializeVar(G4int n_event)
     runAction = dynamic_cast<StorkRunAction*>(userRunAction);
     eventAction = dynamic_cast<StorkEventAction*>(userEventAction);
     worldPointerCD = dynamic_cast<StorkWorld*>(userDetector);
+
+    if(RunThermalModel)
+        heatTransfer->SetWorld(worldPointerCD);
+
     numberOfEventToBeProcessed = n_event;
 }

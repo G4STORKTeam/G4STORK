@@ -23,17 +23,43 @@ StorkRunAction::StorkRunAction(StorkPrimaryGeneratorAction *genPtr,
     infile = fIn;
     runDuration = fIn->GetRunDuration();
     kCalcType = fIn->GetKCalcType();
+    RunThermalModel = fIn->GetRunThermalModel();
     worldSize = G4ThreeVector(0.,0.,0.);
     survivorsBuffer = NULL;
     delayedBuffer = NULL;
     rndmInitializer = fIn->GetInitialSourceFile();
     maxShannonEntropy = 1.0;
-    theMPInterpMan = infile->GetNSInterpolationManager();
+    theMPInterpMan = fIn->GetNSInterpolationManager();
     nameLen = new G4int[theMPInterpMan->GetNumberOfInterpVectors()];
     variableProps = NULL;
     saveFissionData = false;
     numDelayProd = 0;
     numFDCollectionRuns = 0;
+    numRuns = fIn->GetNumberOfRuns();
+    reactorPower = fIn->GetReactorPower();
+    updatePrecursors = fIn->GetPrecursorDelayed();
+    neutronFluxCalc = fIn->GetNeutronFluxCalc();
+    renormalize = fIn->GetRenormalizeAfterRun();
+    saveInterval = fIn->SaveSourcesInterval();
+    primariesPerRun = fIn->GetNumberOfEvents()*fIn->GetNumberOfPrimariesPerEvent();
+    saveRundata = false;
+
+    fn_index = save_index = 0;
+    Origin = fIn->GetOrigin();
+
+    //Set up the neutron flux calcution
+    if(neutronFluxCalc){
+        fluxCalcShape = fIn->GetFluxCalcShape();
+
+        fluxCalcRegion[0] = (fIn->GetFluxRegion())[0];
+        fluxCalcRegion[1] = (fIn->GetFluxRegion())[1];
+        fluxCalcRegion[2] = (fIn->GetFluxRegion())[2];
+        fluxCalcRegion[3] = (fIn->GetFluxRegion())[3];
+
+        EnergyRange[0]=(fIn->GetEnergyRange())[0];
+        EnergyRange[1]=(fIn->GetEnergyRange())[1];
+    }
+
 
 	// Set the shannon entropy mesh
     for(G4int i=0; i<3; i++)
@@ -112,6 +138,7 @@ StorkRunAction::~StorkRunAction()
 // output data.
 void StorkRunAction::BeginOfRunAction(const G4Run *aRun)
 {
+    G4int underline;
     // Start the timer
     runTimer.Start();
 
@@ -164,8 +191,10 @@ void StorkRunAction::BeginOfRunAction(const G4Run *aRun)
     numNProduced = 0;
     numNLost = 0;
 
+    runID = aRun->GetRunID();
 
-    if(aRun->GetRunID() == 0)
+
+    if(runID == 0)
     {
         // Set up the appropriate unit for output
         tUnit = 1.*ns;
@@ -206,8 +235,14 @@ void StorkRunAction::BeginOfRunAction(const G4Run *aRun)
                 << "FS Shannon H "
                 << " S Shannon H "
                 << "Duration (s) ";
+        if(neutronFluxCalc){
+            *output << "Flux (n cm^-2 s^-1) ";
+            underline = 150;
 
-        G4int underline = 129;
+        }
+		else{
+        	underline = 129;
+		}
         G4String interpName;
 
 		// Output the material properties that are being interpolated
@@ -230,6 +265,14 @@ void StorkRunAction::BeginOfRunAction(const G4Run *aRun)
         *output << "-" << G4endl;
 
     }
+
+    //Set the saving index for fission site/energies.
+    if(saveInterval && !(runID%saveInterval)){
+        save_index = fnSites.size();
+        saveRundata = true;
+    }
+    else
+        saveRundata = false;
 
 #ifdef G4TIMERA
     runCalcTimer.Stop();
@@ -266,8 +309,12 @@ void StorkRunAction::EndOfRunAction(const G4Run *aRun)
     shannonEntropy[0] = CalcShannonEntropy(fSites,totalFS);
     shannonEntropy[1] = CalcShannonEntropy(sSites,G4int(survivors.size()));
 
-    // Find the run multiplication factor
-    krun = G4double(survivors.size()) / G4double(numPrimaries);
+    //Find neutron flux of specified material.
+    if(neutronFluxCalc)
+        neutronFlux = CalcNeutronFlux();
+
+    //Find krun
+    krun = G4double(survivors.size()/G4double(primariesPerRun));
 
     // Find the average neutron lifetime
     avgLifetime /= G4double(numNLost);
@@ -300,6 +347,15 @@ void StorkRunAction::EndOfRunAction(const G4Run *aRun)
         keff=0.;
     }
 
+    //Reset the current fission sites.
+    ResetCurrentFissionData();
+
+    //Add precursors if flag is set.
+    if(updatePrecursors)
+    {
+        genAction->AddPrecursors(GetCurrentFissionSites(),GetCurrentFissionEnergy());
+    }
+
     // Find the run time
     runTimer.Stop();
 
@@ -322,6 +378,10 @@ void StorkRunAction::EndOfRunAction(const G4Run *aRun)
             << shannonEntropy[1] << " "
             << std::resetiosflags(std::ios_base::floatfield)
             << std::setw(12) << runTimer.GetRealElapsed();
+    if(neutronFluxCalc){
+        *output << std::setw(12) << std::setprecision(4)
+                << neutronFlux;
+    }
 
 	// Output the current value of the interpolated material properties
     for(G4int i=0; i<theMPInterpMan->GetNumberOfInterpVectors(); i++)
@@ -407,7 +467,7 @@ void StorkRunAction::TallyEvent(const StorkEventData *eventData)
     survivorsBuffer[eventData->eventNum] = *(eventData->survivors);
     delayedBuffer[eventData->eventNum] = *(eventData->delayed);
 
-    // Add the lifetime to the total (avgerage later)
+    // Add the lifetime to the total (average later)
     avgLifetime += eventData->totalLifetime;
 
     // Add the neutron production and loss
@@ -433,12 +493,13 @@ void StorkRunAction::TallyEvent(const StorkEventData *eventData)
     }
 
     // Save fission data if necessary
-    if(saveFissionData)
+    if(saveFissionData || updatePrecursors)
     {
-    	numDelayProd += eventData->numDProd;
-    	fnEnergies.insert(fnEnergies.begin(),eventData->fnEnergy->begin(),
+    	if(saveFissionData) numDelayProd += eventData->numDProd;
+
+    	fnEnergies.insert(fnEnergies.end(),eventData->fnEnergy->begin(),
 						  eventData->fnEnergy->end());
-		fnSites.insert(fnSites.begin(),eventData->fSites->begin(),
+        fnSites.insert(fnSites.end(),eventData->fSites->begin(),
 					   eventData->fSites->end());
     }
 
@@ -624,7 +685,7 @@ void StorkRunAction::SaveSources(G4String fname, G4int numRuns, G4double runEnd)
 
 // WriteFissionData()
 // Write fission sites and energies to file
-G4bool StorkRunAction::WriteFissionData(G4String fname, G4double avgkrun,
+G4bool StorkRunAction::WriteFissionData(G4String fname,
 									 G4int start)
 {
 	// Declare and open file stream
@@ -674,22 +735,40 @@ G4bool StorkRunAction::WriteFissionData(G4String fname, G4double avgkrun,
     outFile << "#" << G4endl << "# Fission data collection started at run "
             << start << G4endl << "#" << G4endl;
 
-    // Write number of fission data points and the average krun value
+    //Get the precursor numbers
+    std::vector<G4int> precursors = genAction->GetPrecursors();
+
+    //Get the collection interval.
+    G4int collectionInt = numRuns-start;
+    if(saveInterval)
+        collectionInt = saveInterval;
+
+    //Write the precursor data
+    outFile << "# Precursor Groups: " << G4endl;
+
+    for(G4int i = 0; i<6; i++){
+        outFile << std::setw(12) << precursors[i] << G4endl;
+    }
+    // Write number of fission data points, the run duration, the current run and primaries simulated per run.
     G4int numEntries = G4int(fnEnergies.size());
-    outFile << numEntries << G4endl << avgkrun << G4endl
-            << G4double(numDelayProd) / G4double(numFDCollectionRuns) << G4endl;
+    outFile << numEntries << G4endl << runDuration << G4endl << collectionInt << G4endl
+            << primariesPerRun << G4endl;
 
     outFile.fill(' ');
-
-    for(G4int i=0; i<numEntries; i++)
+    for(G4int i = save_index; i<numEntries; i++)
     {
+
         outFile << std::resetiosflags(std::ios_base::floatfield) << std::right
                 << std::setprecision(5) << std::scientific
                 << std::setw(12) << fnSites[i][0] << " "
                 << std::setw(12) << fnSites[i][1] << " "
                 << std::setw(12) << fnSites[i][2] << " "
-			    << std::setw(12) << fnEnergies[i] << G4endl;
+                << std::setw(12) << fnEnergies[i] << G4endl;
     }
+
+
+    outFile.close();
+
 
     return true;
 }
@@ -710,4 +789,125 @@ G4bool StorkRunAction::DirectoryExists( const char* pzPath )
     }
 
     return bExists;
+}
+
+G4double StorkRunAction::CalcNeutronFlux(){
+
+    //Initialize known variables;
+    G4int NumEntries = survivors.size();
+    G4double Mass = G4Neutron::Neutron()->GetPDGMass();
+
+    //In units of c (speed of light)
+    G4double lowVelocity_cutoff = sqrt(2*EnergyRange[0]/Mass);
+    G4double highVelocity_cutoff = sqrt(2*EnergyRange[1]/Mass);
+
+    //Initialize variables for neutron flux calculation.
+    G4double volume;
+    G4double speed;
+    G4double total = 0.0;
+    G4int tally;
+    G4int CalcType;
+    G4double x, y, z;
+    G4bool inRegion;
+    G4double innerR, outerR, minX, maxX, minY, maxY, minZ, maxZ;
+
+    //Get region of interest and volume. This is relative to current set origin (default = 0,0,0).
+    if(fluxCalcShape == "Cylinder"){
+        innerR = fluxCalcRegion[0];
+        outerR = fluxCalcRegion[1];
+        minZ = fluxCalcRegion[2];
+        maxZ = fluxCalcRegion[3];
+
+        volume = CLHEP::pi*(maxZ-minZ)*( pow(outerR,2) - pow(innerR,2) );
+        CalcType = 0;
+
+
+    }
+    else if(fluxCalcShape == "Cube"){
+        minX = Origin[0]-fluxCalcRegion[0]/2;
+        maxX = Origin[0]+fluxCalcRegion[0]/2;
+        minY = Origin[1]-fluxCalcRegion[1]/2;
+        maxY = Origin[1]+fluxCalcRegion[1]/2;
+        minZ = Origin[2]-fluxCalcRegion[2]/2;
+        maxZ = Origin[2]+fluxCalcRegion[2]/2;
+
+        volume = fluxCalcRegion[0]*fluxCalcRegion[1]*fluxCalcRegion[2];
+        CalcType = 1;
+    }
+    else if(fluxCalcShape == "Sphere"){
+        innerR = fluxCalcRegion[0];
+        outerR = fluxCalcRegion[1];
+
+        volume = (4/3)*CLHEP::pi*(pow(outerR,3) - pow(innerR,3) );
+        CalcType = 2;
+    }
+    else{
+        G4cerr << "*** ERROR: Shape not properly specified for flux calculation." << G4endl;
+        return 0;
+    }
+
+
+
+
+
+    //Calculate the simulated power in W.
+    G4double simulatedPower = numSites*198/(6.24150934*pow(10,12)*runDuration*pow(10,-9));
+
+    //Run through all survivors, check if they are in the material of interest and calculate fluence.
+    for(G4int i=0; i<NumEntries; i++){
+
+            //Reorient positions according to set origin.
+        x = survivors[i].third[0]-Origin[0];
+        y = survivors[i].third[1]-Origin[1];
+        z = survivors[i].third[2]-Origin[2];
+
+        inRegion = false;
+
+        if(CalcType==0){
+            G4double radius = pow( (pow(x,2) + pow(y,2)) ,0.5 );
+            if( radius>innerR && radius<outerR && z>minZ && z<maxZ)
+                inRegion = true;
+        }
+        else if(CalcType==1){
+            if(x>minX && x<maxX && y>minY && y<maxY && z>minZ && z<maxZ)
+                inRegion = true;
+        }
+        else if(CalcType==2){
+            G4double radius = pow( (pow(x,2) + pow(y,2) + pow(z,2) ) ,0.5);
+            if( radius>innerR && radius<outerR)
+                inRegion = true;
+        }
+
+        //Get the speed from the momentum of the neutron.
+        speed = sqrt(survivors[i].fourth[0]*survivors[i].fourth[0] + survivors[i].fourth[1]*survivors[i].fourth[1] +
+            survivors[i].fourth[2]*survivors[i].fourth[2])/Mass;
+
+        //Collect the sum if within the specified energy range and in the correct region.
+        if( speed > lowVelocity_cutoff && speed < highVelocity_cutoff && inRegion){
+            total += speed;
+            tally++;
+        }
+    }
+
+    G4double simulatedFlux = 299.792458*total/(volume);
+    G4double currentPower = reactorPower;
+
+    //Calculate actual flux, convert to cm^(-2)s^(-1) from mm^(-2)ns^(-1)
+    G4double actualFlux = pow(10,11)*simulatedFlux*currentPower/simulatedPower;
+
+    return actualFlux;
+
+}
+
+void StorkRunAction::ResetCurrentFissionData(){
+
+    CurrentfnSites.clear();
+    CurrentfnEnergy.clear();
+
+    CurrentfnSites.insert(CurrentfnSites.end(),fnSites.begin()+fn_index,fnSites.end());
+    CurrentfnEnergy.insert(CurrentfnEnergy.end(),fnEnergies.begin()+fn_index,fnEnergies.end());
+
+    fn_index = fnSites.size();
+
+    return;
 }

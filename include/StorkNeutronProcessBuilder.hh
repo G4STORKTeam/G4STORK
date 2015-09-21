@@ -27,17 +27,14 @@ processes and models (fission, capture, elastic, inelastic, and step limiters).
 
 // Include Geant4 headers
 #include "G4VNeutronBuilder.hh"
-//#include "G4LElastic.hh"
-#include "G4DiffuseElastic.hh"
-//#include "G4ChipsElasticModel.hh"
 //#include "G4HadronElastic.hh"
 #include "G4LFission.hh"
 #include "G4NeutronRadCapture.hh"
-//#include "QGSP_BERT_HP.hh"
 #include "G4ParticleDefinition.hh"
 #include "G4ParticleTable.hh"
 #include "G4ProcessManager.hh"
 #include "globals.hh"
+#include "G4DiffuseElastic.hh"
 
 #include "StorkMaterial.hh"
 #include "G4LogicalVolumeStore.hh"
@@ -75,10 +72,7 @@ class StorkNeutronProcessBuilder
         StorkUserBCStepLimiter * TheUserBoundaryCond;
         StorkZeroBCStepLimiter * TheZeroBoundaryCond;
 
-        G4DiffuseElastic *theHighElasticModel;
-        //G4ChipsElasticModel *theHighElasticModel;
         //G4HadronElastic *theHighElasticModel;
-        G4LFission *theHighFissionModel;
         G4NeutronRadCapture *theHighCaptureModel;
 
         std::vector<G4VNeutronBuilder *> theModelCollections;

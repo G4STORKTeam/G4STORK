@@ -142,14 +142,17 @@ class StorkParseInput
 		G4String GetInitialSourceFile() const { return initialSourceFile; }
 		void SetInitialSourceFile(G4String SourceFile);
 
-		G4bool LoadInitialDelayed() const { return loadDelayed; }
-		G4String GetInitialDelayedFile() const { return initialDelayedFile; }
+		G4bool GetPrecursorDelayed() const { return precursorDelayed; }
+		G4String GetInitialDelayedFile() const { return initialfissionDataFile; }
 		void SetInitialDelayedFile(G4String DelayedFile);
 
 		G4bool SaveFissionData() const { return saveFissionData; }
 		G4String GetFissionDataFile() const { return fissionDataFile; }
 		void SetFissionDataFile(G4String fissionFile);
 
+        G4bool SaveTemperature() const { return saveTempData; }
+        G4String GetTemperatureDataFile() const { return tempFileName; }
+        void SetTemperatureDataFile(G4String temperatureFile);
 
 		// Interpolation and world property changes
 		G4bool GetInterpStartCond() const {return interpStart;}
@@ -183,8 +186,41 @@ class StorkParseInput
 		G4bool GetUniformDistribution() const {return uniformDis;}
 		void SetUniformDistribution(G4bool uniformSourceDis) { uniformDis=uniformSourceDis; }
 
+        G4bool GetRunThermalModel() const { return RunThermalModel; }
+        void SetRunThermalModel(G4bool tracking) {RunThermalModel=tracking;}
+
 		G4bool GetUniformDistWithDim() const {return uniformDisWithDim;}
 		void SetUniformDistWithDim(G4bool uniDisWithDim) { uniformDisWithDim=uniDisWithDim; }
+
+        G4bool GetInterp() const { return interp; }
+        void SetInterp(G4bool yesno) {interp=yesno;}
+
+        G4bool GetNeutronFluxCalc() const { return neutronFluxCalc;}
+        void SetNeutronFluxCalc(G4bool neutronFlux) { neutronFluxCalc = neutronFlux;}
+
+        G4bool GetSourceFileDelayed() const {return sourcefileDelayed;}
+
+        const G4double* GetEnergyRange() const { return energyRange;}
+
+        const G4double* GetFluxRegion() const {return fluxCalcRegion;}
+
+        const G4String GetFluxCalcShape() const {return fluxCalcShape;}
+
+        G4ThreeVector GetOrigin() const {return Origin;}
+        void SetOrigin(G4ThreeVector orig) { Origin = orig;}
+
+        // Reactor Power Output
+        G4double GetReactorPower() const { return reactorPower; }
+        void SetReactorPower(G4double power) {reactorPower = power;}
+
+        //Heat Transfer
+        G4double GetHeatTransferCoefficient() const {return htc;}
+
+        G4double GetAmbientTemperature() const {return T_infty;}
+
+        G4double GetBaselineFissionRate() const {return baselineFissionRate;}
+
+        G4double GetFissionToEnergyCoefficient() const {return FissionToEnergy;}
 
 
 		// Logging output stream
@@ -212,6 +248,12 @@ class StorkParseInput
 		// GEANT4 version string
 		G4String g4Version;
 
+        // Flag to keep track of fission energy deposition
+        G4bool RunThermalModel;
+        G4bool interp;
+        // Reactor Power
+        G4double reactorPower;
+
 		// World choice and seed for random number generator
 		InitialPropertyMap theWorldProps;
 
@@ -234,6 +276,13 @@ class StorkParseInput
 		std::vector<G4int> *reflectBC;
         std::vector<G4int> *periodicBC;
 		G4bool normalize;
+        G4bool neutronFluxCalc;
+
+        //Delayed neutron options.
+        G4int theDelayedOption;
+        G4bool instantDelayed;
+        G4bool sourcefileDelayed;
+        G4bool precursorDelayed;
 
 		// Number of runs, events and primaries per event
 		G4int numberOfRuns;
@@ -241,8 +290,29 @@ class StorkParseInput
 		G4int numberOfPrimariesPerEvent;
 		G4double runDuration;
 
+        //Energy range and volume name for neutron flux calculation.
+        G4double energyRange[2];
+        G4String fluxCalcShape;
+        G4double fluxCalcRegion[4];
+
+        //Origin
+        G4ThreeVector Origin;
+
 		// Initial neutron energy (default source) in MeV
 		G4double initEnergy;
+
+		//Heat Transfer Coefficient
+		G4double htc;
+
+		//Ambient Temperature.
+		G4double T_infty;
+
+        //Baseline flux
+        G4double baselineFissionRate;
+
+        //Conversion coefficient from flux to power.
+        G4double FissionToEnergy;
+
 		// Initial neutron start position
 		G4ThreeVector initialSourcePos;
 
@@ -261,8 +331,10 @@ class StorkParseInput
 		G4String initialSourceFile;
 		G4bool saveFissionData;			// Save fission data to file
 		G4String fissionDataFile;
-		G4bool loadDelayed;				// Load initial delayed source from file
-		G4String initialDelayedFile;
+		G4String initialfissionDataFile;    //Initial loaded fission data file
+        G4bool saveTempData;
+        G4String tempFileName;
+        G4bool initialFissionData;
 
 
         // Vector of data profile identifiers and file names

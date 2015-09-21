@@ -29,6 +29,8 @@ calculated and printed to the output stream (screen or file).
 #include "StorkParseInput.hh"
 #include "StorkMatPropManager.hh"
 #include "StorkInterpManager.hh"
+#include "StorkProcessManager.hh"
+#include "StorkHadronFissionProcess.hh"
 
 // Include Geant4 headers
 #include "G4Timer.hh"
@@ -37,6 +39,8 @@ calculated and printed to the output stream (screen or file).
 #include "G4ThreeVector.hh"
 #include "G4DataVector.hh"
 #include "G4UserRunAction.hh"
+#include "G4Neutron.hh"
+#include "G4TransportationManager.hh"
 
 // Include other headers
 #include <typeinfo>
@@ -67,6 +71,7 @@ class StorkRunAction : public G4UserRunAction
         void TallyEvent(const StorkEventData *eventData);
         void CollateNeutronSources();
 
+
         // Update the source distributions of StorkPrimaryGeneratorAction
         void UpdateSourceDistributions();
         // Update the value of the variable material-properties
@@ -75,7 +80,7 @@ class StorkRunAction : public G4UserRunAction
         // Write the survivors and delayed neutrons of this run to a file
         void SaveSources(G4String fname, G4int numRuns, G4double runEnd);
         // Save fission data to a file
-        G4bool WriteFissionData(G4String fname, G4double avgkrun, G4int start);
+        G4bool WriteFissionData(G4String fname,G4int start);
 
         G4bool DirectoryExists( const char* pzPath );
 
@@ -89,6 +94,8 @@ class StorkRunAction : public G4UserRunAction
         // Get functions
         G4double* GetRunResults() { return runResults; };
         G4double GetShannonEntropy() { return shannonEntropy[0]; };
+        MSHSiteVector GetCurrentFissionSites() { return CurrentfnSites; }
+        DblVector GetCurrentFissionEnergy() { return CurrentfnEnergy; }
 
 
     private:
@@ -98,6 +105,12 @@ class StorkRunAction : public G4UserRunAction
         G4double CalcShannonEntropy(G4int ***sites, G4int total);
         // Calculate the meshing index of a 3D position
         Index3D SpatialIndex(G4ThreeVector position) const;
+        //Calculate the neutron flux of the core
+        G4double CalcNeutronFlux();
+        // Erase function
+        // This method is needed for the temperature changing since we only
+        // want the temperature change to depend on fisson that occured this run
+        void ResetCurrentFissionData();
 
     private:
         // Private member variables
@@ -114,10 +127,17 @@ class StorkRunAction : public G4UserRunAction
         G4int numDelayProd;         // Number of delayed neutrons produced
         G4int numNLost;             // Number of neutrons lost
         G4double runResults[8];     // Run results passed to run manager
+        G4int numSites;             // Number of fission sites at the end of each run.
+        G4int prevNumSites;         // Number of fission sites of the previous run.
+        G4int runID;                //Current run ID.
+        G4bool renormalize;         //Boolean flag if renormalization is used.
+        G4int prevNumSurvivors;     //Previous number of survivors
+        G4int saveInterval;         //Source and fission site/energy save interval.
 
         G4double tUnit;             // Time unit for output
         G4String rndmInitializer;   // File containing random seed (optional)
         G4bool saveFissionData;     // Flag for saving fission data
+        G4bool RunThermalModel; // Flag to know if fission energy deposition is being kept track of
         G4int numFDCollectionRuns;  // Number of runs of collected fission data
 
         G4double shannonEntropy[2];     // Shannon entropy (fission sites,
@@ -126,6 +146,20 @@ class StorkRunAction : public G4UserRunAction
         G4int numSpatialSteps[3];       // Number of RS spatial steps in each
                                         // dimension (3D)
         G4ThreeVector worldSize;        // Size of world
+
+        G4double neutronFlux;           //Neutron flux.
+        G4double reactorPower;          //Reactor power.
+        G4bool updatePrecursors;        //Flag to update precursors if a initial delayed file was provided.
+
+        G4bool neutronFluxCalc;         //Flag to calculate neutron flux.
+
+        G4double EnergyRange[2];        //Energy range of the neutron flux calc.
+        G4int fn_index;                 //Current index for fission site /energy.
+        G4int save_index;             //Save index for fission site/energy.
+        G4ThreeVector Origin;           //Current set origin.
+        G4double fluxCalcRegion[4];     //Flux region.
+        G4String fluxCalcShape;         //Shape of the flux integration region.
+
 
         // Output stream (file or stdout)
         std::ostream *output;
@@ -139,6 +173,10 @@ class StorkRunAction : public G4UserRunAction
         G4int ***sSites;
         DblVector fnEnergies;
         MSHSiteVector fnSites;
+        MSHSiteVector CurrentfnSites;
+        DblVector CurrentfnEnergy;
+        G4int numRuns;
+        G4int primariesPerRun;
 
         // Pointers to other classes
         StorkPrimaryGeneratorAction *genAction;
@@ -152,6 +190,10 @@ class StorkRunAction : public G4UserRunAction
         G4int* nameLen;
         const StorkInterpManager *theMPInterpMan;
         G4double* variableProps;
+    
+        //Flag to save the run data (fission data and survivor data)
+        G4bool saveRundata;
+    
 
 #ifdef G4TIMERA
         // Performance timer

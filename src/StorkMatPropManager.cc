@@ -24,6 +24,9 @@ StorkMatPropManager::MAT_NAMES[MAX_MATS] = {"all","fuel", "coolant",
 const G4String
 StorkMatPropManager::PROP_NAMES[MAX_PROPS] = {"temperature","density",
 												  "dimension","concentration", "position", "rotation"};
+G4String
+StorkMatPropManager::thePropType[MAX_PROPS] = {"material", "material",
+                                                    "geometry", "material", "geometry", "geometry"};
 G4double
 StorkMatPropManager::thePropUnits[MAX_PROPS] = {kelvin, g/cm3, cm, perCent, cm, rad};
 
@@ -100,6 +103,12 @@ PropEnum StorkMatPropManager::ParsePropEnum(G4String key) const
 	return MAX_PROPS;
 }
 
+// GetPropType()
+// Tells wether the change been made is a change to the material or to the geometry
+G4String StorkMatPropManager::GetPropType(PropEnum aProp) const
+{
+    return thePropType[aProp];
+}
 
 // GetUnits()
 // Get the units of a given property.

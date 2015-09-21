@@ -12,7 +12,7 @@ UnionBinaryTree::~UnionBinaryTree(void)
 }
 
 // creates Union heirarchy
-//Note: the order determins the rate of change of the priority with respect to distance along the specified axis and
+//Note: the order determines the rate of change of the priority with respect to distance along the specified axis and
 //the direction of increase and decrease from the centre outwards (a positive order mean decreasing priority away from the centre)
 //
 solidPos UnionBinaryTree::GetUnionSolid(G4String name, G4int equalP, ShapeEnum regShape, G4double unitRegionDim[], G4double regionDim[], G4double offset, coorEnum axis, G4double order, G4double inPriority[], G4bool delRepeatedEntries)
@@ -154,7 +154,8 @@ solidPos UnionBinaryTree::GetUnionSolid(G4String name, G4int equalP, ShapeEnum r
                 check=false;
             }
         }
-        for(G4int i=0; i<G4int((Temp1.size())/2); i++)
+
+        for(G4int i=0; i< G4int(Temp1.size()/2) ; i++)
         {
             unionName.str("");
             unionName << n;
@@ -570,7 +571,7 @@ intVec UnionBinaryTree::createRegions(solidList* Temp1, ShapeEnum RegShape, G4do
             }
             Temp3.clear();
         }
-        for(G4int d=0; d<int(volCopy.size()); d++)
+        for(G4int d=0; d< G4int(volCopy.size()); d++)
         {
             if(volCopy[d]==0)
             {

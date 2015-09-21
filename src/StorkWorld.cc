@@ -137,6 +137,41 @@ G4VPhysicalVolume* StorkWorld::UpdateWorld(StorkMatPropChangeVector theChanges)
 	return theWorld->UpdateWorld(theChanges);
 }
 
+// HasMatChanged()
+// Returns the value of matChanged in the world class
+G4bool StorkWorld::HasMatChanged()
+{
+    return theWorld->HasMatChanged();
+}
+
+// HasPhysChanged()
+// Returns the calue of physChanged in the world calss
+G4bool StorkWorld::HasPhysChanged()
+{
+    return theWorld->HasPhysChanged();
+}
+
+// SetPhysChanged()
+// Sets the value of physChanged in the world class
+void StorkWorld::SetPhysChanged(G4bool value)
+{
+    theWorld->SetPhysChanged(value);
+}
+
+
+// EvaluateHeatCapacities()
+// Output material temperature header to specified file in Input file
+void StorkWorld::SaveMaterialTemperatureHeader(G4String fname)
+{
+    theWorld->SaveMaterialTemperatureHeader(fname);
+}
+
+// EvaluateHeatCapacities()
+// Output materials temperature to specified file in Input file
+void StorkWorld::SaveMaterialTemperatures(G4String fname, G4int runNumber)
+{
+    theWorld->SaveMaterialTemperatures(fname, runNumber);
+}
 
 // GetWorldBoxDimensions()
 // Get dimensions of smallest box enclosing the simulation world
@@ -169,6 +204,12 @@ G4LogicalVolume* StorkWorld::GetWorldLogicalVolume()
 	return theWorld->GetWorldLogical();
 }
 
+// GetMaterialMap()
+// Get the world material map
+StorkMaterialMap* StorkWorld::GetMaterialMap(void)
+{
+    return theWorld->GetMaterialMap();
+}
 
 // DumpGeometricalTree()
 // Public - prints entire geometry
@@ -206,4 +247,29 @@ void StorkWorld::DumpGeometricalTree(G4VPhysicalVolume *vol,
     }
 
     G4cout << G4endl;
+}
+
+void StorkWorld::SetMatChanged(G4bool value)
+{
+    theWorld->SetMatChanged(value);
+}
+
+G4ThreeVector StorkWorld::GetFuelDimensions()
+{
+    return theWorld->GetFuelDimensions();
+}
+
+G4double* StorkWorld::GetFuelTemperatures()
+{
+    return theWorld->GetFuelTemperatures();
+}
+
+G4double* StorkWorld::GetFuelDensities()
+{
+    return theWorld->GetFuelDensities();
+}
+
+G4double* StorkWorld::GetFuelRadii()
+{
+    return theWorld->GetFuelRadii();
 }

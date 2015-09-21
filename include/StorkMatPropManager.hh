@@ -56,6 +56,7 @@ class StorkMatPropManager
 		// Get property units
 		G4double GetUnits(PropEnum aProp) const;
 		G4String GetUnitsName(PropEnum aProp) const;
+		G4String GetPropType(PropEnum aProp) const;
 
 		// Set the units of a property
 		void SetUnits(PropEnum aProp, G4double value, G4String name);
@@ -78,6 +79,7 @@ class StorkMatPropManager
 		static const G4String MAT_NAMES[MAX_MATS];
 		static const G4String PROP_NAMES[MAX_PROPS];
 
+        static G4String thePropType[MAX_PROPS];
 		static G4double thePropUnits[MAX_PROPS];
 		static G4String theUnitNames[MAX_PROPS];
 };

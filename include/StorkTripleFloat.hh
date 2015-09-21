@@ -26,11 +26,16 @@ class StorkTripleFloat
 		~StorkTripleFloat() {}
 
         G4double& operator[] (G4int i) { return data[i]; };
+        G4ThreeVector GetData() {return data;}
 
 	public:
         // Public member variables
 
 		G4ThreeVector data;	//MSH: primitive
+    
+        void set(const G4ThreeVector coords) { data = coords;}
+    
+    
 };
 //MSH_END
 
