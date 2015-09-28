@@ -72,7 +72,10 @@ class StorkNeutronProcessBuilder
         StorkUserBCStepLimiter * TheUserBoundaryCond;
         StorkZeroBCStepLimiter * TheZeroBoundaryCond;
 
+        G4DiffuseElastic *theHighElasticModel;
+        //G4ChipsElasticModel *theHighElasticModel;
         //G4HadronElastic *theHighElasticModel;
+        G4LFission *theHighFissionModel;
         G4NeutronRadCapture *theHighCaptureModel;
 
         std::vector<G4VNeutronBuilder *> theModelCollections;

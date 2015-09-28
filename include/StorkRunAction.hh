@@ -78,7 +78,7 @@ class StorkRunAction : public G4UserRunAction
         void UpdateWorldProperties(G4double *values);
 
         // Write the survivors and delayed neutrons of this run to a file
-        void SaveSources(G4String fname, G4int numRuns, G4double runEnd);
+        void SaveSources(G4String fname, G4int runID, G4double runEnd);
         // Save fission data to a file
         G4bool WriteFissionData(G4String fname,G4int start);
 
@@ -190,10 +190,10 @@ class StorkRunAction : public G4UserRunAction
         G4int* nameLen;
         const StorkInterpManager *theMPInterpMan;
         G4double* variableProps;
-    
+
         //Flag to save the run data (fission data and survivor data)
         G4bool saveRundata;
-    
+
 
 #ifdef G4TIMERA
         // Performance timer

@@ -382,8 +382,6 @@ void StorkRunManager::RunInitialization()
             //MapFissionSitesToMaterial();
             heatTransfer->RunThermalCalculation(runAction->GetCurrentFissionSites());
 
-
-            /*
             // Save the new temperatures only if asked to do so
             if(saveMatTemp)
             {

@@ -280,7 +280,6 @@ class StorkParseInput
 
         //Delayed neutron options.
         G4int theDelayedOption;
-        G4bool instantDelayed;
         G4bool sourcefileDelayed;
         G4bool precursorDelayed;
 

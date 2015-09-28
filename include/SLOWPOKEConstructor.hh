@@ -10,12 +10,12 @@
 #include "G4UnionSolid.hh"
 #include "G4SubtractionSolid.hh"
 #include "G4IntersectionSolid.hh"
-  
+
 #include "G4Para.hh"
 #include "G4Box.hh"
 #include "G4Tubs.hh"
 #include "G4Orb.hh"
-#include "StorkMaterial.hh"
+#include "StorkMaterialHT.hh"
 #include <sstream>
 #include <cmath>
 #include "StorkUnion.hh"
@@ -30,12 +30,12 @@ class SLOWPOKEConstructor: public StorkVWorldConstructor
         // Protected member functions
 
 		virtual G4VPhysicalVolume* ConstructWorld();
-  
+
         virtual void ConstructMaterials();
 
     protected:
     // Protected member variables
-    
+
     // Logical Volumes
     G4LogicalVolume *ZirconiumLogical1;
     G4LogicalVolume *ZirconiumLogical2;
@@ -60,7 +60,7 @@ class SLOWPOKEConstructor: public StorkVWorldConstructor
     G4LogicalVolume *outLargeBeamLogical;
     G4LogicalVolume *alumShellLogical;
     G4LogicalVolume *cellLogical;
-    
+
     // Visualization attributes
     G4VisAttributes *ZirconiumAtt1;
     G4VisAttributes *ZirconiumAtt2;

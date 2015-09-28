@@ -303,7 +303,7 @@ void StorkRunAction::EndOfRunAction(const G4Run *aRun)
     // Collate the survivors and delayed neutrons
     CollateNeutronSources();
 
-    G4int numPrimaries = genAction->GetNumPrimaries();
+    //G4int numPrimaries = genAction->GetNumPrimaries();
 
     // Find the Shannon Entropy
     shannonEntropy[0] = CalcShannonEntropy(fSites,totalFS);
@@ -475,7 +475,7 @@ void StorkRunAction::TallyEvent(const StorkEventData *eventData)
     numNLost += eventData->numNLost;
 
     // Add the fission sites to the 3D array
-    G4int numSites = eventData->fSites->size();
+    numSites = eventData->fSites->size();
     totalFS += numSites;
 
     // Discretize fission sites
@@ -572,7 +572,7 @@ void StorkRunAction::UpdateWorldProperties(G4double *values)
 // d) survivors (global time, lifetime, position (x,y,z), momentum (px,py,pz))
 // e) number of delayed
 // f) delayed (global time, lifetime, position (x,y,z), momentum (px,py,pz))
-void StorkRunAction::SaveSources(G4String fname, G4int numRuns, G4double runEnd)
+void StorkRunAction::SaveSources(G4String fname, G4int curRunID, G4double runEnd)
 {
 #ifdef G4TIMERA
     // Set up timer for writing sources to file
@@ -580,6 +580,7 @@ void StorkRunAction::SaveSources(G4String fname, G4int numRuns, G4double runEnd)
     sourceTimer.Start();
 #endif
 
+    runID = curRunID;
 	// Print the current state of the random engine
 	CLHEP::HepRandom::saveEngineStatus(fname);
 
@@ -619,7 +620,7 @@ void StorkRunAction::SaveSources(G4String fname, G4int numRuns, G4double runEnd)
     outFile << "#" << G4endl;
 
     // Write time of records and number of runs
-    outFile << "# Source distribution after " << numRuns  << " runs" << G4endl
+    outFile << "# Source distribution after " << runID  << " runs" << G4endl
             << "#" << G4endl << runEnd << G4endl;
 
     // Write number of survivors then each survivors
@@ -735,19 +736,22 @@ G4bool StorkRunAction::WriteFissionData(G4String fname,
     outFile << "#" << G4endl << "# Fission data collection started at run "
             << start << G4endl << "#" << G4endl;
 
-    //Get the precursor numbers
-    std::vector<G4int> precursors = genAction->GetPrecursors();
-
     //Get the collection interval.
     G4int collectionInt = numRuns-start;
     if(saveInterval)
         collectionInt = saveInterval;
 
-    //Write the precursor data
-    outFile << "# Precursor Groups: " << G4endl;
+    if(updatePrecursors)
+    {
+        //Get the precursor numbers
+        std::vector<G4int> precursors = genAction->GetPrecursors();
 
-    for(G4int i = 0; i<6; i++){
-        outFile << std::setw(12) << precursors[i] << G4endl;
+        //Write the precursor data
+        outFile << "# Precursor Groups: " << G4endl;
+
+        for(G4int i = 0; i<6; i++){
+            outFile << std::setw(12) << precursors[i] << G4endl;
+        }
     }
     // Write number of fission data points, the run duration, the current run and primaries simulated per run.
     G4int numEntries = G4int(fnEnergies.size());
@@ -809,7 +813,7 @@ G4double StorkRunAction::CalcNeutronFlux(){
     G4int CalcType;
     G4double x, y, z;
     G4bool inRegion;
-    G4double innerR, outerR, minX, maxX, minY, maxY, minZ, maxZ;
+    G4double innerR=-1, outerR=-1, minX=-1, maxX=-1, minY=-1, maxY=-1, minZ=-1, maxZ=-1;
 
     //Get region of interest and volume. This is relative to current set origin (default = 0,0,0).
     if(fluxCalcShape == "Cylinder"){

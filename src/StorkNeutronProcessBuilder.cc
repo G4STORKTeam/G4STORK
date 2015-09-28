@@ -74,48 +74,6 @@ void StorkNeutronProcessBuilder::Build()
             if(aHPBuilder)
                 aHPBuilder->SetFSTemperature(fsTemp);
         }
-
-        /*
-        StorkMaterial *aStorkMat;
-        G4MaterialTable *matTable = (G4MaterialTable*)G4Material::GetMaterialTable();
-        G4LogicalVolumeStore* lvStore = G4LogicalVolumeStore::GetInstance();
-        std::vector<G4int> lvIndexVec;
-        G4int matTableSize = matTable->size();
-
-        for(int j=0; j<matTableSize; j++)
-        {
-            if((*matTable)[j])
-            {
-                aStorkMat = dynamic_cast<StorkMaterial*>((*matTable)[j]);
-
-                if(aStorkMat)
-                {
-                    aStorkMat->SetTemperature(std::max(0.1,aStorkMat->GetTemperature()-fsTemp),false);
-                }
-                else
-                {
-                    for(int k=0; k<int(lvStore->size()); k++)
-                    {
-                        if(lvStore[0][k]->GetMaterial()==(*matTable)[j])
-                        {
-                            lvIndexVec.push_back(k);
-                        }
-                    }
-
-                    G4Material *oldMat=(*matTable)[j];
-                    G4String realName = oldMat->GetName();
-                    oldMat->SetName(oldMat->GetName()+"Old");
-                    G4Material *tempMat = new G4Material(realName, oldMat->GetDensity(), oldMat, oldMat->GetState(), std::max(0.,oldMat->GetTemperature()-fsTemp), oldMat->GetPressure());
-
-                    for(int k=0; k<int(lvIndexVec.size()); k++)
-                    {
-                        lvStore[0][lvIndexVec[k]]->SetMaterial(tempMat);
-                    }
-                    lvIndexVec.clear();
-                }
-            }
-        }
-        */
     }
 
     // Build the models and data for the neutron processes (all energies)

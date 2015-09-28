@@ -269,25 +269,25 @@ G4VPhysicalVolume* SLOWPOKEConstructor::ConstructWorld()
         // neighbour is used to keep track of the holes that were previously add so
         // that no overlap takes place
         G4bool *neighbour;
-        for(G4int y=1; y<24; y++)
+        for(G4int i=1; i<24; i++)
         {
-            for(G4int x=1; x<24; x++)
+            for(G4int j=1; j<24; j++)
             {
-                if(latticeMat[y][x] != 7)
+                if(latticeMat[i][j] != 7)
                 {
                     // Center sotres the x and y coordinate of the lattice cell that is being tracked.
-                    G4double Center[2] = {((y-12)*0.551833696+(x-12)*1.103632018)*cm, (12-y)*0.955804*cm};
-                    if(latticeMat[y-1][x] != 7 && latticeMat[y][x-1] != 7)
+                    G4double Center[2] = {((i-12)*0.551833696+(j-12)*1.103632018)*cm, (12-i)*0.955804*cm};
+                    if(latticeMat[i-1][j] != 7 && latticeMat[i][j-1] != 7)
                     {
                         G4bool DUMMY[6] = {0,0,1,1,1,0};
                         neighbour = DUMMY;
                     }
-                    else if(latticeMat[y-1][x] != 7)
+                    else if(latticeMat[i-1][j] != 7)
                     {
                         G4bool DUMMY[6] = {0,1,1,1,1,0};
                         neighbour = DUMMY;
                     }
-                    else if(latticeMat[y][x-1] != 7)
+                    else if(latticeMat[i][j-1] != 7)
                     {
                         G4bool DUMMY[6] = {0,0,1,1,1,1};
                         neighbour = DUMMY;
@@ -300,11 +300,11 @@ G4VPhysicalVolume* SLOWPOKEConstructor::ConstructWorld()
 
                     // Once the holes not added have been determined the program goes through and
                     // adds only the holes that are inside the pie slice that we want to create
-                    for(G4int i = 1; i<6; i++)
+                    for(G4int k = 1; k<6; k++)
                     {
-                        if(neighbour[i])
+                        if(neighbour[k])
                         {
-                            G4double x = HolePos[i].getX()+Center[0], y = HolePos[i].getY()+Center[1];
+                            G4double x = HolePos[k].getX()+Center[0], y = HolePos[k].getY()+Center[1];
                             G4double radius = sqrt(x*x+y*y);
                             if(radius+WaterHolesLowerZrDim[1] < refAnnDim[0] && radius-WaterHolesLowerZrDim[1] > contRodZirTubeDim[1]
                                && x-WaterHolesLowerZrDim[1] < radius*cos(LowerZrDim[3])
@@ -322,7 +322,7 @@ G4VPhysicalVolume* SLOWPOKEConstructor::ConstructWorld()
                     }
 
                     // If the material number is 9 then no rod is added, but a pin hole is added to the lower grid
-                    if(latticeMat[y][x] == 9)
+                    if(latticeMat[i][j] == 9)
                     {
                         G4double x = Center[0], y = Center[1];
                         G4double radius = sqrt(x*x+y*y);
@@ -972,11 +972,11 @@ void SLOWPOKEConstructor::ConstructMaterials()
     LEU->AddIsotope(U238, 80.11*perCent);
 
     // (Marteial #0) Void Material
-    World = new StorkMaterial("Galactic", 1, 1, 1.e-25*g/cm3, 0*joule/g/kelvin, 0.0*joule/(s*m*kelvin), kStateGas,
+    World = new StorkMaterialHT("Galactic", 1, 1, 1.e-25*g/cm3, 0*joule/g/kelvin, 0.0*joule/(s*m*kelvin), kStateGas,
                               2.73*kelvin, 3.e-18*pascal);
 
     // (Material #1) Beryllium Sheild with Impurities
-    Reflector = new StorkMaterial("Reflector", ReflectorDensity, 17, 1.83*joule/g/kelvin, 218*joule/(s*m*kelvin), kStateSolid, ReflectorTemp);
+    Reflector = new StorkMaterialHT("Reflector", ReflectorDensity, 17, 1.83*joule/g/kelvin, 218*joule/(s*m*kelvin), kStateSolid, ReflectorTemp);
     Reflector->AddElement(Be,     0.9953863);
     Reflector->AddElement(Oxygen, 9.70113e-6);
     Reflector->AddElement(Al,     1.010534e-3);
@@ -996,42 +996,42 @@ void SLOWPOKEConstructor::ConstructMaterials()
     Reflector->AddElement(Eu153,  2.627389e-7);
 
     // (Material #2) Light Water
-    LW = new StorkMaterial("H2O", LWDensity, 2, 4.1813*joule/g/kelvin, 0.5984*joule/(s*m*kelvin), kStateLiquid, LWTemp);
+    LW = new StorkMaterialHT("H2O", LWDensity, 2, 4.1813*joule/g/kelvin, 0.5984*joule/(s*m*kelvin), kStateLiquid, LWTemp);
     LW->AddElement(Oxygen, 1);
     LW->AddElement(H1,     2);
 
     // (Material #4) Air
-    Air = new StorkMaterial("Air", AirDensity, 2, 1.0035*joule/g/kelvin, 0.024*joule/(s*m*kelvin), kStateGas, AirTemp);
+    Air = new StorkMaterialHT("Air", AirDensity, 2, 1.0035*joule/g/kelvin, 0.024*joule/(s*m*kelvin), kStateGas, AirTemp);
     Air->AddElement(Oxygen, 0.21174);
     Air->AddElement(N,      0.78826);
 
     // (Material #5) Zr
-    Zr = new StorkMaterial("Zirconium", ZrDensity, 1, 0.278*joule/g/kelvin, 8.625*joule/(s*m*kelvin), kStateSolid, ZrTemp);
+    Zr = new StorkMaterialHT("Zirconium", ZrDensity, 1, 0.278*joule/g/kelvin, 8.625*joule/(s*m*kelvin), kStateSolid, ZrTemp);
     Zr->AddElement(Zirc, 1);
 
     // (Material #6) Aluminum with impurities
-    AlAlloy1 = new StorkMaterial("AlAlloy1", AlAlloyDensity, 5, 0.897*joule/g/kelvin, 205*joule/(s*m*kelvin), kStateSolid, AlAlloyTemp1);
+    AlAlloy1 = new StorkMaterialHT("AlAlloy1", AlAlloyDensity, 5, 0.897*joule/g/kelvin, 205*joule/(s*m*kelvin), kStateSolid, AlAlloyTemp1);
     AlAlloy1->AddElement(Al, 0.9792);
     AlAlloy1->AddElement(Si, 0.0060);
     AlAlloy1->AddElement(Cu, 0.0028);
     AlAlloy1->AddElement(Mg, 0.0100);
     AlAlloy1->AddElement(Cr, 0.0020);
 
-    AlAlloy2 = new StorkMaterial("AlAlloy2", AlAlloyDensity, 5, 0.897*joule/g/kelvin, 205*joule/(s*m*kelvin), kStateSolid, AlAlloyTemp2);
+    AlAlloy2 = new StorkMaterialHT("AlAlloy2", AlAlloyDensity, 5, 0.897*joule/g/kelvin, 205*joule/(s*m*kelvin), kStateSolid, AlAlloyTemp2);
     AlAlloy2->AddElement(Al, 0.9792);
     AlAlloy2->AddElement(Si, 0.0060);
     AlAlloy2->AddElement(Cu, 0.0028);
     AlAlloy2->AddElement(Mg, 0.0100);
     AlAlloy2->AddElement(Cr, 0.0020);
 
-    AlAlloy3 = new StorkMaterial("AlAlloy3", AlAlloyDensity, 5, 0.897*joule/g/kelvin, 205*joule/(s*m*kelvin), kStateSolid, AlAlloyTemp3);
+    AlAlloy3 = new StorkMaterialHT("AlAlloy3", AlAlloyDensity, 5, 0.897*joule/g/kelvin, 205*joule/(s*m*kelvin), kStateSolid, AlAlloyTemp3);
     AlAlloy3->AddElement(Al, 0.9792);
     AlAlloy3->AddElement(Si, 0.0060);
     AlAlloy3->AddElement(Cu, 0.0028);
     AlAlloy3->AddElement(Mg, 0.0100);
     AlAlloy3->AddElement(Cr, 0.0020);
 
-    AlAlloy4 = new StorkMaterial("AlAlloy4", AlAlloyDensity, 5, 0.897*joule/g/kelvin, 205*joule/(s*m*kelvin), kStateSolid, AlAlloyTemp4);
+    AlAlloy4 = new StorkMaterialHT("AlAlloy4", AlAlloyDensity, 5, 0.897*joule/g/kelvin, 205*joule/(s*m*kelvin), kStateSolid, AlAlloyTemp4);
     AlAlloy4->AddElement(Al, 0.9792);
     AlAlloy4->AddElement(Si, 0.0060);
     AlAlloy4->AddElement(Cu, 0.0028);
@@ -1039,11 +1039,11 @@ void SLOWPOKEConstructor::ConstructMaterials()
     AlAlloy4->AddElement(Cr, 0.0020);
 
     // (Material #7) Cadmium
-    Cadmium = new StorkMaterial("Cadmium", CadmiumDensity, 1, 0.231*joule/g/kelvin, 92*joule/(s*m*kelvin), kStateSolid, CadmiumTemp);
+    Cadmium = new StorkMaterialHT("Cadmium", CadmiumDensity, 1, 0.231*joule/g/kelvin, 92*joule/(s*m*kelvin), kStateSolid, CadmiumTemp);
     Cadmium->AddElement(Cd, 1);
 
     // (Materail #8) Heavy Water
-    HW = new StorkMaterial("D2O", HWDensity, 2,  4.224211211*joule/g/kelvin, 0.589*joule/(s*m*kelvin), kStateLiquid, HWTemp);
+    HW = new StorkMaterialHT("D2O", HWDensity, 2,  4.224211211*joule/g/kelvin, 0.589*joule/(s*m*kelvin), kStateLiquid, HWTemp);
     HW->AddElement(D2,     2);
     HW->AddElement(Oxygen, 1);
 
@@ -1069,7 +1069,7 @@ void SLOWPOKEConstructor::ConstructMaterials()
     {
         matName.str("");
         matName << "Fuel" << i;
-        Fuel = new StorkMaterial(matName.str(), FuelDensities[i], 2, 0.2411519506*joule/g/kelvin, 21.5*joule/(s*m*kelvin), kStateSolid, FuelTemperatures[i]);
+        Fuel = new StorkMaterialHT(matName.str(), FuelDensities[i], 2, 0.2411519506*joule/g/kelvin, 21.5*joule/(s*m*kelvin), kStateSolid, FuelTemperatures[i]);
         Fuel->AddElement(Oxygen, 2);
         Fuel->AddElement(LEU,    1);
 

@@ -146,7 +146,7 @@ G4bool StorkNeutronSD::ProcessHits(G4Step *aStep, G4TouchableHistory*)
 	}
 
     // Find the process used in the hit (if it is defined)
-    G4String hitProcess = "";
+    hitProcess = "";
     if(postStepPoint->GetProcessDefinedStep() != 0)
     {
         hitProcess = postStepPoint->GetProcessDefinedStep()->GetProcessName();

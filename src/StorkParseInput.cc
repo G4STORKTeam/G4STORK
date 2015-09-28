@@ -47,12 +47,10 @@ StorkParseInput::StorkParseInput(G4bool master)
 
 	// Set default flags
 	loadSources=false;
-	loadDelayed=false;
 	logData=false;
 	instantDelayed=false;
     sourcefileDelayed=false;
     precursorDelayed=false;
-	periodicBC=false;
 	normalize = true;
 	uniformDis = false;
 	uniformDisWithDim = false;
@@ -219,7 +217,6 @@ void StorkParseInput::SetWorld(G4String worldNam)
         }
         else if(worldNam=="SLOWPOKE")
         {
-            periodicBC=false;
         }
         else if(userWorlds.find(worldNam) != userWorlds.end())
         {
@@ -382,7 +379,6 @@ G4bool StorkParseInput::ReadInputFile(G4String filename)
 			}
 			else if(keyWord=="SLOWPOKE")
 			{
-                periodicBC=false;
 			}
 			else if(keyWord=="SCWR")
 			{

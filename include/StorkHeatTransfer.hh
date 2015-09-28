@@ -14,7 +14,7 @@ is used to track keep track of heat transfer with time
 
 #include "StorkWorld.hh"
 #include "StorkContainers.hh"
-#include "StorkMaterial.hh"
+#include "StorkMaterialHT.hh"
 #include "G4TransportationManager.hh"
 #include <math.h>
 #include <string.h>
@@ -27,14 +27,14 @@ class StorkHeatTransfer
         // Default constructor
         StorkHeatTransfer(const StorkParseInput* fIn);
         ~StorkHeatTransfer(void);
-    
+
         void InitializeSlowpokeModel(const StorkParseInput* fIn);
         void RunThermalCalculation(MSHSiteVector fissionSites);
         void RunSlowpokeModel();
         void SetWorld(StorkWorld* world);
         void SetFuelDimensions(G4ThreeVector fDim) {fuelDimensions = fDim;}
-    
-    
+
+
     protected:
         void CalcHeatDistribution();
         void UpdateFuelProperties(G4double FuelTemperatures[],G4double FuelDensities[],G4double FuelRadii[]);
@@ -43,7 +43,7 @@ class StorkHeatTransfer
         G4double CalcFuelRadius(G4double oldRadius, G4double oldDensity, G4double newDensity);
         void SaveSLOWPOKEFuelProperties(G4String filename);
         G4double CalcEffectiveHeatGenerated(G4double currentFissions);
-    
+
 
     protected:
         StorkWorld* theWorld;
