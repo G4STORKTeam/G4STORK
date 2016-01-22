@@ -206,7 +206,7 @@ class StorkParseInput
 
         const G4String GetFluxCalcShape() const {return fluxCalcShape;}
 
-        G4ThreeVector GetOrigin() const {return FluxOrigin;}
+        G4ThreeVector GetFluxOrigin() const {return FluxOrigin;}
         void SetFluxOrigin(G4ThreeVector orig) { FluxOrigin = orig;}
 
         // Reactor Power Output

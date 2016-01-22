@@ -104,8 +104,8 @@ SCWRDopplerConstructor::SCWRDopplerConstructor()
     linerDensity=7.9*g/cm3;
 
     coolantTemp=666.64*kelvin;
-    //coolantDensity=0.21395*g/cm3;
-    coolantDensity=0.001*g/cm3;
+    coolantDensity=0.21395*g/cm3;
+    //coolantDensity=0.001*g/cm3;
 
     inSheatheTemp=706.93*kelvin;
     inSheatheDensity=7.9*g/cm3;
@@ -123,8 +123,8 @@ SCWRDopplerConstructor::SCWRDopplerConstructor()
     flowTubeDensity=7.9*g/cm3;
 
     centralCoolantTemp=635.32*kelvin;
-    centralCoolantDensity=0.58374*g/cm3;
-    //centralCoolantDensity=0.001*g/cm3;
+    //centralCoolantDensity=0.58374*g/cm3;
+    centralCoolantDensity=0.001*g/cm3;
 }
 
 

@@ -156,7 +156,7 @@ class StorkRunAction : public G4UserRunAction
         G4double EnergyRange[2];        //Energy range of the neutron flux calc.
         G4int fn_index;                 //Current index for fission site /energy.
         G4int save_index;             //Save index for fission site/energy.
-        G4ThreeVector Origin;           //Current set origin.
+        G4ThreeVector FluxOrigin;           //Current set FluxOrigin.
         G4double fluxCalcRegion[4];     //Flux region.
         G4String fluxCalcShape;         //Shape of the flux integration region.
 
