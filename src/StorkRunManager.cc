@@ -23,7 +23,7 @@ StorkRunManager::StorkRunManager()
 :G4RunManager()
 {
     runStart = 0.0;
-	frac = 25.*perCent;
+	frac = 100.*perCent;
 
 	// Initialize flags and values
     interpStarted = false;
@@ -41,7 +41,7 @@ StorkRunManager::StorkRunManager(const StorkParseInput* infile)
 {
     // maybe able to run default Constructor instead
     runStart = 0.0;
-	frac = 25.*perCent;
+	frac = 100.*perCent;
 
 	// Initialize flags and values
     interpStarted = false;

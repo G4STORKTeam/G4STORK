@@ -40,7 +40,7 @@ StorkParseInput::StorkParseInput(G4bool master)
 	reactorPower = 0;
 	htc = 0.;
 	T_infty = 20;
-    Origin.set(0.,0.,0.);
+    FluxOrigin.set(0.,0.,0.);
 
 	reflectBC = new std::vector<int>;
     periodicBC = new std::vector<int>;
@@ -419,6 +419,24 @@ G4bool StorkParseInput::ReadInputFile(G4String filename)
 			infile >> reactorMat;
 		}
 
+		//Runs
+		else if(keyWord=="NUM_RUNS")
+		{
+			infile >> numberOfRuns;
+		}
+		else if(keyWord=="NUM_EVENTS")
+		{
+			infile >> numberOfEvents;
+		}
+		else if(keyWord=="NUM_PRIMARY_PER_EVENT")
+		{
+			infile >> numberOfPrimariesPerEvent;
+		}
+		else if(keyWord=="RUN_DURATION")
+		{
+			infile >> runDuration;
+		}
+
 		// Keff calculation method
 		else if(keyWord=="K_CALC")
 		{
@@ -439,6 +457,19 @@ G4bool StorkParseInput::ReadInputFile(G4String filename)
 			}
 
 		}
+
+		//additional calculation method
+		else if(keyWord=="NEUTRON_FLUX_CALC")
+        {
+            infile >> fluxCalcShape >> energyRange[0] >> energyRange[1] >> fluxCalcRegion[0]
+            >> fluxCalcRegion[1] >> fluxCalcRegion[2]>> fluxCalcRegion[3];
+            neutronFluxCalc = true;
+
+        }
+        else if(keyWord=="SET_FLUX_ORIGIN")
+        {
+            infile >> FluxOrigin[0] >> FluxOrigin[1] >> FluxOrigin[2];
+        }
 
 		// CS Data File Location
 		else if(keyWord=="CS_DATA_DIR")
@@ -476,33 +507,28 @@ G4bool StorkParseInput::ReadInputFile(G4String filename)
 			infile >> initialSourceFile;
 			loadSources=true;
 		}
+		else if(keyWord=="INITIAL_SOURCE_POS")
+		{
+			infile >> initialSourcePos[0] >> initialSourcePos[1] >> initialSourcePos[2];
+		}
 		else if(keyWord=="INITIAL_FISSION_DATA_FILE")
 		{
 			infile >> initialfissionDataFile;
 			initialFissionData=true;
 		}
+        else if(keyWord=="UNIFORM_DISTRIBUTION")
+		{
+			infile >> uniformDis >> uniDisShape;
+        }
+        else if(keyWord=="UNIFORM_DIST_WITH_DIM")
+		{
+            G4double tempDim[6];
+			infile >> uniformDis >> uniDisShape >> uniformDisWithDim >> tempDim[0] >> tempDim[1] >> tempDim[2] >> tempDim[3] >> tempDim[4] >> tempDim[5];
+			uniDisDim = tempDim;
+        }
 
 
-		//Runs
-		else if(keyWord=="NUM_RUNS")
-		{
-			infile >> numberOfRuns;
-		}
-		else if(keyWord=="NUM_EVENTS")
-		{
-			infile >> numberOfEvents;
-		}
-		else if(keyWord=="NUM_PRIMARY_PER_EVENT")
-		{
-			infile >> numberOfPrimariesPerEvent;
-		}
-		else if(keyWord=="RUN_DURATION")
-		{
-			infile >> runDuration;
-		}
-
-
-		//Options
+		//Simulation Options
 		else if(keyWord=="SEED")
 		{
 			infile >> randomSeed;
@@ -544,35 +570,9 @@ G4bool StorkParseInput::ReadInputFile(G4String filename)
             else if (theDelayedOption == 3)
                 precursorDelayed = true;
         }
-		else if(keyWord=="UNIFORM_DISTRIBUTION")
-		{
-			infile >> uniformDis >> uniDisShape;
-        }
-        else if(keyWord=="UNIFORM_DIST_WITH_DIM")
-		{
-            G4double tempDim[6];
-			infile >> uniformDis >> uniDisShape >> uniformDisWithDim >> tempDim[0] >> tempDim[1] >> tempDim[2] >> tempDim[3] >> tempDim[4] >> tempDim[5];
-			uniDisDim = tempDim;
-        }
-		else if(keyWord=="INITIAL_SOURCE_POS")
-		{
-			infile >> initialSourcePos[0] >> initialSourcePos[1] >> initialSourcePos[2];
-		}
-		else if(keyWord=="INTERP_START_COND")
-		{
-			infile >> interpStart;
-		}
-        else if(keyWord=="NEUTRON_FLUX_CALC")
-        {
-            infile >> fluxCalcShape >> energyRange[0] >> energyRange[1] >> fluxCalcRegion[0]
-            >> fluxCalcRegion[1] >> fluxCalcRegion[2]>> fluxCalcRegion[3];
-            neutronFluxCalc = true;
 
-        }
-        else if(keyWord=="SET_ORIGIN")
-        {
-            infile >> Origin[0] >> Origin[1] >> Origin[2];
-        }
+
+
 
 		// Logging
 		else if(keyWord=="OUTPUT_LOG")
@@ -601,6 +601,8 @@ G4bool StorkParseInput::ReadInputFile(G4String filename)
 			infile >> fissionDataFile;
 			saveFissionData = true;
 		}
+
+
         //Thermal model variables
         else if(keyWord=="RUN_THERMAL_MODEL")
         {
@@ -633,6 +635,10 @@ G4bool StorkParseInput::ReadInputFile(G4String filename)
         }
 
 		// World data (initial and interpolation)
+		else if(keyWord=="INTERP_START_COND")
+		{
+			infile >> interpStart;
+		}
 		else if(keyWord == "INTERPOLATION_DATA")
 		{
 			// Read the material and property

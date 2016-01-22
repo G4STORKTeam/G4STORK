@@ -45,7 +45,7 @@ StorkRunAction::StorkRunAction(StorkPrimaryGeneratorAction *genPtr,
     saveRundata = false;
 
     fn_index = save_index = 0;
-    Origin = fIn->GetOrigin();
+    FluxOrigin = fIn->GetFluxOrigin();
 
     //Set up the neutron flux calcution
     if(neutronFluxCalc){
@@ -815,7 +815,7 @@ G4double StorkRunAction::CalcNeutronFlux(){
     G4bool inRegion;
     G4double innerR=-1, outerR=-1, minX=-1, maxX=-1, minY=-1, maxY=-1, minZ=-1, maxZ=-1;
 
-    //Get region of interest and volume. This is relative to current set origin (default = 0,0,0).
+    //Get region of interest and volume. This is relative to current set FluxOrigin (default = 0,0,0).
     if(fluxCalcShape == "Cylinder"){
         innerR = fluxCalcRegion[0];
         outerR = fluxCalcRegion[1];
@@ -828,12 +828,12 @@ G4double StorkRunAction::CalcNeutronFlux(){
 
     }
     else if(fluxCalcShape == "Cube"){
-        minX = Origin[0]-fluxCalcRegion[0]/2;
-        maxX = Origin[0]+fluxCalcRegion[0]/2;
-        minY = Origin[1]-fluxCalcRegion[1]/2;
-        maxY = Origin[1]+fluxCalcRegion[1]/2;
-        minZ = Origin[2]-fluxCalcRegion[2]/2;
-        maxZ = Origin[2]+fluxCalcRegion[2]/2;
+        minX = FluxOrigin[0]-fluxCalcRegion[0]/2;
+        maxX = FluxOrigin[0]+fluxCalcRegion[0]/2;
+        minY = FluxOrigin[1]-fluxCalcRegion[1]/2;
+        maxY = FluxOrigin[1]+fluxCalcRegion[1]/2;
+        minZ = FluxOrigin[2]-fluxCalcRegion[2]/2;
+        maxZ = FluxOrigin[2]+fluxCalcRegion[2]/2;
 
         volume = fluxCalcRegion[0]*fluxCalcRegion[1]*fluxCalcRegion[2];
         CalcType = 1;
@@ -860,10 +860,10 @@ G4double StorkRunAction::CalcNeutronFlux(){
     //Run through all survivors, check if they are in the material of interest and calculate fluence.
     for(G4int i=0; i<NumEntries; i++){
 
-            //Reorient positions according to set origin.
-        x = survivors[i].third[0]-Origin[0];
-        y = survivors[i].third[1]-Origin[1];
-        z = survivors[i].third[2]-Origin[2];
+            //Reorient positions according to set FluxOrigin.
+        x = survivors[i].third[0]-FluxOrigin[0];
+        y = survivors[i].third[1]-FluxOrigin[1];
+        z = survivors[i].third[2]-FluxOrigin[2];
 
         inRegion = false;
 

@@ -111,6 +111,7 @@ class StorkNeutronSD : public G4VSensitiveDetector
         G4int nEsc;
         G4int nFiss;
         G4int nInel;
+        G4int nEner;
 
 #ifdef G4TIMESD
         // Performance timing variables

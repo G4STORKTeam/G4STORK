@@ -92,9 +92,9 @@ class StorkPrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
         // Disable renormalization of the number of survivors at the start of
         // each run
 		void DisableNormalization() { normalize = false; }
-    
+
         std::vector<G4int> GetPrecursors();
-    
+
         void AddPrecursors(MSHSiteVector fSites, DblVector fEnergy);
 
 	private:
@@ -114,9 +114,9 @@ class StorkPrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
 
         // Produce uniformly distributed positions in the world volume
         void UniformPosition(StorkNeutronData* input);
-    
 
-    
+
+
 
 	private:
 
@@ -125,7 +125,7 @@ class StorkPrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
         G4String sourceFile;    // Filename of source file
 
         G4bool sourcefileDelayed;			// Flag denotes whether an initial
-    
+
         G4bool precursorDelayed;   //Flag to indicate if precursors are used.
 										// delayed distribution is to be used
         G4String delayedSourceFile; 	// Filename for initial delayed source
@@ -137,6 +137,8 @@ class StorkPrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
 
         G4double initEnergy;    // Initial energy of source neutrons
         G4ThreeVector origin;
+        G4bool uniformDisWithDim;
+        StorkSixVector<G4double> uniDisDim;
         G4String shape; // The shape to be used for the Uniform Distribution
         G4double runEnd;        // End time of the run
         G4int numPrimaries;     // Number of primary particles per event
@@ -166,8 +168,8 @@ class StorkPrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
 
         G4bool uniformDis;		// Uniform source distribution flag
         std::vector<G4int> Precursors; //Precursor population
-    
-    
+
+
         StorkDelayedNeutron* delayedNeutronGenerator; //The delayed neutron generator, uses and tracks precursors.
 
         StorkHadronFissionProcess* theFissionProcess;

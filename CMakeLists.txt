@@ -58,7 +58,7 @@ if(G4VERBOSE_TRACKING_USE)
 endif()
 
 # Parallel processing using TOP-C
-option(TOPC_USE "Use TOP-C parallel architecture" OFF)
+option(TOPC_USE "Use TOP-C parallel architecture" ON)
 option(TOPC_USE_SEQ "Use TOP-C in sequential mode" OFF)
 if(TOPC_USE)
   if(TOPC_USE_SEQ)

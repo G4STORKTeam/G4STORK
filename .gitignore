@@ -11,4 +11,12 @@ procgroup~
 G4STORK.cbp
 G4STORK.layout
 G4STORK.layout.cbTemp
+.gitignore.gz
+.gitignore~.gz
+CMakeCache.txt
+CMakeFiles/
+CMakeLists.txt~
+Makefile
+cmake_install.cmake
+
 

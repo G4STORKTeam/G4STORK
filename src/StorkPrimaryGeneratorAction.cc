@@ -27,6 +27,8 @@ StorkPrimaryGeneratorAction::StorkPrimaryGeneratorAction(
     realNumPrimaries = numPrimaries;
     initEnergy = infile->GetInitialEnergy();
     uniformDis = infile->GetUniformDistribution();
+    uniformDisWithDim = infile->GetUniformDistWithDim();
+    uniDisDim = infile->GetUniformDistDim();
     shape = infile->GetUniformDistributionShape();
     origin = infile->GetInitialSourcePos();
     initialSource = false;
@@ -514,16 +516,25 @@ void StorkPrimaryGeneratorAction::UniformPosition(StorkNeutronData* input)
                                     ->GetDaughter(0)->GetLogicalVolume()
                                     ->GetSolid()->GetEntityType();
 
-    G4ThreeVector extent = worldPointerCD->GetWorldDimensions();
-
     G4double limit[3];
+    G4ThreeVector extent = worldPointerCD->GetWorldDimensions();
 
     if(shape=="G4Orb")
     {
-        // Select a random position
-        limit[0] = G4UniformRand()*extent[0];
-        limit[1] = G4UniformRand()*2.0*CLHEP::pi;
-        limit[2] = G4UniformRand()*CLHEP::pi;
+        if(uniformDisWithDim)
+        {
+                // Select a random position
+            limit[0] = (G4UniformRand()*(uniDisDim[1]-uniDisDim[0])+uniDisDim[0])*CLHEP::cm;
+            limit[1] = (G4UniformRand()*(uniDisDim[3]-uniDisDim[2])+uniDisDim[2])*CLHEP::pi;
+            limit[2] = (G4UniformRand()*(uniDisDim[5]-uniDisDim[4])+uniDisDim[4])*CLHEP::pi;
+        }
+        else
+        {
+            // Select a random position
+            limit[0] = G4UniformRand()*extent[0];
+            limit[1] = G4UniformRand()*2.0*CLHEP::pi;
+            limit[2] = G4UniformRand()*CLHEP::pi;
+        }
 
         // Set position
         input->third.setRThetaPhi(limit[0],limit[2],limit[1]);
@@ -531,23 +542,42 @@ void StorkPrimaryGeneratorAction::UniformPosition(StorkNeutronData* input)
 
     else if(shape=="G4Tubs")
     {
-        // Select a random position
-        limit[0] = G4UniformRand()*extent[1];
-        limit[1] = G4UniformRand()*2.0*CLHEP::pi;
-        limit[2] = G4UniformRand()*extent[2]*2-extent[2];
+        if(uniformDisWithDim)
+        {
+            limit[0] = (G4UniformRand()*(uniDisDim[1]-uniDisDim[0])+uniDisDim[0])*CLHEP::cm;
+            limit[1] = (G4UniformRand()*uniDisDim[2])*CLHEP::pi;
+            limit[2] = (G4UniformRand()*uniDisDim[3]-0.5*uniDisDim[3])*CLHEP::cm;
+            input->third.setRhoPhiZ(limit[0],limit[1],limit[2]);
+            input->third.rotate((uniDisDim[4]*CLHEP::pi),(uniDisDim[5]*CLHEP::pi),0.);
 
-        // Set position
-        input->third.setRhoPhiZ(limit[0],limit[1],limit[2]);
+        }
+        else
+        {
+            // Select a random position
+            limit[0] = G4UniformRand()*extent[1];
+            limit[1] = G4UniformRand()*2.0*CLHEP::pi;
+            limit[2] = G4UniformRand()*2*extent[2]-extent[2];
+            input->third.setRhoPhiZ(limit[0],limit[1],limit[2]);
+        }
     }
 
     else
     {
-        limit[0] = G4UniformRand()*extent[0]*2-extent[0];
-        limit[1] = G4UniformRand()*extent[1]*2-extent[1];
-        limit[2] = G4UniformRand()*extent[2]*2-extent[2];
-
-        // Set position
-        input->third.set(limit[0],limit[2],limit[1]);
+        if(uniformDisWithDim)
+        {
+            limit[0] = G4UniformRand()*uniDisDim[0]-0.5*uniDisDim[0];
+            limit[1] = G4UniformRand()*uniDisDim[1]-0.5*uniDisDim[1];
+            limit[2] = G4UniformRand()*uniDisDim[2]-0.5*uniDisDim[2];
+            input->third.set(limit[0],limit[2],limit[1]);
+            input->third.rotate((uniDisDim[3]*CLHEP::pi),(uniDisDim[4]*CLHEP::pi),0.);
+        }
+        else
+        {
+            limit[0] = G4UniformRand()*extent[0]*2-extent[0];
+            limit[1] = G4UniformRand()*extent[1]*2-extent[1];
+            limit[2] = G4UniformRand()*extent[2]*2-extent[2];
+            input->third.set(limit[0],limit[2],limit[1]);
+        }
     }
     input->third = input->third + origin*CLHEP::cm;
 }

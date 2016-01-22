@@ -63,7 +63,7 @@ void StorkNeutronSD::Initialize(G4HCofThisEvent *HCE)
 	prevTrackID = -1;
 
 #ifdef STORK_EXPLICIT_LOSS
-	nCap = nFiss = nEsc = nInel = 0;
+	nCap = nFiss = nEsc = nInel = nEner = 0;
 #endif
 
 #ifdef G4TIMESD
@@ -122,9 +122,37 @@ G4bool StorkNeutronSD::ProcessHits(G4Step *aStep, G4TouchableHistory*)
     G4double lifetime = postStepPoint->GetLocalTime();
 
     // Set up other variables to be used later
+
+    // Modified
     G4TrackVector *trackVector;
     std::vector<G4Track*>::iterator itr;
 
+    trackVector = const_cast<G4TrackVector*>(aStep->GetSecondary());
+    itr = trackVector->begin();
+
+    for(; itr<trackVector->end(); itr++)
+    {
+        if((*itr)->GetKineticEnergy()>20.0*MeV)
+        {
+//            (*itr)->SetTrackStatus(fKillTrackAndSecondaries);
+//            nLoss++;
+//#ifdef STORK_EXPLICIT_LOSS
+//            nEner++;
+//#endif
+            (*itr)->SetKineticEnergy(20.0*MeV);
+        }
+    }
+
+    if(aTrack->GetKineticEnergy()>20.0*MeV)
+    {
+//        aTrack->SetTrackStatus(fKillTrackAndSecondaries);
+//        nLoss++;
+//#ifdef STORK_EXPLICIT_LOSS
+//        nEner++;
+//#endif
+//        return true;
+        aTrack->SetKineticEnergy(20.0*MeV);
+    }
 
     // If the neutron is a primary neutron, on its first step, fix the lifetime
 	// Also add the track info (fission generation)
@@ -185,54 +213,57 @@ G4bool StorkNeutronSD::ProcessHits(G4Step *aStep, G4TouchableHistory*)
 	// neutron daughters.
 	if(hitProcess == "StorkHadronFission")
 	{
-        trackVector = const_cast<G4TrackVector*>(aStep->GetSecondary());
+        //trackVector = const_cast<G4TrackVector*>(aStep->GetSecondary());
         itr = trackVector->begin();
 
         // Record number of daughter neutrons
         for( ; itr != trackVector->end(); itr++)
         {
-            // Check if secondary is a neutron
-            if((*itr)->GetDefinition() == G4Neutron::NeutronDefinition())
+            if((*itr)->GetTrackStatus()!=fKillTrackAndSecondaries)
             {
-                // Check if the neutron is a delayed neutron
-                if((*itr)->GetGlobalTime() > hitTime)
+                // Check if secondary is a neutron
+                if((*itr)->GetDefinition() == G4Neutron::NeutronDefinition())
                 {
-                    // Correct the lifetime of the delayed neutron
-                    (*itr)->SetLocalTime((*itr)->GetGlobalTime() - hitTime);
-
-                    // Correct global time to produce instantaneously
-                    if(instantDelayed)
+                    // Check if the neutron is a delayed neutron
+                    if((*itr)->GetGlobalTime() > hitTime)
                     {
-                        (*itr)->SetGlobalTime(hitTime);
-                        if(kCalcType == 2)
+                        // Correct the lifetime of the delayed neutron
+                        (*itr)->SetLocalTime((*itr)->GetGlobalTime() - hitTime);
+
+                        // Correct global time to produce instantaneously
+                        if(instantDelayed)
                         {
-                            SaveSurvivors((*itr));
+                            (*itr)->SetGlobalTime(hitTime);
+                            if(kCalcType == 2)
+                            {
+                                SaveSurvivors((*itr));
+                                (*itr)->SetTrackStatus(fKillTrackAndSecondaries);
+                            }
+                        }
+                        // Otherwise save (and kill) the delayed neutron for later
+                        else
+                        {
+                            SaveDelayed(*itr);
                             (*itr)->SetTrackStatus(fKillTrackAndSecondaries);
                         }
+
+                        // Increment delayed neutron production counter
+                        dProd++;
                     }
-                    // Otherwise save (and kill) the delayed neutron for later
-                    else
+                    else if(kCalcType == 2)
                     {
-                        SaveDelayed(*itr);
+                        SaveSurvivors((*itr));
                         (*itr)->SetTrackStatus(fKillTrackAndSecondaries);
                     }
 
-                    // Increment delayed neutron production counter
-                    dProd++;
+                    // Increment neutron production counter
+                    nProd++;
                 }
-                else if(kCalcType == 2)
+                // Stop and kill particle if it is not a neutron
+                else
                 {
-                    SaveSurvivors((*itr));
                     (*itr)->SetTrackStatus(fKillTrackAndSecondaries);
                 }
-
-                // Increment neutron production counter
-                nProd++;
-            }
-            // Stop and kill particle if it is not a neutron
-            else
-            {
-                (*itr)->SetTrackStatus(fKillTrackAndSecondaries);
             }
         }
 
@@ -269,7 +300,7 @@ G4bool StorkNeutronSD::ProcessHits(G4Step *aStep, G4TouchableHistory*)
 		totalLifetime += lifetime;
 
 		// Kill any non-neutron (all) secondaries
-		trackVector = const_cast<G4TrackVector*>(aStep->GetSecondary());
+		//trackVector = const_cast<G4TrackVector*>(aStep->GetSecondary());
 		itr = trackVector->begin();
 
 		for( ; itr != trackVector->end(); itr++)
@@ -289,29 +320,32 @@ G4bool StorkNeutronSD::ProcessHits(G4Step *aStep, G4TouchableHistory*)
 	{
 		G4bool nMulti = false;
 
-		trackVector = const_cast<G4TrackVector*>(aStep->GetSecondary());
+		//trackVector = const_cast<G4TrackVector*>(aStep->GetSecondary());
 		itr = trackVector->begin();
 
 		for( ; itr != trackVector->end(); itr++)
 		{
-			// Set the neutrons lifetime to that of the current neutron
-			if((*itr)->GetDefinition() == G4Neutron::NeutronDefinition())
-			{
-				if(nMulti)
-				{
-					nProd++;
-				}
-				else
-				{
-					nMulti = true;
-					(*itr)->SetLocalTime(lifetime);
-				}
-			}
-			// Kill secondary particle if it is not a neutron
-			else
-			{
-				(*itr)->SetTrackStatus(fKillTrackAndSecondaries);
-			}
+            if((*itr)->GetTrackStatus()!=fKillTrackAndSecondaries)
+            {
+                // Set the neutrons lifetime to that of the current neutron
+                if((*itr)->GetDefinition() == G4Neutron::NeutronDefinition())
+                {
+                    if(nMulti)
+                    {
+                        nProd++;
+                    }
+                    else
+                    {
+                        nMulti = true;
+                        (*itr)->SetLocalTime(lifetime);
+                    }
+                }
+                // Kill secondary particle if it is not a neutron
+                else
+                {
+                    (*itr)->SetTrackStatus(fKillTrackAndSecondaries);
+                }
+            }
 		}
 
 		// Check for inelastic collisions where neutron is killed
@@ -328,18 +362,21 @@ G4bool StorkNeutronSD::ProcessHits(G4Step *aStep, G4TouchableHistory*)
 	// If an elastic collision occurs kill any secondaries (uranium atom, etc.)
 	else if(hitProcess == "StorkHadronElastic")
 	{
-		trackVector = const_cast<G4TrackVector*>(aStep->GetSecondary());
+		//trackVector = const_cast<G4TrackVector*>(aStep->GetSecondary());
 		itr = trackVector->begin();
 
 		for( ; itr != trackVector->end(); itr++)
 		{
-			if((*itr)->GetDefinition() != G4Neutron::NeutronDefinition())
-			{
-				(*itr)->SetTrackStatus(fKillTrackAndSecondaries);
-			}
-            else
+            if((*itr)->GetTrackStatus()!=fKillTrackAndSecondaries)
             {
-                nProd++;
+                if((*itr)->GetDefinition() != G4Neutron::NeutronDefinition())
+                {
+                    (*itr)->SetTrackStatus(fKillTrackAndSecondaries);
+                }
+                else
+                {
+                    nProd++;
+                }
             }
 		}
 	}
@@ -480,5 +517,6 @@ void StorkNeutronSD::PrintCounterTotals() const
 		   << "Escapes:  " << nEsc << G4endl
 		   << "Fissions:  " << nFiss << G4endl
 		   << "Captures:  " << nCap << G4endl
-		   << "Inelastic Loss:  " << nInel << G4endl;
+		   << "Inelastic Loss:  " << nInel << G4endl
+		   << "Energy Cut: " << nEner << G4endl;
 }

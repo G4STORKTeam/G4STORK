@@ -206,8 +206,8 @@ class StorkParseInput
 
         const G4String GetFluxCalcShape() const {return fluxCalcShape;}
 
-        G4ThreeVector GetOrigin() const {return Origin;}
-        void SetOrigin(G4ThreeVector orig) { Origin = orig;}
+        G4ThreeVector GetOrigin() const {return FluxOrigin;}
+        void SetFluxOrigin(G4ThreeVector orig) { FluxOrigin = orig;}
 
         // Reactor Power Output
         G4double GetReactorPower() const { return reactorPower; }
@@ -294,8 +294,8 @@ class StorkParseInput
         G4String fluxCalcShape;
         G4double fluxCalcRegion[4];
 
-        //Origin
-        G4ThreeVector Origin;
+        //FluxOrigin
+        G4ThreeVector FluxOrigin;
 
 		// Initial neutron energy (default source) in MeV
 		G4double initEnergy;

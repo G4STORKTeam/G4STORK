@@ -1,0 +1,370 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{fullpage}
+\usepackage{enumitem}
+\setlistdepth{9}
+
+\setlist[itemize,1]{label=$\bullet$}
+\setlist[itemize,2]{label=$\bullet$}
+\setlist[itemize,3]{label=$\bullet$}
+\setlist[itemize,4]{label=$\bullet$}
+\setlist[itemize,5]{label=$\bullet$}
+\setlist[itemize,6]{label=$\bullet$}
+\setlist[itemize,7]{label=$\bullet$}
+\setlist[itemize,8]{label=$\bullet$}
+\setlist[itemize,9]{label=$\bullet$}
+
+\renewlist{itemize}{itemize}{9}
+
+\title{G4-STORK Input Manual}
+\author{Andrew Tan \& Wesley Ford}
+\date{October 2015}
+
+\begin{document}
+
+\maketitle
+
+\section{Installing G4-STORK}
+\begin{itemize}
+\item Download tarballs \ for CLHEP-2.1.3.1, marshalgen-1.0, topc-2.5.2, geant\texttt{4.10.00.p02}, and G4STORK
+\item Installing \ CLHEP-2.1.3.1
+
+\begin{itemize}
+\item \texttt{Note: this is no longer nessecary, the later verisons of geant4 come with their own version of CLHEP}
+\item \texttt{http://proj-clhep.web.cern.ch/proj-clhep/DISTRIBUTION/}
+\item tar -xzf clhep-2.1.3.1.tgz
+\item cd 2.1.3.1
+\item mkdir clhep-build clhep-install
+\item cd clhep-build
+\item \texttt{cmake -DCMAKE\_INSTALL\_PREFIX= [clhep-install full path] [2.1.3.1/CLHEP/ full path]}
+\item \texttt{make}
+\item \texttt{make test}
+\item \texttt{make install}
+\end{itemize}
+\item \texttt{Installing marshalgen-1.0}
+
+\begin{itemize}
+\item \texttt{http://www.ccs.neu.edu/home/gene/marshalgen.html}
+\item \texttt{tar -xzf marshalgen.tar.gz}
+\item \texttt{yum install bison flex}
+\item \texttt{cd marshalgen-1.0/}
+\item \texttt{make}
+\item \texttt{fix  marshalgen-1.0/Phase1/mgen.pl:683}
+\begin{itemize}
+\item \begin{verbatim}
+from this $annot.= ”\t\t\tcopy  off \+\= sizeof\($strElementType\)\);\n”;
+\end{verbatim}
+\item \begin{verbatim}
+to this $annot.= ”\t\t\tcopy  off \+\= sizeof\($strElementType\);\n”;
+\end{verbatim}
+\end{itemize}
+\end{itemize}
+\item \texttt{Installing \ topc-2.5.2}
+
+\begin{itemize}
+\item \texttt{http://www.ccs.neu.edu/home/gene/topc.html}
+\item \texttt{tar -xzf topc-2.5.2.tar.gz}
+\item \texttt{cd topc-2.5.2}
+\item \texttt{./configure (installs to usr/local/include and usr/local/src}
+\item \texttt{make install this may give an error but still succeed use the next step to check}
+\item \texttt{make test}
+\end{itemize}
+\item \texttt{Installing Visualization Drivers}
+
+\begin{itemize}
+\item X11 OpenGL Visualization (\emph{Linux and Mac OS X}) 
+
+\begin{itemize}
+\item very responsive photorealistic graphics
+\item \emph{Requires}: X11 headers and libraries,OpenGL or MesaGL headers and libraries. 
+
+\begin{itemize}
+\item yum groupinstall {\textquotedbl}X Software Development{\textquotedbl}
+\item \emph{yum groupinstall ``Development Tools''}
+\end{itemize}
+\item Optional: Motif to add gui control
+\end{itemize}
+\item Qt User Interface and Visualization (\emph{All Platforms}) 
+
+\begin{itemize}
+\item very responsive photorealistic graphics plus more interactivity
+\item \emph{Requires}: Qt4 headers and libraries, OpenGL or MesaGL headers and libraries
+
+\begin{itemize}
+\item yum install qt4-devel
+\item yum groupinstall {\textquotedbl}X Software Development{\textquotedbl}
+\item \emph{yum groupinstall ``Development Tools''}
+\end{itemize}
+\end{itemize}
+\item \emph{RayTracer Visualization (Linux and Mac OS X) }
+
+\begin{itemize}
+\item \texttt{install ghostscript}
+
+\begin{itemize}
+\item yum install ghostscript
+\end{itemize}
+\item install ghostview
+
+\begin{itemize}
+\item http://pages.cs.wisc.edu/\~{}ghost/gsview/get49.htm
+\item or http://www.filewatcher.com/m/gsview-4.9.tar.gz.892681-0.html
+\item \emph{setenv DAWN\_PS\_PREVIEWER {\textquotedbl}ghostview{\textquotedbl}}
+\end{itemize}
+\end{itemize}
+\item X11 RayTracer Visualization (\emph{Linux and Mac OS X}) 
+
+\begin{itemize}
+\item visualize a geometry that the other visualization drivers can't handle
+\item \emph{Requires}: X11 headers and libraries. 
+
+\begin{itemize}
+\item yum groupinstall {\textquotedbl}X Software Development{\textquotedbl}
+\end{itemize}
+\end{itemize}
+\item \texttt{DAWN}
+
+\begin{itemize}
+\item highest quality photorealistic images\texttt{ with little control}
+\item \texttt{install }Tcl/Tk 
+
+\begin{itemize}
+\item \texttt{maybe preinstalled, try wish command to see}
+\item \texttt{if not install from http://www.tcl.tk/software/tcltk/8.6.html}
+\end{itemize}
+\item \texttt{install ghostscript}
+
+\begin{itemize}
+\item yum install ghostscript
+\end{itemize}
+\item install ghostview
+
+\begin{itemize}
+\item http://pages.cs.wisc.edu/\~{}ghost/gsview/get49.htm
+\item or http://www.filewatcher.com/m/gsview-4.9.tar.gz.892681-0.html
+\item setenv DAWN\_PS\_PREVIEWER {\textquotedbl}ghostview{\textquotedbl}
+\end{itemize}
+\item Install DAWN
+
+\begin{itemize}
+\item http://geant4.kek.jp/\~{}tanaka/DAWN/About\_DAWN.html
+\item tar -xzf dawn\_version.tgz
+\item cd dawn\_version
+\item make clean
+\item make guiclean
+\item ./configure
+\item make
+\item make install
+\end{itemize}
+\item Optional install david to see intersecting geometry
+
+\begin{itemize}
+\item http://geant4.kek.jp/\~{}tanaka/DAWN/About\_DAVID.html
+\item \begin{verbatim}
+tar -xzf david_1_36a.taz
+\end{verbatim}
+\item \begin{verbatim}
+cd  david_1_36a
+\end{verbatim}
+\item \begin{verbatim}
+make -f Makefile.GNU_g++
+\end{verbatim}
+\item \begin{verbatim}
+ls -F david
+\end{verbatim}
+\begin{verbatim}
+(Please check if a binary file named "david" is created.)
+\end{verbatim}
+\item \begin{verbatim}
+Optional: Test to make sure it installed correctly
+\end{verbatim}
+\begin{verbatim}
+cd TESTDATA
+\end{verbatim}
+\begin{verbatim}
+dawn -c
+\end{verbatim}
+\begin{verbatim}
+export DAVID_DAWN_PVNAME=1
+\end{verbatim}
+\begin{verbatim}
+../david david_boxes.prim 
+\end{verbatim}
+\begin{itemize}
+\item Go to page 1 of the DAWN's GUI panel.
+\item Click the "Load Default" button
+\item select "Surface" for the "viewing mode"\\
+\item Display Parameters and Axes to Yes\\
+\item Go to page 4 of the DAWN's GUI panel, and select "EPS" in the menu of the "Device Selection"
+\item Click the "Save Default" button
+\item Click the "Okay" button
+\item Confirm the followings: Two of three boxes, named Box1 and Box2, are highlighted with "red color" and with forced wireframe style. The remaining one box is visualized with gray and with surfaces.
+\end{itemize}
+\item make install
+\end{itemize}
+\end{itemize}
+\end{itemize}
+\item \texttt{Installing geant4.10.00.p02}
+
+\begin{itemize}
+\item yum install expat-devel 
+\item \texttt{tar -xzf geant4.10.00.p02.tar.gz}
+\item \texttt{mkdir geant4.10.00.p02{}-build geant4.10.00.p02{}-install}
+\item \texttt{cd \ geant4.10.00.p02{}-build}
+\item \texttt{cmake -DGEANT4\_INSTALL\_DATA=ON -[Visualization Drivers]\\ -DCMAKE\_INSTALL\_PREFIX=/path/to/geant4.10.00.p02{}-install /path/to/geant4.10.00.p02}
+\item \texttt{make -j[\# of processors]}
+\item \texttt{make install}
+\item \texttt{Note: to add data manually instead of automatically uploading with make}
+
+\begin{itemize}
+\item \texttt{mkdir /path to geant4.10.00.p02-install/share/Geant4-10.0.2/data/}
+\item \texttt{cp G4ABLA.3.0.tar.gz G4EMLOW.6.35.tar.gz G4ENSDFSTATE.1.0.tar.gz G4NDL.4.4.tar.gz G4NEUTRONXS.1.4.tar.gz G4PhotonEvaporation.3.0.tar.gz G4PII.1.3.tar.gz \\G4RadioactiveDecay.4.0.tar.gz G4SAIDDATA.1.1.tar.gz RealSurface.1.0.tar.gz /path to geant4.10.00.p02-install/share/Geant4-10.0.2/data/}
+\item \texttt{cd /path to geant4.10.00.p02-install/share/Geant4-10.0.2/data/}
+\item \texttt{tar -xzf [data]}
+\item \texttt{source \$\{GEANT4 INSTALL\}/bin/geant4.sh}
+\end{itemize}
+\item \texttt{Note: to add data for Z{\textgreater}92}
+
+\begin{itemize}
+\item \texttt{contact cern and retrieve added data}
+\item \texttt{mv extraElemData.tar.gz /path/to/geant4.10.00.p02{}-install/share/Geant4-10.0.2/data/}
+\item \texttt{cd /path/to/geant4.10.00.p02{}-install/share/Geant4-10.0.2/data/}
+\item \texttt{mkdir ExtraData}
+\item \texttt{tar -xzf \ extraElemData.tar.gz -C ExtraData/}
+\item \texttt{cp -nr ExtraData/* G4NDL4.4/}
+\item \texttt{rm -rf ExtraData/ \ extraElemData.tar.gz}
+\end{itemize}
+\end{itemize}
+\item \texttt{Installing G4STORK}
+
+\begin{itemize}
+\item \texttt{tar -xzf \$\{G4-STORK TARBALL\} \$\{DESTINATION\}}
+\item \texttt{cd \ G4STORK/Build/}
+\item \texttt{source \$\{GEANT4 INSTALL\}/bin/geant4.sh}
+\item \texttt{rm -rf CMakeCache.txt CMakeFiles/ }
+\item \texttt{cmake -DTOPC\_USE=1 -[Vis and debug options] -DGeant4\_DIR=\$\{GEANT4 INSTALL\}/lib64/Geant4.10.00.p02/Geant4Config.cmake ../}
+
+\begin{itemize}
+\item Options:
+
+\begin{itemize}
+\item \texttt{{}-DCMAKE\_BUILD\_TYPE=Debug,[Release] controls whether debuggin information is added to the code}
+\item \texttt{{}... the usual compiler options}
+\item \texttt{{}-DG4TIME\_USE=[0],1 controls whether timing information the efficiency of the program is outputted}
+\item \texttt{{}-DG4VERBOSE\_TRACKING\_USE=[0],1 controls the amount of neutron tracking information that is outputted }
+\item \texttt{{}-DG4VISUALIZE\_USE=[0],1 controls whether the GEANT4 user interface pops up for visualizing the given geometry}
+\item \texttt{{}-DSTORK\_EXPLICIT\_LOSS=[0],1 controls whether the number of neutrons lost to each process is printed for each event }
+\item \texttt{{}-DTOPC\_USE=[0],1 controls whether the code is run in parallel using an MPI frame work}
+\item \texttt{{}-DTOPC\_USE\_SEQ=[0], 1 forces parallel code to run like sequential code for debugging purposes }
+\item \texttt{{}-DWITH\_GEANT4\_UIVIS=[1],0 allows for user interface to appear }
+\end{itemize}
+\end{itemize}
+\item \texttt{make -j[\# of processors]}
+\end{itemize}
+\end{itemize}
+
+\section{Input Options}
+\subsection{Required Inputs}
+\subsubsection{Simulation World}
+
+This option determines which simulation world is to be used, the current options are listed in the table below:
+
+\begin{verbatim}
+WORLD <OPTION>
+\end{verbatim}
+
+\begin{figure}[h!]
+\centering
+\begin{tabular}{|c|c|}
+\hline
+\verb OPTION & Description \\
+\hline
+\verb Sphere & A sphere of U235\\
+\verb C6Lattice & Lattice cell of the CANDU6\\
+\verb Cube & \\
+\verb ZED2 & The full core ZED-2 reactor\\
+\verb Q_ZED2 & The quarter core ZED-2\\
+\verb SLOWPOKE & The SLOWPOKE-2 reactor (RMC)\\
+\verb SCWR & The (lattice cell?) Super-Critical Water Reactor.\\
+\verb SCWRDoppler & \\
+\verb SCWRJason & \\
+\hline
+\end{tabular}
+\caption{World options}
+\label{fig:my_label}
+\end{figure}
+
+\subsubsection{Events, Primaries and Duration}
+These inputs control the simulation scheme.\\
+\begin{verbatim}
+INPUT <integer>
+\end{verbatim}
+\begin{figure}[h!]
+\centering
+\begin{tabular}{|c|c|}
+\hline
+\verb INPUT & Description \\
+\hline
+\verb NUM_RUNS  & Sets the number of runs in the simulation. \\
+\verb NUM_EVENTS & Sets the number of events per run.\\
+\verb NUM_PRIMARIES_PER_EVENT & Sets the number of primaries per event/\\
+\verb RUN_DURATION & Sets the run duration in nanoseconds.\\
+\hline
+\end{tabular}
+\caption{Simulation inputs.}
+\label{fig:my_label}
+\end{figure}
+\newpage
+\subsection{Additional Inputs}
+\subsubsection{Shannon Entropy}
+\subsubsection{Initial Particles}
+\subsubsection{Logging Files}
+
+
+%%%%% Added by Andrew Tan, 2015-Dec-16 %%%%%%
+\subsection{Delayed Neutron Options}
+This section outlines the 4 main ways we simulate delayed neutrons in G4-STORK. The \texttt{DELAYED\_OPTION} input has the following options:
+\begin{description}
+    \item[No delayed neutrons] \hfill \\
+    \texttt{DELAYED\_OPTION 0} -- Delayed neutrons are not simulated.
+    \item[Instantaneous delayed neutrons] \hfill \\
+    \texttt{DELAYED\_OPTION 1} -- Delayed neutrons are set to appear the moment of fission.
+    \item[Natural Creation] \hfill \\
+    \texttt{DELAYED\_OPTION 2} -- Delayed neutrons are created at the the time of fission and are set to appear sometime in the future.
+    \item[Precursor-Decay Method] \hfill \\
+    \texttt{DELAYED\_OPTION 3} -- An initial fission source file is used to generate a precursor distribution (six groups) and the precursors decay naturally into the simulation. Precursors are created from fission.
+    
+\end{description}
+
+%%%%% Added by Andrew Tan, 2015-Dec-16 %%%%%%
+\subsection{SLOWPOKE heat transfer}
+This section outlines the heat transfer specifically pertaining to the SLOWPOKE-2 reactor. For more information refer to the M.A.Sc thesis \textit{TRANSIENT SIMULATIONS OF THE SLOWPOKE-2 REACTOR USING G4-STORK}.
+\begin{description}
+    \item[\texttt{RUN\_THERMAL\_MODEL}] \hfill \\
+    Takes inputs 0 or 1. Turns the heat transfer model on or off.
+    \item[\texttt{SET\_HEAT\_TRANSFER\_COEFFICIENT}] \hfill \\
+    Input for the heat transfer coefficient between the fuel and the coolant. In units of (W m$^{-2}$ K$^{-1}$).
+    \item[\texttt{SET\_AMBIENT\_TEMPERATURE}] \hfill \\
+    Sets the coolant (ambient) temperature to which the heat will dissipate into. In units of K.
+    \item[\texttt{SET\_BASELINE\_FISSION\_RATE}] \hfill \\
+    Set the baseline rate of fissions. This number should be calculated or inferred from a previous set-up simulation. Units are in fissions/ns.
+    \item[\texttt{SET\_FISSION\_TO\_ENERGY\_COEFFICIENT}] \hfill \\
+    Sets the amount of energy a fission produces. Units are in Joules.
+\end{description}
+
+%%%%% Added by Andrew Tan, 2015-Dec-16 %%%%%%
+\subsection{Calculation types}
+This section outlines the input \texttt{CALC\_TYPE} and its various options. It should be noted that when doing transients the precursor-delayed option should be used which means a matching source and fission source file are needed.
+\begin{description}
+    \item[STATIC RENORMALIZATION:] \hfill \\
+    \texttt{CALC\_TYPE 0} -- Static renormalization samples primaries from a given source file for each run. This should be utilized for static calculations where the input source is converged.
+    \item[DYNAMIC NONRENORMALIZATION:] \hfill \\
+    \texttt{CALC\_TYPE 1} -- From an input source the primaries will be renormalized  \textit{only at the start} to the set number of primaries. Then the simulation will continue with no-renormalization used.
+    \item[TRANSIENT CONTINUATION:] \hfill \\
+    \texttt{CALC\_TYPE 2} -- From an input source primaries will be loaded and the simulation will continue with no renomalization used. This simulation type allows the user to directly continue from a previous simulation. Useful for transient simulations.
+    
+\end{description}
+
+
+
+\end{document}
